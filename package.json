@@ -1,0 +1,41 @@
+{
+  "name": "@bugsnag/source-maps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "bin": {
+    "bugsnag-source-maps": "bin/cli"
+  },
+  "scripts": {
+    "clean": "rm -fr dist",
+    "build": "npm run clean && tsc",
+    "lint": "eslint . --ext .js,.ts",
+    "test": "tsc --noEmit && npm run lint && jest"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "LICENSE.txt"
+  ],
+  "keywords": [],
+  "author": "Bugsnag",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.14",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "babel-jest": "^26.5.2",
+    "eslint": "^7.11.0",
+    "eslint-plugin-node": "^11.1.0",
+    "i": "^0.3.6",
+    "jest": "^26.5.3",
+    "npm": "^6.14.8",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "yargs": "^16.0.3"
+  }
+}
