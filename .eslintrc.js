@@ -6,7 +6,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['**/*.js'],
+      files: ['**/*.js', 'bin/cli'],
       extends: [
         'plugin:node/recommended'
       ]
@@ -18,7 +18,10 @@ module.exports = {
       ],
       plugins: [
         '@typescript-eslint'
-      ]
+      ],
+      rules: {
+        "@typescript-eslint/no-empty-function": ["off"]
+      }
     }
   ]
 }

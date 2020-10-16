@@ -8,9 +8,10 @@
   },
   "scripts": {
     "clean": "rm -fr dist",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .js,.ts",
-    "test": "tsc --noEmit && npm run lint && jest"
+    "test": "tsc --noEmit && npm run lint && jest",
+    "preversion": "npm run build"
   },
   "files": [
     "bin",
@@ -30,9 +31,7 @@
     "babel-jest": "^26.5.2",
     "eslint": "^7.11.0",
     "eslint-plugin-node": "^11.1.0",
-    "i": "^0.3.6",
     "jest": "^26.5.3",
-    "npm": "^6.14.8",
     "typescript": "^4.0.3"
   },
   "dependencies": {
