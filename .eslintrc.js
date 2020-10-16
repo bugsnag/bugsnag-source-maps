@@ -6,7 +6,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['**/*.js'],
+      files: ['**/*.js', 'bin/cli'],
       extends: [
         'plugin:node/recommended'
       ]

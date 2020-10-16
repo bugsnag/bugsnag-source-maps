@@ -1,5 +1,6 @@
 module.exports = {
   testPathIgnorePatterns: ['dist/*'],
+  clearMocks: true,
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.ts',
