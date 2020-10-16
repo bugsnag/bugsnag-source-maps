@@ -10,7 +10,8 @@
     "clean": "rm -fr dist",
     "build": "npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts",
-    "test": "tsc --noEmit && npm run lint && jest"
+    "test": "tsc --noEmit && npm run lint && jest",
+    "preversion": "npm run build"
   },
   "files": [
     "bin",
