@@ -2,7 +2,7 @@
 
 ## Installation
 
-You can install @bugsnag/source-maps locally to you project:
+You can install @bugsnag/source-maps locally to your project:
 
 ```sh
 npm install --save-dev @bugsnag/source-maps
