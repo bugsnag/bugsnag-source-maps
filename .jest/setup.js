@@ -1,0 +1,2 @@
+process.env.BUGSNAG_RETRY_INTERVAL = '10'
+process.env.BUGSNAG_TIMEOUT = '100'

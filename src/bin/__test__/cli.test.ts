@@ -11,18 +11,18 @@ test('cli prints help', () => {
 
 test('cli upload-node command', () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
-  run(['/usr/bin/env/node', 'source-map-upload', 'upload-node'])
-  expect(logSpy).toHaveBeenCalledWith('TODO: uploadNode()')
+  run(['/usr/bin/env/node', 'source-map-upload', 'upload-node', '--help'])
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('bugsnag-source-maps upload-node'))
 })
 
 test('cli upload-react-native command', () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
-  run(['/usr/bin/env/node', 'source-map-upload', 'upload-react-native'])
-  expect(logSpy).toHaveBeenCalledWith('TODO: uploadReactNative()')
+  run(['/usr/bin/env/node', 'source-map-upload', 'upload-react-native', '--help'])
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('bugsnag-source-maps upload-react-native'))
 })
 
 test('cli upload-browser command', () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
-  run(['/usr/bin/env/node', 'source-map-upload', 'upload-browser'])
-  expect(logSpy).toHaveBeenCalledWith('TODO: uploadBrowser()')
+  run(['/usr/bin/env/node', 'source-map-upload', 'upload-browser', '--help'])
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('bugsnag-source-maps upload-browser'))
 })
