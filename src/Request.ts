@@ -17,8 +17,8 @@ export interface BrowserSourceMapPayload {
 }
 
 const MAX_ATTEMPTS = 5
-const RETRY_INTERVAL = parseInt(process.env.BUGSNAG_RETRY_INTERVAL as string) || 1000
-const TIMEOUT = parseInt(process.env.BUGSNAG_TIMEOUT as string) || 30000
+const RETRY_INTERVAL_MS = parseInt(process.env.BUGSNAG_RETRY_INTERVAL_MS as string) || 1000
+const TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 30000
 
 export default async function request (endpoint: string, payload: SourceMapPayload, requestOpts: http.RequestOptions): Promise<void> {
   let attempts = 0
@@ -28,7 +28,7 @@ export default async function request (endpoint: string, payload: SourceMapPaylo
       await send(endpoint, payload, requestOpts)
     } catch (err) {
       if (err && err.isRetryable !== false && attempts < MAX_ATTEMPTS) {
-        await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL))
+        await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL_MS))
         return await go()
       }
       throw err
@@ -95,7 +95,7 @@ export async function send (endpoint: string, payload: SourceMapPayload, request
       err.code = UploadErrorCode.UNKNOWN
       reject(err)
     })
-    req.setTimeout(TIMEOUT, () => {
+    req.setTimeout(TIMEOUT_MS, () => {
       const err = new UploadError('Connection timed out')
       err.code = UploadErrorCode.TIMEOUT
       reject(err)
