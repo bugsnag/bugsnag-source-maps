@@ -1,7 +1,7 @@
 import consolaGlobalInstance, { LogLevel } from 'consola'
 
 export default consolaGlobalInstance
-consolaGlobalInstance.level = 4
+consolaGlobalInstance.level = LogLevel.Debug
 
 export type Logger = {
   trace: (...args: unknown[]) => void,
