@@ -79,8 +79,8 @@ export async function uploadOne ({
   }
 
   if (!appVersion) {
-    logger.debug('Detecting appVersion')
     appVersion = await detectAppVersion(projectRoot)
+    if (appVersion) logger.debug(`Detected appVersion "${appVersion}"`)
   }
 
   logger.debug(`Initiating upload "${endpoint}"`)
