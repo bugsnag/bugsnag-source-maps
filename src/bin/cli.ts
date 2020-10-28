@@ -94,7 +94,7 @@ export default function run (argv: string[]): void {
             process.exitCode = 1
           }
         } else if (argv.directory && argv.baseUrl) {
-          logger.info(`Uploading browser source map for ${argv.bundleUrl}`)
+          logger.info(`Uploading browser source map for ${argv.baseUrl}`)
         } else {
           return program.showHelp()
         }
