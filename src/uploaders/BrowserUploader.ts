@@ -74,7 +74,8 @@ export async function uploadOne ({
       .then(json => AddSources(fullSourceMapPath, json, projectRoot, logger))
       .then(json => StripProjectRoot(fullSourceMapPath, json, projectRoot, logger))
   } catch (e) {
-    logger.error('Error applying transforms to source map')
+    logger.error('Error applying transforms to source map', e)
+    throw e
   }
 
   if (!appVersion) {
