@@ -5,8 +5,9 @@ import { noopLogger } from '../../Logger'
 
 test('AddSources transformer: typescript example', async () => {
   const projectRoot = path.join(__dirname, 'fixtures', 'typescript')
-  const sourceMapJson = JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'out.js.map'), 'utf-8'))
-  await AddSources('dist/out.js.map', sourceMapJson, projectRoot, noopLogger)
+  const absolutePath = path.join(projectRoot, 'dist', 'out.js.map')
+  const sourceMapJson = JSON.parse(await fs.readFile(absolutePath, 'utf-8'))
+  await AddSources(absolutePath, sourceMapJson, projectRoot, noopLogger)
   expect(sourceMapJson.sourcesContent).toHaveLength(2)
   expect(sourceMapJson.sourcesContent[0]).toBe(await fs.readFile(path.join(projectRoot, 'lib', 'a.ts'), 'utf-8'))
   expect(sourceMapJson.sourcesContent[1]).toBe(await fs.readFile(path.join(projectRoot, 'index.ts'), 'utf-8'))
@@ -14,13 +15,15 @@ test('AddSources transformer: typescript example', async () => {
 
 test('AddSources transformer: ignore errors when source map is in an unexpected format', async () => {
   const projectRoot = path.join(__dirname, 'fixtures', 'typescript')
-  await AddSources('dist/out.js.map', 1, projectRoot, noopLogger)
+  const absolutePath = path.join(projectRoot, 'dist', 'out.js.map')
+  await AddSources(absolutePath, 1, projectRoot, noopLogger)
 })
 
 test('AddSources transformer: webpack example', async () => {
   const projectRoot = path.join(__dirname, 'fixtures', 'webpack')
-  const sourceMapJson = JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'main.js.map'), 'utf-8'))
-  await AddSources('dist/main.js.map', sourceMapJson, projectRoot, noopLogger)
+  const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
+  const sourceMapJson = JSON.parse(await fs.readFile(absolutePath, 'utf-8'))
+  await AddSources(absolutePath, sourceMapJson, projectRoot, noopLogger)
   expect(sourceMapJson.sourcesContent).toHaveLength(3)
   expect(sourceMapJson.sourcesContent[0]).toBe(await fs.readFile(path.join(projectRoot, 'lib', 'a.js'), 'utf-8'))
   expect(sourceMapJson.sourcesContent[1]).toBe(null)
@@ -29,8 +32,9 @@ test('AddSources transformer: webpack example', async () => {
 
 test('AddSources transformer: webpack example (synthetic sections)', async () => {
   const projectRoot = path.join(__dirname, 'fixtures', 'webpack')
-  const sourceMapJson = { sections: [ { map: JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'main.js.map'), 'utf-8')) } ] }
-  await AddSources('dist/main.js.map', sourceMapJson, projectRoot, noopLogger)
+  const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
+  const sourceMapJson = { sections: [ { map: JSON.parse(await fs.readFile(absolutePath, 'utf-8')) } ] }
+  await AddSources(absolutePath, sourceMapJson, projectRoot, noopLogger)
   expect(sourceMapJson.sections[0].map.sourcesContent).toHaveLength(3)
   expect(sourceMapJson.sections[0].map.sourcesContent[0]).toBe(await fs.readFile(path.join(projectRoot, 'lib', 'a.js'), 'utf-8'))
   expect(sourceMapJson.sections[0].map.sourcesContent[1]).toBe(null)
@@ -39,9 +43,10 @@ test('AddSources transformer: webpack example (synthetic sections)', async () =>
 
 test('AddSources transformer: webpack example (synthetic missing source)', async () => {
   const projectRoot = path.join(__dirname, 'fixtures', 'webpack')
-  const sourceMapJson = JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'main.js.map'), 'utf-8'))
+  const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
+  const sourceMapJson = JSON.parse(await fs.readFile(absolutePath, 'utf-8'))
   sourceMapJson.sources[2] = 'index--nothanks.js'
-  await AddSources('dist/main.js.map', sourceMapJson, projectRoot, noopLogger)
+  await AddSources(absolutePath, sourceMapJson, projectRoot, noopLogger)
   expect(sourceMapJson.sourcesContent).toHaveLength(3)
   expect(sourceMapJson.sourcesContent[0]).toBe(await fs.readFile(path.join(projectRoot, 'lib', 'a.js'), 'utf-8'))
   expect(sourceMapJson.sourcesContent[1]).toBe(null)

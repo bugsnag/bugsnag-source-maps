@@ -35,7 +35,7 @@ async function addSourcesContent (sourceMapPath: string, map: UnsafeSourceMap, p
         // don't look up sources for virtual webpack files
         if (!/^webpack:\/\/\/webpack/.test(p)) {
           const absoluteSourcePath = path.resolve(
-            path.dirname(path.join(projectRoot, sourceMapPath)),
+            path.dirname(sourceMapPath),
             p.replace(/webpack:\/\/\/\.\//, `${projectRoot}/`)
           )
           source = await fs.readFile(absoluteSourcePath, 'utf-8')
