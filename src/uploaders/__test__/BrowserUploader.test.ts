@@ -143,6 +143,24 @@ test('uploadOne(): failure (bundle not found)', async () => {
   }
 })
 
+test('uploadOne(): failure (sourcemap is invalid json)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadOne({
+      apiKey: '123',
+      bundleUrl: 'http://mybundle.jim',
+      sourceMap: 'invalid-source-map.js.map',
+      projectRoot: path.join(__dirname, 'fixtures/b'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(0)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unexpected token h in JSON at position 0')
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The provided source map was not valid JSON.'))
+  }
+})
+
 test('uploadOne(): failure (empty bundle)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new UploadError('network error')

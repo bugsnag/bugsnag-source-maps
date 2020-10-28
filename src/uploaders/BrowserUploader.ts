@@ -63,7 +63,7 @@ export async function uploadOne ({
   try {
     sourceMapJson = JSON.parse(sourceMapContent)
   } catch (e) {
-    logger.error(`The provided source map was not valid JSON`)
+    logger.error(`The provided source map was not valid JSON. Is this the correct file?\n\n  "${fullSourceMapPath}"`)
     throw e
   }
 
