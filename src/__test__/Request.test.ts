@@ -82,7 +82,6 @@ test('request: send() successful upload (with overwrite, appVersion)', async () 
     appVersion: '1.2.3',
     minifiedUrl: 'http://example.url',
     sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-    minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' },
     overwrite: true
   }, {})
 
@@ -98,9 +97,6 @@ test('request: send() successful upload (with overwrite, appVersion)', async () 
 
   expect(received[0].files.sourceMap[0].originalFilename).toBe('dist/app.js.map')
   expect(received[0].files.sourceMap[0].headers['content-type']).toBe('application/json')
-
-  expect(received[0].files.minifiedFile[0].originalFilename).toBe('dist/app.js')
-  expect(received[0].files.minifiedFile[0].headers['content-type']).toBe('application/javascript')
 })
 
 test('request: send() unsuccessful upload (invalid, no retry)', async () => {
