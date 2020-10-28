@@ -4,7 +4,8 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.ts',
-    "!src/**/*.test.*"
+    '!src/**/*.test.*',
+    '!**/*/fixtures/**/*'
   ],
   coverageThreshold: {
     global: {
@@ -13,5 +14,6 @@ module.exports = {
       lines: 80,
       statements: 80
     }
-  }
+  },
+  setupFiles: [ '<rootDir>/.jest/setup.js' ]
 }
