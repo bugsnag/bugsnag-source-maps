@@ -1,112 +1,168 @@
-import * as Yargs from 'yargs'
-import yargs from 'yargs/yargs'
+import commandLineArgs, { OptionDefinition } from 'command-line-args'
+import commandLineUsage from 'command-line-usage'
 import * as browser from '../uploaders/BrowserUploader'
 import logger from '../Logger'
+import { LogLevel } from 'consola'
 
-const commonOpts: Record<string, Yargs.Options> = {
-  apiKey: {
-    describe: 'your project\'s API key',
-    type: 'string',
-    demandOption: true
+const topLevelDefs = [
+  {
+    name: 'command',
+    defaultOption: true
   },
-  overwrite: {
-    describe: 'whether to replace existing source maps uploaded with the same version',
-    default: false,
-    type: 'boolean'
+  {
+    name: 'help',
+    alias: 'h',
+    type: Boolean,
+    description: 'show this message'
   },
-  projectRoot: {
-    describe: 'the root of your project',
-    default: process.cwd(),
-    type: 'string'
+  {
+    name: 'quiet',
+    type: Boolean,
+    description: 'less verbose logging'
   },
-  verbose: {
-    describe: 'show detailed logs',
-    default: false,
-    type: 'boolean'
+  {
+    name: 'version',
+    type: Boolean,
+    description: 'output the version of the CLI module'
+  }
+]
+
+export default async function run (argv: string[]): Promise<void> {
+  const opts = commandLineArgs(topLevelDefs, { argv, stopAtFirstUnknown: true })
+
+  if (opts.quiet) logger.level = LogLevel.Success
+
+  switch (opts.command) {
+    case 'upload-browser': {
+
+      const defs: OptionDefinition[] = [
+        ...commonCommandDefs,
+        ...browserCommandCommonDefs,
+        ...browserCommandSingleDefs,
+        ...browserCommandMultipleDefs
+      ]
+      let browserOpts
+      try {
+        browserOpts = commandLineArgs(defs, { argv: opts._unknown || [], camelCase: true })
+        if (opts.help) return browserUsage()
+        validateBrowserOpts(browserOpts)
+      } catch (e) {
+        process.exitCode = 1
+        if (e.name === 'UNKNOWN_VALUE') {
+          logger.error(`Invalid argument provided. ${e.message}`)
+        } else {
+          logger.error(e.message)
+        }
+        return browserUsage()
+      }
+      try {
+        if (browserOpts.sourceMap) {
+          // single mode
+          await browser.uploadOne({
+            apiKey: browserOpts.apiKey,
+            sourceMap: browserOpts.sourceMap,
+            bundleUrl: browserOpts.bundleUrl,
+            bundle: browserOpts.bundle,
+            projectRoot: browserOpts.projectRoot,
+            overwrite: browserOpts.overwrite,
+            appVersion: browserOpts.appVersion,
+            endpoint: browserOpts.endpoint,
+            logger
+          })
+        }
+      } catch (e) {
+        process.exitCode = 1
+      }
+      break
+    }
+    case 'upload-node':
+      console.log('TODO')
+      break
+    case 'upload-react-native':
+      console.log('TODO')
+      break
+    default:
+      if (opts.help) return usage()
+      if (opts.command) {
+        logger.error(`Unrecognized command "${opts.command}"`)
+      } else {
+        logger.error(`Command expected, nothing provided.`)
+      }
+      usage()
   }
 }
 
-export default function run (argv: string[]): void {
-  const program = yargs()
+function usage (): void {
+  console.log(
+    commandLineUsage([
+      { content: 'bugsnag-source-maps <command>'},
+      { header: 'Available commands', content: 'upload-browser\nupload-node\nupload-react-native' },
+      { header: 'Options', optionList: topLevelDefs, hide: [ 'command' ] }
+    ])
+  )
+}
 
-  program
-    .scriptName('bugsnag-source-maps')
-    .command(
-      'upload-node',
-      'upload source maps for a Node app',
-      {}
-    )
-    .command(
-      'upload-browser',
-      'upload source maps for a browser JS app',
-      yargs => {
-        return yargs
-          .options({
-            ...commonOpts,
-            appVersion: {
-              describe: 'the version of the app the source map applies to',
-              type: 'string'
-            },
-            bundleUrl: {
-              describe: 'the URL of the bundle this source map is for is served at (may contain * wildcards)',
-              group: 'Single upload'
-            },
-            bundle: {
-              describe: 'the path to the bundle',
-              type: 'string',
-              group: 'Single upload'
-            },
-            sourceMap: {
-              describe: 'the path to the source map',
-              type: 'string',
-              group: 'Single upload'
-            },
-            directory: {
-              describe: 'the path generated sources and source maps',
-              type: 'string',
-              group: 'Bulk upload'
-            },
-            baseUrl: {
-              describe: 'the base URL your bundles are served from (may contain * wildcards)',
-              type: 'string',
-              group: 'Bulk upload'
-            }
-          })
-          .conflicts('bundle', ['baseUrl', 'directory'])
-          .conflicts('baseUrl', ['bundleUrl', 'bundle', 'sourceMap'])
+function browserUsage (): void {
+  console.log(
+    commandLineUsage([
+      { content: 'bugsnag-source-maps upload-browser [...opts]' },
+      {
+        header: 'Options',
+        optionList: [ ...commonCommandDefs, ...browserCommandCommonDefs ]
       },
-      async (argv) => {
-        logger.trace('cli: upload-browser', argv)
-        if (argv.bundleUrl && argv.sourceMap) {
-          try {
-            await browser.uploadOne({
-              apiKey: argv.apiKey as string,
-              bundleUrl: argv.bundleUrl as string,
-              sourceMap: argv.sourceMap as string,
-              bundle: argv.bundle as string,
-              appVersion: argv.appVersion as string,
-              projectRoot: argv.projectRoot as string,
-              overwrite: argv.overwrite as boolean | undefined,
-              endpoint: argv.endpoint as string | undefined,
-              logger: logger
-            })
-          } catch (e) {
-            process.exitCode = 1
-          }
-        } else if (argv.directory && argv.baseUrl) {
-          logger.info(`Uploading browser source map for ${argv.baseUrl}`)
-        } else {
-          return program.showHelp()
-        }
+      {
+        header: 'Single upload',
+        content: 'Options for uploading a source map for a single bundle'
+      },
+      {
+        optionList: [ ...browserCommandSingleDefs ]
+      },
+      {
+        header: 'Multiple upload',
+        content: 'Options for recursing directory and upload multiple source maps'
+      },
+      {
+        optionList: [ ...browserCommandMultipleDefs ]
       }
-    )
-    .command(
-      'upload-react-native',
-      'upload source maps for a React Native app',
-      {}
-    )
-    .help()
-    .demandCommand()
-    .wrap(program.terminalWidth())
-    .parse(argv.slice(2))
+    ])
+  )
+}
+
+const commonCommandDefs = [
+  { name: 'api-key', type: String, description: 'your project\'s API key {bold required}' },
+  { name: 'overwrite', type: Boolean, description: 'whether to replace exiting source maps uploaded with the same version' },
+  { name: 'project-root', type: String, description: 'the top level directory of your project' },
+  { name: 'endpoint', type: String, description: 'customize the endpoint for Bugsnag On-Premise' }
+]
+
+const browserCommandCommonDefs = [ { name: 'app-version', type: String } ]
+
+const browserCommandSingleDefs = [
+  { name: 'source-map', type: String, description: 'the path to the source map {bold required}', typeLabel: '{underline file}' },
+  { name: 'bundle-url', type: String, description: 'the URL the bundle is served at (may contain * wildcards) {bold required}', typeLabel: '{underline url}' },
+  { name: 'bundle', type: String, description: 'the path to the bundle', typeLabel: '{underline file}' },
+]
+const browserCommandMultipleDefs = [
+  { name: 'directory', type: String, description: 'the directory to start searching for source maps in {bold required}', typeLabel: '{underline path}' },
+  { name: 'base-url', type: String, description: 'the base URL that JS bundles are served from (may contain * wildcards) {bold required}', typeLabel: '{underline url}' },
+]
+
+function validateBrowserOpts (opts: Record<string, unknown>): void {
+  if (!opts['apiKey']) throw new Error('--api-key is a required parameter')
+  const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']
+  const anyMultipleSet = opts['baseUrl'] || opts['directory']
+  if (anySingleSet && anyMultipleSet) {
+    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory,--base-url).')
+  }
+  if (!anySingleSet && !anyMultipleSet) throw new Error('Not enough options supplied')
+
+  if (anySingleSet) {
+    // single mode
+    if (!opts['sourceMap']) throw new Error('--sourcemap is required')
+    if (!opts['bundleUrl']) throw new Error('--bundle-url is required')
+  } else {
+    // multiple mode
+    if (!opts['directory']) throw new Error('--directory is required')
+    if (!opts['base-url']) throw new Error('--base-url is required')
+  }
 }
