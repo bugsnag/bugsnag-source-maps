@@ -24,6 +24,13 @@ const topLevelDefs = [
 export default async function run (argv: string[]): Promise<void> {
   const opts = commandLineArgs(topLevelDefs, { argv, stopAtFirstUnknown: true })
 
+  if (opts.version) {
+    return console.log(
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      `@bugsnag/source-maps v${require('../../package.json').version}`
+    )
+  }
+
   switch (opts.command) {
     case 'upload-browser':
       await uploadBrowser(opts._unknown || [], opts)

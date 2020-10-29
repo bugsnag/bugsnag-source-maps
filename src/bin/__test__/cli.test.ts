@@ -13,6 +13,13 @@ test('cli: prints help', async () => {
   expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('bugsnag-source-maps <command>'))
 })
 
+test('cli: version', async () => {
+  const logSpy = jest.spyOn(global.console, 'log').mockImplementation(jest.fn())
+  await run(['--version'])
+  expect(logSpy).toHaveBeenCalled()
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('@bugsnag/source-maps v'))
+})
+
 test('cli: upload-node command', async () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
   run(['upload-node', '--help'])
