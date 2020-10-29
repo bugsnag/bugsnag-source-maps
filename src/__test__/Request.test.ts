@@ -1,8 +1,9 @@
-import request, { send, isRetryable } from '../Request'
+import request, { PayloadType, send, isRetryable } from '../Request'
 import { UploadErrorCode } from '../UploadError'
 import http from 'http'
 import { AddressInfo } from 'net'
 import multiparty from 'multiparty'
+import File from '../File'
 
 let server: http.Server
 afterEach(() => server?.close())
@@ -38,10 +39,11 @@ test('request: send() successful upload', async () => {
   const port = (server.address() as AddressInfo).port
 
   await send(`http://localhost:${port}`, {
+    type: PayloadType.Browser,
     apiKey: '123',
     minifiedUrl: 'http://example.url',
-    sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-    minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+    sourceMap: new File('dist/app.js.map', '{}'),
+    minifiedFile: new File('dist/app.js', 'console.log("hello")')
   }, {})
 
   expect(received.length).toBe(1)
@@ -78,10 +80,11 @@ test('request: send() successful upload (with overwrite, appVersion)', async () 
   const port = (server.address() as AddressInfo).port
 
   await send(`http://localhost:${port}`, {
+    type: PayloadType.Browser,
     apiKey: '123',
     appVersion: '1.2.3',
     minifiedUrl: 'http://example.url',
-    sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
+    sourceMap: new File('dist/app.js.map', '{}'),
     overwrite: true
   }, {})
 
@@ -111,10 +114,11 @@ test('request: send() unsuccessful upload (invalid, no retry)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
@@ -134,10 +138,11 @@ test('request: send() unsuccessful upload (invalid, empty file)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
@@ -157,10 +162,11 @@ test('request: send() unsuccessful upload (misc 40x code)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
@@ -180,10 +186,11 @@ test('request: send() unsuccessful upload (unauthed, no retry)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
@@ -203,10 +210,11 @@ test('request: send() unsuccessful upload (retryable status)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(true)
@@ -226,10 +234,11 @@ test('request: send() unsuccessful upload (timeout)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(true)
@@ -249,10 +258,11 @@ test('request: send() unsuccessful upload (duplicate)', async () => {
 
   try {
     await send(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
@@ -273,10 +283,11 @@ test('request: request() multiple attempts at retryable errors', async () => {
 
   try {
     await request(`http://localhost:${port}`, {
+      type: PayloadType.Browser,
       apiKey: '123',
       minifiedUrl: 'http://example.url',
-      sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-      minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+      sourceMap: new File('dist/app.js.map', '{}'),
+      minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
     expect(requestsReceived).toBe(5)
@@ -296,11 +307,30 @@ test('request: request() multiple attempts, eventually succeeds', async () => {
 
   const port = (server.address() as AddressInfo).port
   await request(`http://localhost:${port}`, {
+    type: PayloadType.Browser,
     apiKey: '123',
     minifiedUrl: 'http://example.url',
-    sourceMap: { filepath: 'dist/app.js.map', data: '{}' },
-    minifiedFile: { filepath: 'dist/app.js', data: 'console.log("hello")' }
+    sourceMap: new File('dist/app.js.map', '{}'),
+    minifiedFile: new File('dist/app.js', 'console.log("hello")')
   }, {})
 
   expect(requestsReceived).toBe(4)
+})
+
+test('request: request() throws when given a ReactNative payload', async () => {
+  expect(async () => {
+    await request(`http://localhost`, {
+      type: PayloadType.ReactNative,
+      apiKey: '123'
+    }, {})
+  }).rejects.toThrow()
+})
+
+test('request: request() throws when given a Node payload', async () => {
+  expect(async () => {
+    await request(`http://localhost`, {
+      type: PayloadType.Node,
+      apiKey: '123'
+    }, {})
+  }).rejects.toThrow()
 })
