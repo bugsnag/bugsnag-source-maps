@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  package:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.package
+    volumes:
+      - .:/app/build
+
+
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}

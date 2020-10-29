@@ -1,0 +1,13 @@
+FROM node:lts-alpine
+
+RUN apk add --update bash git
+
+WORKDIR /app
+
+COPY src ./src
+COPY package*.json ./
+COPY features/scripts ./scripts
+
+RUN scripts/create_package.sh
+
+CMD cp bugsnag-source-maps.tgz build/bugsnag-source-maps.tgz
