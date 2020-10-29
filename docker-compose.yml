@@ -1,12 +1,20 @@
 version: '3.6'
 services:
-  package:
+  maze-runner:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.package
+      dockerfile: dockerfiles/Dockerfile.maze-runner
+      target: maze-runner
+    environment:
+      VERBOSE:
+      DEBUG:
+    networks:
+      default:
+        aliases:
+          - maze-runner
     volumes:
-      - .:/app/build
-
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./features:/app/features
 
 networks:
   default:

@@ -1,0 +1,20 @@
+FROM node:lts-alpine as packager
+
+RUN apk add --update bash git
+
+WORKDIR /app
+
+# Copy in files needed to build the package
+COPY src ./src
+COPY package*.json ./
+COPY features/scripts ./scripts
+
+# Create bugsnag-source-maps.tgz (version removed)
+RUN scripts/create_package.sh
+
+#FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli as maze-runner
+FROM 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-runner-and-value-steps-cli as maze-runner
+COPY --from=packager /app/bugsnag-source-maps.tgz ./
+WORKDIR /app/
+
+ENTRYPOINT ["bundle", "exec", "maze-runner"]

@@ -1,0 +1,12 @@
+version: '3.6'
+services:
+  single-source-map-webpack:
+    build:
+      context: single-source-map-webpack
+    environment:
+      - BUGSNAG_API_KEY
+      - BUGSNAG_ENDPOINT
+    networks:
+      default:
+        aliases:
+          - single-source-map-webpack
