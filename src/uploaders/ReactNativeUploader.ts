@@ -7,48 +7,11 @@ import formatErrorLog from './FormatErrorLog'
 import { Logger } from '../Logger'
 import AddSources from '../transformers/AddSources'
 import StripProjectRoot from '../transformers/StripProjectRoot'
+import { Platform, PlatformOptions } from '../react-native/Platform'
+import { Version, VersionType } from '../react-native/Version'
+import { SourceMapRetrieval, SourceMapRetrievalType } from '../react-native/SourceMapRetrieval'
 
-export const enum Platform { Android = 'android', Ios = 'ios' }
-export const enum VersionType { AppVersion, CodeBundleId }
-export const enum SourceMapRetrievalType { Provided, Fetch }
-
-interface AndroidOptions {
-  readonly type: Platform.Android
-  readonly appVersionCode?: string
-}
-
-interface IosOptions {
-  readonly type: Platform.Ios
-  readonly appBundleVersion?: string
-}
-
-interface AppVersion {
-  readonly type: VersionType.AppVersion
-  readonly appVersion: string
-}
-
-interface CodeBundleId {
-  readonly type: VersionType.CodeBundleId
-  readonly codeBundleId: string
-}
-
-// The user has provided a source map & bundle
-interface ProvidedSourceMapBundlePair {
-  readonly type: SourceMapRetrievalType.Provided
-  readonly sourceMap: string
-  readonly bundle: string
-}
-
-// We should fetch the source map & bundle from the RN bundle server
-interface Fetch {
-  readonly type: SourceMapRetrievalType.Fetch
-}
-
-type PlatformOptions = AndroidOptions | IosOptions
-type Version = AppVersion | CodeBundleId
-type SourceMapRetrieval = ProvidedSourceMapBundlePair | Fetch
-
-interface ReactNativeUploadOptions {
+export interface ReactNativeUploadOptions {
   readonly apiKey: string
   readonly platformOptions: PlatformOptions
   readonly dev: boolean

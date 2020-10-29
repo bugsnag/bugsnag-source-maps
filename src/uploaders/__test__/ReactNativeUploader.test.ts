@@ -1,8 +1,7 @@
-import ReactNativeUploader, {
-  Platform,
-  VersionType,
-  SourceMapRetrievalType
-} from '../ReactNativeUploader'
+import ReactNativeUploader from '../ReactNativeUploader'
+import { Platform } from '../../react-native/Platform'
+import { VersionType } from '../../react-native/Version'
+import { SourceMapRetrievalType } from '../../react-native/SourceMapRetrieval'
 import request from '../../Request'
 import File from '../../File'
 import { UploadError, UploadErrorCode } from '../../UploadError'

@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 import commandLineUsage from 'command-line-usage'
 import logger from '../Logger'
 import uploadBrowser from '../commands/UploadBrowserCommand'
+import uploadReactNative from '../commands/UploadReactNativeCommand'
 
 const topLevelDefs = [
   {
@@ -36,12 +37,15 @@ export default async function run (argv: string[]): Promise<void> {
       case 'upload-browser':
         await uploadBrowser(opts._unknown || [], opts)
         break
+
       case 'upload-node':
         console.log('TODO')
         break
+
       case 'upload-react-native':
-        console.log('TODO')
+        await uploadReactNative(opts._unknown || [], opts)
         break
+
       default:
         if (opts.help) return usage()
         if (opts.command) {
