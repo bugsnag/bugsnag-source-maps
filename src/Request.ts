@@ -6,7 +6,7 @@ import FormData from 'form-data'
 import { UploadError, UploadErrorCode } from './UploadError'
 import File from './File'
 
-export enum PayloadType { Browser, ReactNative, Node }
+export const enum PayloadType { Browser, ReactNative, Node }
 type Payload = BrowserPayload | ReactNativePayload | NodePayload
 
 interface BrowserPayload {
