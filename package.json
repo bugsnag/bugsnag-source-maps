@@ -35,10 +35,8 @@
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "babel-jest": "^26.5.2",
-    "concat-stream": "^2.0.0",
     "eslint": "^7.12.1",
     "eslint-plugin-node": "^11.1.0",
-    "form-data": "^3.0.0",
     "jest": "^26.5.3",
     "multiparty": "^4.2.2",
     "once": "^1.4.0",
@@ -49,7 +47,9 @@
   "dependencies": {
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0",
+    "concat-stream": "^2.0.0",
     "consola": "^2.15.0",
+    "form-data": "^3.0.0",
     "read-pkg-up": "^7.0.1"
   }
 }

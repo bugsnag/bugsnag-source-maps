@@ -4,23 +4,36 @@ import concat from 'concat-stream'
 import url from 'url'
 import FormData from 'form-data'
 import { UploadError, UploadErrorCode } from './UploadError'
+import File from './File'
 
-type SourceMapPayload = BrowserSourceMapPayload
+export enum PayloadType { Browser, ReactNative, Node }
+type Payload = BrowserPayload | ReactNativePayload | NodePayload
 
-export interface BrowserSourceMapPayload {
+interface BrowserPayload {
+  type: PayloadType.Browser
   apiKey: string
   appVersion?: string
   minifiedUrl: string
-  sourceMap: { filepath: string, data: string }
-  minifiedFile?: { filepath: string, data: string }
+  sourceMap: File
+  minifiedFile?: File
   overwrite?: boolean
+}
+
+interface ReactNativePayload {
+  type: PayloadType.ReactNative
+  apiKey: string
+}
+
+interface NodePayload {
+  type: PayloadType.Node
+  apiKey: string
 }
 
 const MAX_ATTEMPTS = 5
 const RETRY_INTERVAL_MS = parseInt(process.env.BUGSNAG_RETRY_INTERVAL_MS as string) || 1000
 const TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 30000
 
-export default async function request (endpoint: string, payload: SourceMapPayload, requestOpts: http.RequestOptions): Promise<void> {
+export default async function request (endpoint: string, payload: Payload, requestOpts: http.RequestOptions): Promise<void> {
   let attempts = 0
   const go = async (): Promise<void> => {
     try {
@@ -37,18 +50,33 @@ export default async function request (endpoint: string, payload: SourceMapPaylo
   await go()
 }
 
-function createFormData (payload: SourceMapPayload): FormData {
+function createFormData (payload: Payload): FormData {
   const formData = new FormData()
   formData.append('apiKey', payload.apiKey)
+
+  switch (payload.type) {
+    case PayloadType.Browser:
+      return appendBrowserFormData(formData, payload)
+
+    case PayloadType.ReactNative:
+      throw new Error('ReactNative is not implemented yet!')
+
+    case PayloadType.Node:
+      throw new Error('Node is not implemented yet!')
+  }
+}
+
+function appendBrowserFormData(formData: FormData, payload: BrowserPayload): FormData {
   if (payload.appVersion) formData.append('appVersion', payload.appVersion)
   formData.append('minifiedUrl', payload.minifiedUrl)
   formData.append('sourceMap', payload.sourceMap.data, { filepath: payload.sourceMap.filepath})
   if (payload.minifiedFile) formData.append('minifiedFile', payload.minifiedFile.data, { filepath: payload.minifiedFile.filepath})
   if (payload.overwrite) formData.append('overwrite', payload.overwrite.toString())
+
   return formData
 }
 
-export async function send (endpoint: string, payload: SourceMapPayload, requestOpts: http.RequestOptions): Promise<void> {
+export async function send (endpoint: string, payload: Payload, requestOpts: http.RequestOptions): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const formData = createFormData(payload)
 
