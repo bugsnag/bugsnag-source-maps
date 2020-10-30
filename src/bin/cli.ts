@@ -22,33 +22,38 @@ const topLevelDefs = [
 ]
 
 export default async function run (argv: string[]): Promise<void> {
-  const opts = commandLineArgs(topLevelDefs, { argv, stopAtFirstUnknown: true })
+  try {
+    const opts = commandLineArgs(topLevelDefs, { argv, stopAtFirstUnknown: true })
 
-  if (opts.version) {
-    return console.log(
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      `@bugsnag/source-maps v${require('../../package.json').version}`
-    )
-  }
+    if (opts.version) {
+      return console.log(
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        `@bugsnag/source-maps v${require('../../package.json').version}`
+      )
+    }
 
-  switch (opts.command) {
-    case 'upload-browser':
-      await uploadBrowser(opts._unknown || [], opts)
-      break
-    case 'upload-node':
-      console.log('TODO')
-      break
-    case 'upload-react-native':
-      console.log('TODO')
-      break
-    default:
-      if (opts.help) return usage()
-      if (opts.command) {
-        logger.error(`Unrecognized command "${opts.command}".`)
-      } else {
-        logger.error(`Command expected, nothing provided.`)
-      }
-      usage()
+    switch (opts.command) {
+      case 'upload-browser':
+        await uploadBrowser(opts._unknown || [], opts)
+        break
+      case 'upload-node':
+        console.log('TODO')
+        break
+      case 'upload-react-native':
+        console.log('TODO')
+        break
+      default:
+        if (opts.help) return usage()
+        if (opts.command) {
+          logger.error(`Unrecognized command "${opts.command}".`)
+        } else {
+          logger.error(`Command expected, nothing provided.`)
+        }
+        usage()
+    }
+  } catch (e) {
+    logger.error(`Invalid options. ${e.message}`)
+    process.exitCode = 1
   }
 }
 

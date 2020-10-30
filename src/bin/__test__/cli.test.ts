@@ -20,6 +20,11 @@ test('cli: version', async () => {
   expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('@bugsnag/source-maps v'))
 })
 
+test('cli: duplicate option', async () => {
+  await run(['--help', '--help'])
+  expect(logger.error).toHaveBeenCalledWith('Invalid options. Singular option already set [help=true]')
+})
+
 test('cli: upload-node command', async () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
   run(['upload-node', '--help'])
