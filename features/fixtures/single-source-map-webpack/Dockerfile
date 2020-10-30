@@ -3,6 +3,7 @@ FROM node:lts-alpine
 WORKDIR /app
 COPY bugsnag-source-maps.tgz ./
 COPY ./package* ./
+COPY ./webpack.config.js ./
 COPY ./src ./src
 
 RUN npm install

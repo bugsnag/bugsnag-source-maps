@@ -4,11 +4,11 @@ Feature: Browser source map uploads
 
     When I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-map upload-browser --api-key 123
-                                        --source-map dist/main.js.map
-                                        --bundle dist/main.js
-                                        --bundle-url http://myapp.url/static/js/main.js
-                                        --endpoint http://localhost:9339
+      bugsnag-source-maps upload-browser --api-key 123
+                                         --source-map dist/main.js.map
+                                         --bundle dist/main.js
+                                         --bundle-url http://myapp.url/static/js/main.js
+                                         --endpoint http://maze-runner:9339
       """
 #    And the server responds with HTTP 200
 #    Then the CLI terminates successfully (zero exitCode)
