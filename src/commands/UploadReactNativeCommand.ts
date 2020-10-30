@@ -77,17 +77,47 @@ function reactNativeUsage(): void {
 }
 
 const reactNativeCommonDefs = [
-  { name: 'platform', type: String },
-  { name: 'app-version', type: String },
-  { name: 'code-bundle-id', type: String },
-  { name: 'app-version-code', type: String },
-  { name: 'app-bundle-version', type: String },
-  { name: 'dev', type: Boolean },
+  {
+    name: 'platform',
+    type: String,
+    description: 'the application platform, either "android" or "ios" {bold required}',
+  },
+  {
+    name: 'app-version',
+    type: String,
+  },
+  {
+    name: 'code-bundle-id',
+    type: String,
+  },
+  {
+    name: 'app-version-code',
+    type: String,
+  },
+  {
+    name: 'app-bundle-version',
+    type: String,
+  },
+  {
+    name: 'dev',
+    type: Boolean,
+    description: 'indicates this is a debug build',
+  },
 ]
 
 const reactNativeProvideOpts = [
-  { name: 'source-map', type: String },
-  { name: 'bundle', type: String },
+  {
+    name: 'source-map',
+    type: String,
+    description: 'the path to the source map {bold required}',
+    typeLabel: '{underline file}',
+  },
+  {
+    name: 'bundle',
+    type: String,
+    description: 'the path to the bundle {bold required}',
+    typeLabel: '{underline file}',
+  },
 ]
 
 const reactNativeFetchOpts = [
