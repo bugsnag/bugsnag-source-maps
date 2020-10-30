@@ -24,7 +24,7 @@ function formatErrorLog (e: UploadError): string {
       str += 'The request timed out.'
       break
     default:
-      str += 'An unexpected error occured.'
+      str += 'An unexpected error occurred.'
   }
   str += `\n\n`
   return str

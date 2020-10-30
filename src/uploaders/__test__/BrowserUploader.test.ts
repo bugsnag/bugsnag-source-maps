@@ -1,4 +1,4 @@
-import { uploadOne } from '../BrowserUploader'
+import { uploadOne, uploadMultiple } from '../BrowserUploader'
 import request from '../../Request'
 import { UploadError, UploadErrorCode } from '../../UploadError'
 import path from 'path'
@@ -100,7 +100,7 @@ test('uploadOne(): failure (unexpected network error)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toBe('misc upload error')
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occured.'), expect.any(Error), expect.any(Error))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred.'), expect.any(Error), expect.any(Error))
   }
 })
 
@@ -295,5 +295,120 @@ test('uploadOne(): failure (timeout)', async () => {
     expect(e).toBeTruthy()
     expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
+  }
+})
+
+test('uploadMultiple(): success', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: 'build',
+    projectRoot: path.join(__dirname, 'fixtures/c'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.any(Object),
+      sourceMap: expect.any(Object),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/2.e5bb21a6.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadMultiple(): no source maps', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('timeout')
+  err.code = UploadErrorCode.TIMEOUT
+  mockedRequest.mockRejectedValue(err)
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: '.',
+    projectRoot: path.join(__dirname, 'fixtures/d'),
+    logger: mockLogger
+  })
+  expect(mockLogger.warn).toHaveBeenCalledWith('No source maps found.')
+})
+
+test('uploadMultiple(): no bundles', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: 'build',
+    projectRoot: path.join(__dirname, 'fixtures/e'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('A bundle file could not be found for'))
+})
+
+test('uploadMultiple(): invalid source map', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: '.',
+      projectRoot: path.join(__dirname, 'fixtures/b'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unexpected token h in JSON at position 0')
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The following source map was not valid JSON.'))
+  }
+})
+
+test('uploadMultiple(): failure (timeout)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('timeout')
+  err.code = UploadErrorCode.TIMEOUT
+  mockedRequest.mockRejectedValue(err)
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/c'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(3)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
+  }
+})
+
+test('uploadMultiple(): failure (connection error)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('misc error')
+  err.code = UploadErrorCode.UNKNOWN
+  err.cause = new Error('the cause')
+  mockedRequest.mockRejectedValue(err)
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/c'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(6)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect((e as UploadError).code).toBe(UploadErrorCode.UNKNOWN)
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred'), expect.any(Error), expect.any(Error))
   }
 })

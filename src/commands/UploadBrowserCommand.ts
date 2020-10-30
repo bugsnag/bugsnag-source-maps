@@ -43,7 +43,16 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
       })
     } else {
       // multiple mode
-      // TODO
+      await browser.uploadMultiple({
+        apiKey: browserOpts.apiKey,
+        baseUrl: browserOpts.baseUrl,
+        directory: browserOpts.directory,
+        projectRoot: browserOpts.projectRoot,
+        overwrite: browserOpts.overwrite,
+        appVersion: browserOpts.appVersion,
+        endpoint: browserOpts.endpoint,
+        logger
+      })
     }
   } catch (e) {
     process.exitCode = 1
