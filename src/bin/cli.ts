@@ -1,112 +1,68 @@
-import * as Yargs from 'yargs'
-import yargs from 'yargs/yargs'
-import * as browser from '../uploaders/BrowserUploader'
+import commandLineArgs from 'command-line-args'
+import commandLineUsage from 'command-line-usage'
 import logger from '../Logger'
+import uploadBrowser from '../commands/UploadBrowserCommand'
 
-const commonOpts: Record<string, Yargs.Options> = {
-  apiKey: {
-    describe: 'your project\'s API key',
-    type: 'string',
-    demandOption: true
+const topLevelDefs = [
+  {
+    name: 'command',
+    defaultOption: true
   },
-  overwrite: {
-    describe: 'whether to replace existing source maps uploaded with the same version',
-    default: false,
-    type: 'boolean'
+  {
+    name: 'help',
+    alias: 'h',
+    type: Boolean,
+    description: 'show this message'
   },
-  projectRoot: {
-    describe: 'the root of your project',
-    default: process.cwd(),
-    type: 'string'
-  },
-  verbose: {
-    describe: 'show detailed logs',
-    default: false,
-    type: 'boolean'
+  {
+    name: 'version',
+    type: Boolean,
+    description: 'output the version of the CLI module'
+  }
+]
+
+export default async function run (argv: string[]): Promise<void> {
+  try {
+    const opts = commandLineArgs(topLevelDefs, { argv, stopAtFirstUnknown: true })
+
+    if (opts.version) {
+      return console.log(
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        `@bugsnag/source-maps v${require('../../package.json').version}`
+      )
+    }
+
+    switch (opts.command) {
+      case 'upload-browser':
+        await uploadBrowser(opts._unknown || [], opts)
+        break
+      case 'upload-node':
+        console.log('TODO')
+        break
+      case 'upload-react-native':
+        console.log('TODO')
+        break
+      default:
+        if (opts.help) return usage()
+        if (opts.command) {
+          logger.error(`Unrecognized command "${opts.command}".`)
+        } else {
+          logger.error(`Command expected, nothing provided.`)
+        }
+        usage()
+    }
+  } catch (e) {
+    logger.error(`Invalid options. ${e.message}`)
+    process.exitCode = 1
   }
 }
 
-export default function run (argv: string[]): void {
-  const program = yargs()
-
-  program
-    .scriptName('bugsnag-source-maps')
-    .command(
-      'upload-node',
-      'upload source maps for a Node app',
-      {}
-    )
-    .command(
-      'upload-browser',
-      'upload source maps for a browser JS app',
-      yargs => {
-        return yargs
-          .options({
-            ...commonOpts,
-            appVersion: {
-              describe: 'the version of the app the source map applies to',
-              type: 'string'
-            },
-            bundleUrl: {
-              describe: 'the URL of the bundle this source map is for is served at (may contain * wildcards)',
-              group: 'Single upload'
-            },
-            bundle: {
-              describe: 'the path to the bundle',
-              type: 'string',
-              group: 'Single upload'
-            },
-            sourceMap: {
-              describe: 'the path to the source map',
-              type: 'string',
-              group: 'Single upload'
-            },
-            directory: {
-              describe: 'the path generated sources and source maps',
-              type: 'string',
-              group: 'Bulk upload'
-            },
-            baseUrl: {
-              describe: 'the base URL your bundles are served from (may contain * wildcards)',
-              type: 'string',
-              group: 'Bulk upload'
-            }
-          })
-          .conflicts('bundle', ['baseUrl', 'directory'])
-          .conflicts('baseUrl', ['bundleUrl', 'bundle', 'sourceMap'])
-      },
-      async (argv) => {
-        logger.trace('cli: upload-browser', argv)
-        if (argv.bundleUrl && argv.sourceMap) {
-          try {
-            await browser.uploadOne({
-              apiKey: argv.apiKey as string,
-              bundleUrl: argv.bundleUrl as string,
-              sourceMap: argv.sourceMap as string,
-              bundle: argv.bundle as string,
-              appVersion: argv.appVersion as string,
-              projectRoot: argv.projectRoot as string,
-              overwrite: argv.overwrite as boolean | undefined,
-              endpoint: argv.endpoint as string | undefined,
-              logger: logger
-            })
-          } catch (e) {
-            process.exitCode = 1
-          }
-        } else if (argv.directory && argv.baseUrl) {
-          logger.info(`Uploading browser source map for ${argv.baseUrl}`)
-        } else {
-          return program.showHelp()
-        }
-      }
-    )
-    .command(
-      'upload-react-native',
-      'upload source maps for a React Native app',
-      {}
-    )
-    .help()
-    .demandCommand()
-    .wrap(program.terminalWidth())
-    .parse(argv.slice(2))
+function usage (): void {
+  console.log(
+    commandLineUsage([
+      { content: 'bugsnag-source-maps <command>'},
+      { header: 'Available commands', content: 'upload-browser\nupload-node\nupload-react-native' },
+      { header: 'Options', optionList: topLevelDefs, hide: [ 'command' ] }
+    ])
+  )
 }
