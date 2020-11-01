@@ -4,4 +4,4 @@ RUN apk add --update bash
 
 WORKDIR /app
 
-CMD ["/bin/bash", "scripts/prepare.sh"]
+CMD ["/bin/bash", "features/scripts/create_package.sh"]

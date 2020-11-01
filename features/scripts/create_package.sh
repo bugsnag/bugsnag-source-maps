@@ -1,6 +1,7 @@
-#!
-rm -f bugsnag-source-maps*.tgz
+#!/usr/bin/env bash
+rm -f build/bugsnag-source-maps*.tgz
 npm i
 npm run build
 PACKAGE=$(npm pack)
-mv $PACKAGE bugsnag-source-maps.tgz
+mkdir -p build
+mv $PACKAGE build/bugsnag-source-maps.tgz

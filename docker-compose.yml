@@ -1,10 +1,14 @@
 version: '3.6'
 services:
-  maze-runner:
+  packager:
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.maze-runner
-      target: maze-runner
+      dockerfile: dockerfiles/Dockerfile.packager
+    volumes:
+      - ./:/app
+
+  maze-runner:
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-runner-and-value-steps-cli
     environment:
       VERBOSE:
       DEBUG:
@@ -15,6 +19,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./features:/app/features
+      - ./build/:/app/build
 
 networks:
   default:

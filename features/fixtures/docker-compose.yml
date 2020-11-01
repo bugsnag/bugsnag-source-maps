@@ -6,7 +6,10 @@ services:
     environment:
       - BUGSNAG_API_KEY
       - BUGSNAG_ENDPOINT
+    volumes:
+    - ../../build:/app/build
+    - ./single-source-map-webpack/:/app
     networks:
       default:
         aliases:
-          - single-source-map-webpack
+          - maze-runner
