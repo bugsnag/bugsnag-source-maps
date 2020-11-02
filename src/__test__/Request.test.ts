@@ -59,6 +59,60 @@ test('request: send() successful upload', async () => {
   expect(received[0].files.minifiedFile[0].headers['content-type']).toBe('application/javascript')
 })
 
+test('request: send() successful React Native upload', async () => {
+  const received: {
+    fields: Record<string, string[]>
+    files: Record<string, multiparty.File[]>
+  }[] = []
+  server = http.createServer(async (req, res) => {
+    await new Promise((resolve) => {
+      const form = new multiparty.Form()
+      form.parse(req, function(err, fields, files) {
+        received.push({ fields, files })
+        res.end('OK')
+        resolve()
+      });
+    })
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+
+  const port = (server.address() as AddressInfo).port
+
+  await send(`http://localhost:${port}`, {
+    type: PayloadType.ReactNative,
+    apiKey: '123',
+    platform: 'ios',
+    appVersion: '1.0.0.0.0.1',
+    appVersionCode: '0.0.0.1.2.1.0',
+    codeBundleId: '123.123.123',
+    appBundleVersion: '321.321.321',
+    overwrite: false,
+    dev: false,
+    sourceMap: new File('dist/app.js.map', '{}'),
+    bundle: new File('dist/app.js', 'console.log("hello")')
+  }, {})
+
+  expect(received.length).toBe(1)
+
+  expect(received[0].fields).toEqual({
+    apiKey: ['123'],
+    platform: ['ios'],
+    appVersion: ['1.0.0.0.0.1'],
+    appVersionCode: ['0.0.0.1.2.1.0'],
+    codeBundleId: ['123.123.123'],
+    appBundleVersion: ['321.321.321'],
+    overwrite: ['false'],
+    dev: ['false'],
+  })
+
+  expect(received[0].files.sourceMap[0].originalFilename).toBe('dist/app.js.map')
+  expect(received[0].files.sourceMap[0].headers['content-type']).toBe('application/json')
+
+  expect(received[0].files.bundle[0].originalFilename).toBe('dist/app.js')
+  expect(received[0].files.bundle[0].headers['content-type']).toBe('application/javascript')
+})
+
 test('request: send() successful upload (with overwrite, appVersion)', async () => {
   const received: {
     fields: Record<string, string[]>
@@ -317,13 +371,30 @@ test('request: request() multiple attempts, eventually succeeds', async () => {
   expect(requestsReceived).toBe(4)
 })
 
-test('request: request() throws when given a ReactNative payload', async () => {
-  expect(async () => {
-    await request(`http://localhost`, {
-      type: PayloadType.ReactNative,
-      apiKey: '123'
-    }, {})
-  }).rejects.toThrow()
+test('request: request() React Native payload, multiple attempts, eventually succeeds', async () => {
+  let requestsReceived = 0
+  server = http.createServer(async (req, res) => {
+    // intentionally hang
+    requestsReceived += 1
+    if (requestsReceived > 3) res.end('OK')
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+
+  const port = (server.address() as AddressInfo).port
+  await request(`http://localhost:${port}`, {
+    type: PayloadType.ReactNative,
+    apiKey: '123',
+    platform: 'ios',
+    appVersion: '1.0.0.0.0.1',
+    appVersionCode: '0.0.0.1.2.1.0',
+    overwrite: false,
+    dev: false,
+    sourceMap: new File('dist/app.js.map', '{}'),
+    bundle: new File('dist/app.js', 'console.log("hello")')
+  }, {})
+
+  expect(requestsReceived).toBe(4)
 })
 
 test('request: request() throws when given a Node payload', async () => {
