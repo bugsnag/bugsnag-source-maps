@@ -3,5 +3,10 @@ FROM node:lts-alpine
 RUN apk add --update bash
 
 WORKDIR /app
+COPY scripts/ scripts/
+COPY build/ build/
+COPY src/ src/
+COPY package* ./
+COPY webpack.config.js ./
 
-CMD ["/bin/bash", "scripts/prepare.sh"]
+RUN scripts/prepare.sh

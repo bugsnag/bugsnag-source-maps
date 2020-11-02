@@ -8,7 +8,7 @@ Feature: Browser source map uploads
                                          --source-map dist/main.js.map
                                          --bundle dist/main.js
                                          --bundle-url http://myapp.url/static/js/main.js
-                                         --endpoint http://maze-runner:9339
+                                         --endpoint $BUGSNAG_ENDPOINT
       """
 #    And the server responds with HTTP 200
 #    Then the CLI terminates successfully (zero exitCode)

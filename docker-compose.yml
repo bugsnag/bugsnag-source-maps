@@ -8,10 +8,11 @@ services:
       - ./:/app
 
   maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-runner-and-value-steps-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-docker-services-cli
     environment:
       VERBOSE:
       DEBUG:
+      BUGSNAG_ENDPOINT:
     networks:
       default:
         aliases:
