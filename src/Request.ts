@@ -6,7 +6,7 @@ import FormData from 'form-data'
 import { UploadError, UploadErrorCode } from './UploadError'
 import File from './File'
 
-export enum PayloadType { Browser, ReactNative, Node }
+export const enum PayloadType { Browser, ReactNative, Node }
 type Payload = BrowserPayload | ReactNativePayload | NodePayload
 
 interface BrowserPayload {
@@ -22,6 +22,15 @@ interface BrowserPayload {
 interface ReactNativePayload {
   type: PayloadType.ReactNative
   apiKey: string
+  platform: 'ios' | 'android'
+  appVersion?: string
+  codeBundleId?: string,
+  appBundleVersion?: string
+  appVersionCode?: string
+  overwrite: boolean
+  dev: boolean
+  sourceMap: File
+  bundle: File
 }
 
 interface NodePayload {
@@ -59,7 +68,7 @@ function createFormData (payload: Payload): FormData {
       return appendBrowserFormData(formData, payload)
 
     case PayloadType.ReactNative:
-      throw new Error('ReactNative is not implemented yet!')
+      return appendReactNativeFormData(formData, payload)
 
     case PayloadType.Node:
       throw new Error('Node is not implemented yet!')
@@ -72,6 +81,32 @@ function appendBrowserFormData(formData: FormData, payload: BrowserPayload): For
   formData.append('sourceMap', payload.sourceMap.data, { filepath: payload.sourceMap.filepath})
   if (payload.minifiedFile) formData.append('minifiedFile', payload.minifiedFile.data, { filepath: payload.minifiedFile.filepath})
   if (payload.overwrite) formData.append('overwrite', payload.overwrite.toString())
+
+  return formData
+}
+
+function appendReactNativeFormData(formData: FormData, payload: ReactNativePayload): FormData {
+  formData.append('platform', payload.platform)
+  formData.append('overwrite', payload.overwrite.toString())
+  formData.append('dev', payload.dev.toString())
+  formData.append('sourceMap', payload.sourceMap.data, { filepath: payload.sourceMap.filepath })
+  formData.append('bundle', payload.bundle.data, { filepath: payload.bundle.filepath })
+
+  if (payload.appVersion) {
+    formData.append('appVersion', payload.appVersion)
+  }
+
+  if (payload.codeBundleId) {
+    formData.append('codeBundleId', payload.codeBundleId)
+  }
+
+  if (payload.appBundleVersion) {
+    formData.append('appBundleVersion', payload.appBundleVersion)
+  }
+
+  if (payload.appVersionCode) {
+    formData.append('appVersionCode', payload.appVersionCode)
+  }
 
   return formData
 }

@@ -36,6 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "babel-jest": "^26.5.2",
+    "babel-plugin-const-enum": "^1.0.1",
     "eslint": "^7.12.1",
     "eslint-plugin-node": "^11.1.0",
     "jest": "^26.5.3",
