@@ -37,38 +37,15 @@ export async function uploadOne ({
 }: UploadSingleOpts): Promise<void> {
   logger.info(`Uploading browser source map for "${bundleUrl}"`)
 
-  logger.debug(`Reading source map "${sourceMap}"`)
-  const fullSourceMapPath = path.resolve(projectRoot, sourceMap)
-  let sourceMapContent
-  try {
-    sourceMapContent = await fs.readFile(fullSourceMapPath, 'utf-8')
-  } catch (e) {
-    logger.error(`There was an error attempting to find a source map at the following location. Is the path correct?\n\n  "${fullSourceMapPath}"`)
-    throw e
-  }
+  const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
 
   let bundleContent
   let fullBundlePath
   if (bundle) {
-    fullBundlePath = path.resolve(projectRoot, bundle)
-    logger.debug(`Reading bundle file "${bundle}"`)
-    try {
-      bundleContent = await fs.readFile(fullBundlePath, 'utf-8')
-    } catch (e) {
-      logger.error(`There was an error attempting to find a bundle file at the following location. Is the path correct?\n\n  "${fullBundlePath}"`)
-      throw e
-    }
+    [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
   }
 
-  let sourceMapJson
-  try {
-    sourceMapJson = JSON.parse(sourceMapContent)
-  } catch (e) {
-    logger.error(`The provided source map was not valid JSON. Is this the correct file?\n\n  "${fullSourceMapPath}"`)
-    throw e
-  }
-
-  logger.info('Applying transformations to source map')
+  const sourceMapJson = parseSourceMap(sourceMapContent, sourceMap, logger)
   const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
   if (!appVersion) {
@@ -143,39 +120,23 @@ export async function uploadMultiple ({
     logger.warn('No source maps found.')
     return
   }
+
   for (const sourceMap of sourceMaps) {
     n++
     logger.info(`${n} of ${sourceMaps.length}`)
     logger.debug(`Reading source map "${sourceMap}"`)
-    const fullSourceMapPath = path.resolve(absoluteSearchPath, sourceMap)
-    let sourceMapContent
-    try {
-      sourceMapContent = await fs.readFile(fullSourceMapPath, 'utf-8')
-    } catch (e) {
-      logger.error(`There was an error attempting to find a source map at the following location.\n\n  "${fullSourceMapPath}"`)
-      throw e
-    }
 
-    let sourceMapJson
-    try {
-      sourceMapJson = JSON.parse(sourceMapContent)
-    } catch (e) {
-      logger.error(`The following source map was not valid JSON.\n\n  "${fullSourceMapPath}"`)
-      throw e
-    }
+    const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, absoluteSearchPath, logger)
+    const sourceMapJson = parseSourceMap(sourceMapContent, fullSourceMapPath, logger)
 
     const bundlePath = sourceMap.replace(/\.map$/, '')
-
-    let bundleContent
-    const fullBundlePath = path.resolve(absoluteSearchPath, bundlePath)
-    logger.debug(`Reading bundle file "${bundlePath}"`)
+    let bundleContent, fullBundlePath
     try {
-      bundleContent = await fs.readFile(fullBundlePath, 'utf-8')
+      [ bundleContent, fullBundlePath ] = await readBundleContent(bundlePath, absoluteSearchPath, sourceMap, logger)
     } catch (e) {
-      logger.warn(`A bundle file could not be found for "${sourceMap}" at the following location.\n\n  "${fullBundlePath}"`)
+      // bundle file is optional – ignore and carry on with the error logged out
     }
 
-    logger.info('Applying transformations to source map')
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
     logger.debug(`Initiating upload "${endpoint}"`)
@@ -210,6 +171,7 @@ async function detectAppVersion (projectRoot: string, logger: Logger): Promise<s
 }
 
 async function applyTransformations(fullSourceMapPath: string, sourceMapJson: unknown, projectRoot: string, logger: Logger): Promise<unknown> {
+  logger.info('Applying transformations to source map')
   try {
     return await Promise.resolve(sourceMapJson)
       .then(json => AddSources(fullSourceMapPath, json, projectRoot, logger))
@@ -217,5 +179,52 @@ async function applyTransformations(fullSourceMapPath: string, sourceMapJson: un
   } catch (e) {
     logger.error('Error applying transforms to source map', e)
     throw e
+  }
+}
+
+async function readSourceMap (sourceMapPath: string, basePath: string, logger: Logger): Promise<[string, string]> {
+  logger.debug(`Reading source map "${sourceMapPath}"`)
+  const fullSourceMapPath = path.resolve(basePath, sourceMapPath)
+  try {
+    return [ await fs.readFile(fullSourceMapPath, 'utf-8'), fullSourceMapPath ]
+  } catch (e) {
+    logger.error(`The source map "${sourceMapPath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullSourceMapPath}"`)
+    throw e
+  }
+}
+
+function parseSourceMap (sourceMapContent: string, sourceMapPath: string, logger: Logger) {
+  try {
+    return JSON.parse(sourceMapContent)
+  } catch (e) {
+    logger.error(`The source map was not valid JSON.\n\n  "${sourceMapPath}"`)
+    throw e
+  }
+}
+
+async function readBundleContent (bundlePath: string, basePath: string, sourceMapName: string, logger: Logger): Promise<[string, string]> {
+  const fullBundlePath = path.resolve(basePath, bundlePath)
+  logger.debug(`Reading bundle file "${bundlePath}"`)
+  try {
+    return [ await fs.readFile(fullBundlePath, 'utf-8'), fullBundlePath ]
+  } catch (e) {
+    logger.error(`The bundle "${bundlePath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullBundlePath}"`)
+    throw e
+  }
+}
+
+function stringifyFileAccessError (e: NodeJS.ErrnoException): string {
+  switch (e.code) {
+    case 'ENOENT':
+      return `No file exists at the provided path.`
+      break
+    case 'EISDIR':
+      return `The path contained a directory, not a file.`
+      break
+    case 'EACCES':
+      return `This process did not have sufficient permissions to read the file.`
+      break
+    default:
+      return `Tried at the following location.`
   }
 }
