@@ -1,1 +1,1 @@
-this folder intentionally has not source maps in it
+this folder intentionally has no source maps in it
