@@ -121,7 +121,17 @@ const reactNativeProvideOpts = [
 ]
 
 const reactNativeFetchOpts = [
-  { name: 'fetch', type: Boolean },
+  {
+    name: 'fetch',
+    type: Boolean,
+    description: 'enable fetch mode {bold required}',
+  },
+  {
+    name: 'url',
+    type: String,
+    description: 'the URL of the React Native bundle server',
+    typeLabel: '{underline url}',
+  },
 ]
 
 function validateReactNativeOpts (opts: Record<string, unknown>): ReactNativeUploadOptions {
@@ -244,7 +254,16 @@ function marshallPlatformOptions(platform: Platform, version: Version, opts: Rec
 
 function marshallRetrieval(opts: Record<string, unknown>): SourceMapRetrieval {
   if (opts.fetch) {
-    return { type: SourceMapRetrievalType.Fetch }
+    let url = 'http://localhost:8081'
+
+    if (opts.url && typeof opts.url === 'string') {
+      url = opts.url
+    }
+
+    return {
+      type: SourceMapRetrievalType.Fetch,
+      url,
+    }
   }
 
   if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {

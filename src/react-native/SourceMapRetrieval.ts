@@ -9,7 +9,8 @@ interface ProvidedSourceMapBundlePair {
 
 // We should fetch the source map & bundle from the RN bundle server
 interface Fetch {
-  readonly type: SourceMapRetrievalType.Fetch
+  readonly type: SourceMapRetrievalType.Fetch,
+  readonly url: string,
 }
 
 export type SourceMapRetrieval = ProvidedSourceMapBundlePair | Fetch

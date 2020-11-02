@@ -1,4 +1,4 @@
-import request, { PayloadType, send, isRetryable } from '../Request'
+import request, { PayloadType, send, isRetryable, fetch } from '../Request'
 import { UploadErrorCode } from '../UploadError'
 import http from 'http'
 import { AddressInfo } from 'net'
@@ -404,4 +404,68 @@ test('request: request() throws when given a Node payload', async () => {
       apiKey: '123'
     }, {})
   }).rejects.toThrow()
+})
+
+test('request: fetch() successful request', async () => {
+  server = http.createServer((req, res) => { res.end('OK') })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+
+  const port = (server.address() as AddressInfo).port
+  const response = await fetch(`http://localhost:${port}`)
+
+  expect(response).toBe('OK')
+})
+
+test('request: fetch() unsuccessful (bad request)', async () => {
+  server = http.createServer((req, res) => {
+    res.statusCode = 400
+    res.end('invalid')
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(false)
+    expect(e.code).toBe(UploadErrorCode.MISC_BAD_REQUEST)
+  }
+})
+
+test('request: fetch() unsuccessful (server error)', async () => {
+  server = http.createServer((req, res) => {
+    res.statusCode = 500
+    res.end('invalid')
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(true)
+    expect(e.code).toBe(UploadErrorCode.SERVER_ERROR)
+  }
+})
+
+test('request: fetch() unsuccessful (timeout)', async () => {
+  server = http.createServer(async () => {
+    // intentionally hang
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(true)
+    expect(e.code).toBe(UploadErrorCode.TIMEOUT)
+  }
 })

@@ -1,8 +1,9 @@
+import { promises as fs } from 'fs'
 import ReactNativeUploader from '../ReactNativeUploader'
 import { Platform } from '../../react-native/Platform'
 import { VersionType } from '../../react-native/Version'
 import { SourceMapRetrievalType } from '../../react-native/SourceMapRetrieval'
-import request from '../../Request'
+import request, { fetch } from '../../Request'
 import File from '../../File'
 import { UploadError, UploadErrorCode } from '../../UploadError'
 import path from 'path'
@@ -19,6 +20,11 @@ const mockLogger = {
   fatal: jest.fn(),
   level: -1
 }
+
+afterEach(() => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockReset()
+})
 
 test('uploadOne(): dispatches a request with the correct params for Android with appVersion', async () => {
   const mockedRequest = request as jest.MockedFunction<typeof request>
@@ -710,25 +716,289 @@ test('uploadOne(): failure (timeout)', async () => {
   }
 })
 
-test('uploadOne(): throws when given unimplemented "fetch" mode', async () => {
+test('uploadOne(): dispatches a request with the correct params for Android with appVersion in Fetch mode', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
   const uploader = new ReactNativeUploader(mockLogger)
 
-  expect(async () => {
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platformOptions: { type: Platform.Android },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'android',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): dispatches a request with the correct params for iOS with appVersion in Fetch mode', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platformOptions: { type: Platform.Ios },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): dispatches a request with the correct params for Android with appVersion in Fetch mode (dev build)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: true,
+    platformOptions: { type: Platform.Android },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platform: 'android',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): dispatches a request with the correct params for iOS with appVersion in Fetch mode (dev build)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: true,
+    platformOptions: { type: Platform.Ios },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=true')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=true')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): Fetch mode failure to get source map', async () => {
+  const err = new UploadError('misc upload error')
+  err.cause = new Error('network error')
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
     await uploader.uploadOne({
       endpoint: 'example.com',
       apiKey: '123',
       overwrite: false,
-      dev: false,
-      platformOptions: {
-        type: Platform.Android,
-        appVersionCode: '3.2.1',
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
       },
-      retrieval: { type: SourceMapRetrievalType.Fetch },
       version: {
         type: VersionType.AppVersion,
         appVersion: '1.2.3',
       },
       projectRoot: path.join(__dirname, 'fixtures/react-native-android')
     })
-  }).rejects.toThrow()
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      'Unable to fetch source map from http://react-native-bundler:1234. Is the server running?'
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+
+  const err = new UploadError('misc upload error')
+  err.cause = new Error('network error')
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      'Unable to fetch bundle from http://react-native-bundler:1234. Is the server running?'
+    )
+  }
 })

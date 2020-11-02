@@ -178,3 +178,46 @@ export function isRetryable (status?: number): boolean {
       ].indexOf(status) !== -1)
     )
 }
+
+export function fetch(endpoint: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const parsedUrl = url.parse(endpoint)
+
+    const req = (parsedUrl.protocol === 'https:' ? https : http).get(endpoint, res => {
+      res.pipe(concat((bodyBuffer: Buffer) => {
+        if (res.statusCode === 200) {
+          return resolve(bodyBuffer.toString())
+        }
+
+        const err = new UploadError(`HTTP status ${res.statusCode} received from bundle server`)
+        err.responseText = bodyBuffer.toString()
+
+        if (!isRetryable(res.statusCode)) {
+          err.isRetryable = false
+        }
+
+        if (res.statusCode && (res.statusCode >= 400 && res.statusCode < 500)) {
+          err.code = UploadErrorCode.MISC_BAD_REQUEST
+        } else {
+          err.code = UploadErrorCode.SERVER_ERROR
+        }
+
+        return reject(err)
+      }))
+    })
+
+    req.on('error', e => {
+      const err = new UploadError('Unknown connection error')
+      err.cause = e
+      err.code = UploadErrorCode.UNKNOWN
+      reject(err)
+    })
+
+    req.setTimeout(TIMEOUT_MS, () => {
+      const err = new UploadError('Connection timed out')
+      err.code = UploadErrorCode.TIMEOUT
+      reject(err)
+      req.abort()
+    })
+  })
+}

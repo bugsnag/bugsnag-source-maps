@@ -1,8 +1,9 @@
 import path from 'path'
 import { promises as fs } from 'fs'
+import qs from 'querystring'
 
 import File from '../File'
-import request, { PayloadType } from '../Request'
+import request, { fetch, PayloadType } from '../Request'
 import formatErrorLog from './FormatErrorLog'
 import { Logger } from '../Logger'
 import AddSources from '../transformers/AddSources'
@@ -41,7 +42,9 @@ class ReactNativeUploader {
   async uploadOne(options: ReactNativeUploadOptions): Promise<void> {
     const { sourceMap, bundle } = await this.getSourceMapAndBundle(
       options.projectRoot,
-      options.retrieval
+      options.retrieval,
+      options.platformOptions.type,
+      options.dev
     )
 
     this.logger.debug(`Initiating upload "${options.endpoint}"`)
@@ -66,11 +69,39 @@ class ReactNativeUploader {
 
   private async getSourceMapAndBundle(
     projectRoot: string,
-    retrieval: SourceMapRetrieval
+    retrieval: SourceMapRetrieval,
+    platform: Platform,
+    dev: boolean
   ): Promise<SourceMapBundlePair> {
     switch (retrieval.type) {
-      case SourceMapRetrievalType.Fetch:
-        throw new Error('SourceMapRetrievalType.Fetch is not implemented!')
+      case SourceMapRetrievalType.Fetch: {
+        const queryString = qs.stringify({ platform, dev })
+        const sourceMapUrl = `${retrieval.url}/index.js.map?${queryString}`
+        const bundleUrl = `${retrieval.url}/index.bundle?${queryString}`
+        let sourceMap
+        let bundle
+
+        try {
+          this.logger.debug(`Fetching source map from ${sourceMapUrl}`)
+          sourceMap = await fetch(sourceMapUrl)
+        } catch (e) {
+          this.logger.error(`Unable to fetch source map from ${retrieval.url}. Is the server running?`)
+          throw e
+        }
+
+        try {
+          this.logger.debug(`Fetching bundle from ${bundleUrl}`)
+          bundle = await fetch(bundleUrl)
+        } catch (e) {
+          this.logger.error(`Unable to fetch bundle from ${retrieval.url}. Is the server running?`)
+          throw e
+        }
+
+        return {
+          sourceMap: new File(sourceMapUrl, sourceMap),
+          bundle: new File(bundleUrl, bundle),
+        }
+      }
 
       case SourceMapRetrievalType.Provided:
         return {
