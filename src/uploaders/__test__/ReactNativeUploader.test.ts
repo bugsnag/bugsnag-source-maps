@@ -41,7 +41,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       type: VersionType.AppVersion,
       appVersion: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -81,7 +81,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
       type: VersionType.AppVersion,
       appVersion: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -124,7 +124,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       type: VersionType.AppVersion,
       appVersion: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -168,7 +168,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
       type: VersionType.AppVersion,
       appVersion: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -212,7 +212,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       type: VersionType.CodeBundleId,
       codeBundleId: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -255,7 +255,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
       type: VersionType.CodeBundleId,
       codeBundleId: '1.2.3',
     },
-    projectRoot: path.join(__dirname, 'fixtures/a')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
   })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -303,7 +303,7 @@ test('uploadOne(): failure (unexpected network error) with cause', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -345,7 +345,7 @@ test('uploadOne(): failure (unexpected network error) without cause', async () =
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -384,7 +384,7 @@ test('uploadOne(): failure (source map not found)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
   } catch (e) {
     expect(e).toBeTruthy()
@@ -420,7 +420,7 @@ test('uploadOne(): failure (bundle not found)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
   } catch (e) {
     expect(e).toBeTruthy()
@@ -495,7 +495,7 @@ test('uploadOne(): failure (empty bundle)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -536,7 +536,7 @@ test('uploadOne(): failure (invalid api key)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -577,7 +577,7 @@ test('uploadOne(): failure (misc bad request)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -618,7 +618,7 @@ test('uploadOne(): failure (duplicate)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -659,7 +659,7 @@ test('uploadOne(): failure (server error)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -699,7 +699,7 @@ test('uploadOne(): failure (timeout)', async () => {
         type: VersionType.CodeBundleId,
         codeBundleId: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
     })
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
@@ -728,7 +728,7 @@ test('uploadOne(): throws when given unimplemented "fetch" mode', async () => {
         type: VersionType.AppVersion,
         appVersion: '1.2.3',
       },
-      projectRoot: path.join(__dirname, 'fixtures/a')
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
     })
   }).rejects.toThrow()
 })
