@@ -119,7 +119,7 @@ test('uploadOne(): failure (source map not found)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toMatch(/ENOENT/)
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('There was an error attempting to find a source map at the following location. Is the path correct?'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map "not-found.js.map" could not be found'))
   }
 })
 
@@ -139,7 +139,7 @@ test('uploadOne(): failure (bundle not found)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toMatch(/ENOENT/)
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('There was an error attempting to find a bundle file at the following location. Is the path correct?'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The bundle "not-found.js" could not be found'))
   }
 })
 
@@ -157,7 +157,7 @@ test('uploadOne(): failure (sourcemap is invalid json)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toBe('Unexpected token h in JSON at position 0')
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The provided source map was not valid JSON.'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
   }
 })
 
@@ -313,10 +313,70 @@ test('uploadMultiple(): success', async () => {
     'https://upload.bugsnag.com/',
     expect.objectContaining({
       apiKey: '123',
-      minifiedFile: expect.any(Object),
-      sourceMap: expect.any(Object),
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js.map'),
+        data: expect.any(String)
+      }),
       overwrite: false,
       minifiedUrl: 'http://mybundle.jim/static/js/2.e5bb21a6.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/3.1b8b4fc7.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/main.286ac573.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/runtime-main.ad66c902.js',
       appVersion: '1.2.3'
     }),
     expect.objectContaining({})
@@ -349,7 +409,7 @@ test('uploadMultiple(): no bundles', async () => {
     logger: mockLogger
   })
   expect(mockedRequest).toHaveBeenCalledTimes(4)
-  expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('A bundle file could not be found for'))
+  expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('could not be found'))
 })
 
 test('uploadMultiple(): invalid source map', async () => {
@@ -366,7 +426,7 @@ test('uploadMultiple(): invalid source map', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toBe('Unexpected token h in JSON at position 0')
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The following source map was not valid JSON.'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
   }
 })
 
