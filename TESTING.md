@@ -13,11 +13,11 @@ docker-compose run packager
 All tests can then be run with the following:
 
 ```shell script
-docker-compose run maze-runner
+docker-compose run --use-aliases maze-runner
 ```
 
 For extra output:
 
 ```shell script
-DEBUG=true docker-compose run maze-runner
+DEBUG=true docker-compose run --use-aliases maze-runner
 ```

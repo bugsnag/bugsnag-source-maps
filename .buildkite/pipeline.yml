@@ -14,7 +14,7 @@ steps:
           run: packager
     artifact_paths: build/bugsnag-source-maps.tgz
 
-  - label: 'Maze Runner image'
+  - label: 'Run Maze Runner tests'
     key: "run-maze"
     depends_on: "packager"
     timeout_in_minutes: 20
@@ -26,39 +26,3 @@ steps:
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
-
-#  - label: 'Browser end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
-#
-#  - label: 'Node end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
-#
-#  - label: 'React Native 0.60 end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
-#
-#  - label: 'React Native 0.61 end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
-#
-#  - label: 'React Native 0.62 end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
-#
-#  - label: 'React Native 0.63 end-to-end tests'
-#    depends_on: "package"
-#    timeout_in_minutes: 20
-#    skip: Placeholder step - will be Maze Runner
-#    command: echo
