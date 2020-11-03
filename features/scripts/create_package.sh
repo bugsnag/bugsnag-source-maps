@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+set -ex
 rm -f build/bugsnag-source-maps*.tgz
 npm i
 npm run build

@@ -1,7 +1,5 @@
 FROM node:lts-alpine
 
-RUN apk add --update bash
-
 WORKDIR /app
 
-CMD ["/bin/bash", "features/scripts/create_package.sh"]
+CMD ["features/scripts/create_package.sh"]
