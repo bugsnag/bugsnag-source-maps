@@ -1,4 +1,4 @@
-import { uploadOne } from '../BrowserUploader'
+import { uploadOne, uploadMultiple } from '../BrowserUploader'
 import request from '../../Request'
 import { UploadError, UploadErrorCode } from '../../UploadError'
 import path from 'path'
@@ -100,7 +100,7 @@ test('uploadOne(): failure (unexpected network error)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toBe('misc upload error')
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occured.'), expect.any(Error), expect.any(Error))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred.'), expect.any(Error), expect.any(Error))
   }
 })
 
@@ -119,7 +119,7 @@ test('uploadOne(): failure (source map not found)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toMatch(/ENOENT/)
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('There was an error attempting to find a source map at the following location. Is the path correct?'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map "not-found.js.map" could not be found'))
   }
 })
 
@@ -139,7 +139,7 @@ test('uploadOne(): failure (bundle not found)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toMatch(/ENOENT/)
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('There was an error attempting to find a bundle file at the following location. Is the path correct?'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The bundle "not-found.js" could not be found'))
   }
 })
 
@@ -157,7 +157,7 @@ test('uploadOne(): failure (sourcemap is invalid json)', async () => {
   } catch (e) {
     expect(e).toBeTruthy()
     expect(e.message).toBe('Unexpected token h in JSON at position 0')
-    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The provided source map was not valid JSON.'))
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
   }
 })
 
@@ -295,5 +295,180 @@ test('uploadOne(): failure (timeout)', async () => {
     expect(e).toBeTruthy()
     expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
+  }
+})
+
+test('uploadMultiple(): success', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: 'build',
+    projectRoot: path.join(__dirname, 'fixtures/c'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/2.e5bb21a6.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/3.1b8b4fc7.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/main.286ac573.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/runtime-main.ad66c902.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadMultiple(): no source maps', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('timeout')
+  err.code = UploadErrorCode.TIMEOUT
+  mockedRequest.mockRejectedValue(err)
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: '.',
+    projectRoot: path.join(__dirname, 'fixtures/d'),
+    logger: mockLogger
+  })
+  expect(mockLogger.warn).toHaveBeenCalledWith('No source maps found.')
+})
+
+test('uploadMultiple(): no bundles', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: 'build',
+    projectRoot: path.join(__dirname, 'fixtures/e'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('could not be found'))
+})
+
+test('uploadMultiple(): invalid source map', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: '.',
+      projectRoot: path.join(__dirname, 'fixtures/b'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unexpected token h in JSON at position 0')
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
+  }
+})
+
+test('uploadMultiple(): failure (timeout)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('timeout')
+  err.code = UploadErrorCode.TIMEOUT
+  mockedRequest.mockRejectedValue(err)
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/c'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(3)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
+  }
+})
+
+test('uploadMultiple(): failure (connection error)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  const err = new UploadError('misc error')
+  err.code = UploadErrorCode.UNKNOWN
+  err.cause = new Error('the cause')
+  mockedRequest.mockRejectedValue(err)
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/c'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(6)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect((e as UploadError).code).toBe(UploadErrorCode.UNKNOWN)
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred'), expect.any(Error), expect.any(Error))
   }
 })

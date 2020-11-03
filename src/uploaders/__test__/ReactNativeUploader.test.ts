@@ -311,7 +311,7 @@ test('uploadOne(): failure (unexpected network error) with cause', async () => {
     expect(e).toBeTruthy()
     expect(e.message).toBe('misc upload error')
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occured.'),
+      expect.stringContaining('An unexpected error occurred.'),
       err,
       err.cause
     )
@@ -353,7 +353,7 @@ test('uploadOne(): failure (unexpected network error) without cause', async () =
     expect(e).toBeTruthy()
     expect(e.message).toBe('misc upload error')
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occured.'),
+      expect.stringContaining('An unexpected error occurred.'),
       err
     )
   }
