@@ -127,7 +127,7 @@ const reactNativeFetchOpts = [
     description: 'enable fetch mode {bold required}',
   },
   {
-    name: 'url',
+    name: 'bundler-url',
     type: String,
     description: 'the URL of the React Native bundle server',
     typeLabel: '{underline url}',
@@ -262,8 +262,8 @@ function marshallRetrieval(opts: Record<string, unknown>): SourceMapRetrieval {
   if (opts.fetch) {
     let url = 'http://localhost:8081'
 
-    if (opts.url && typeof opts.url === 'string') {
-      url = opts.url
+    if (opts.bundlerUrl && typeof opts.bundlerUrl === 'string') {
+      url = opts.bundlerUrl
     }
 
     let entryPoint = 'index.js'

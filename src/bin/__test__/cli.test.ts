@@ -378,7 +378,7 @@ test('cli: upload-react-native success with "fetch" mode and custom URL', async 
     '--platform', 'ios',
     '--app-version', '1.0.2',
     '--fetch',
-    '--url', 'http://example.com:1100/rn-bundler'
+    '--bundler-url', 'http://example.com:1100/rn-bundler'
   ])
 
   expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
