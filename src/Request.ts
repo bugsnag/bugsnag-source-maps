@@ -151,19 +151,11 @@ export async function send (endpoint: string, payload: Payload, requestOpts: htt
         return reject(err)
       }))
     })
+
     formData.pipe(req)
-    req.on('error', e => {
-      const err = new NetworkError('Unknown connection error')
-      err.cause = e
-      err.code = NetworkErrorCode.UNKNOWN
-      reject(err)
-    })
-    req.setTimeout(TIMEOUT_MS, () => {
-      const err = new NetworkError('Connection timed out')
-      err.code = NetworkErrorCode.TIMEOUT
-      reject(err)
-      req.abort()
-    })
+
+    addErrorHandler(req, reject)
+    addTimeout(req, reject)
   })
 }
 
@@ -206,18 +198,25 @@ export function fetch(endpoint: string): Promise<string> {
       }))
     })
 
-    req.on('error', e => {
-      const err = new NetworkError('Unknown connection error')
-      err.cause = e
-      err.code = NetworkErrorCode.UNKNOWN
-      reject(err)
-    })
+    addErrorHandler(req, reject)
+    addTimeout(req, reject)
+  })
+}
 
-    req.setTimeout(TIMEOUT_MS, () => {
-      const err = new NetworkError('Connection timed out')
-      err.code = NetworkErrorCode.TIMEOUT
-      reject(err)
-      req.abort()
-    })
+function addErrorHandler(req: http.ClientRequest, reject: (reason: NetworkError) => void): void {
+  req.on('error', e => {
+    const err = new NetworkError('Unknown connection error')
+    err.cause = e
+    err.code = NetworkErrorCode.UNKNOWN
+    reject(err)
+  })
+}
+
+function addTimeout(req: http.ClientRequest, reject: (reason: NetworkError) => void): void {
+  req.setTimeout(TIMEOUT_MS, () => {
+    const err = new NetworkError('Connection timed out')
+    err.code = NetworkErrorCode.TIMEOUT
+    reject(err)
+    req.abort()
   })
 }
