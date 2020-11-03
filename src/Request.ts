@@ -207,7 +207,15 @@ function addErrorHandler(req: http.ClientRequest, reject: (reason: NetworkError)
   req.on('error', e => {
     const err = new NetworkError('Unknown connection error')
     err.cause = e
-    err.code = NetworkErrorCode.UNKNOWN
+
+    const failureReason = (e as any).code
+
+    if (failureReason === 'ECONNREFUSED') {
+      err.code = NetworkErrorCode.CONNECTION_REFUSED
+    } else {
+      err.code = NetworkErrorCode.UNKNOWN
+    }
+
     reject(err)
   })
 }

@@ -8,6 +8,7 @@ import formatErrorLog from './FormatErrorLog'
 import { Logger } from '../Logger'
 import AddSources from '../transformers/AddSources'
 import StripProjectRoot from '../transformers/StripProjectRoot'
+import { NetworkError, NetworkErrorCode } from '../NetworkError'
 import { Platform, PlatformOptions } from '../react-native/Platform'
 import { Version, VersionType } from '../react-native/Version'
 import { SourceMapRetrieval, SourceMapRetrievalType } from '../react-native/SourceMapRetrieval'
@@ -88,7 +89,9 @@ class ReactNativeUploader {
           this.logger.debug(`Fetching source map from ${sourceMapUrl}`)
           sourceMap = await fetch(sourceMapUrl)
         } catch (e) {
-          this.logger.error(`Unable to fetch source map from ${retrieval.url}. Is the server running?`)
+          this.logger.error(
+            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
+          )
           throw e
         }
 
@@ -96,7 +99,9 @@ class ReactNativeUploader {
           this.logger.debug(`Fetching bundle from ${bundleUrl}`)
           bundle = await fetch(bundleUrl)
         } catch (e) {
-          this.logger.error(`Unable to fetch bundle from ${retrieval.url}. Is the server running?`)
+          this.logger.error(
+            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
+          )
           throw e
         }
 
@@ -231,3 +236,23 @@ class ReactNativeUploader {
 }
 
 export default ReactNativeUploader
+
+function formatFetchError(err: Error, url: string, entryPoint: string): string {
+  if (!(err instanceof NetworkError)) {
+    return `An unexpected error occurred.\n\n`
+  }
+
+  switch (err.code) {
+    case NetworkErrorCode.CONNECTION_REFUSED:
+      return `Unable to connect to ${url}. Is the server running?\n\n`
+
+    case NetworkErrorCode.SERVER_ERROR:
+      return `Recieved an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
+
+    case NetworkErrorCode.TIMEOUT:
+      return `The request timed out.\n\n`
+
+    default:
+      return `An unexpected error occurred.\n\n`
+  }
+}

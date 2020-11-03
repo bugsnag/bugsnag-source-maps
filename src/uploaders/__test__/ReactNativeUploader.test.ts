@@ -1028,9 +1028,8 @@ test('uploadOne(): dispatches a request with the correct params with custom entr
   )
 })
 
-test('uploadOne(): Fetch mode failure to get source map', async () => {
-  const err = new NetworkError('misc upload error')
-  err.cause = new Error('network error')
+test('uploadOne(): Fetch mode failure to get source map (generic Error)', async () => {
+  const err = new Error('misc error')
 
   const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
   mockedFetch.mockRejectedValue(err)
@@ -1063,17 +1062,183 @@ test('uploadOne(): Fetch mode failure to get source map', async () => {
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Unable to fetch source map from http://react-native-bundler:1234. Is the server running?'
+      expect.stringContaining('An unexpected error occurred'),
+      err
     )
   }
 })
 
-test('uploadOne(): Fetch mode failure to get bundle', async () => {
+test('uploadOne(): Fetch mode failure to get source map (generic NetworkError)', async () => {
+  const err = new NetworkError('misc error')
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('An unexpected error occurred'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get source map (connection refused)', async () => {
+  const err = new NetworkError('connection refused')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.CONNECTION_REFUSED
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('Unable to connect to http://react-native-bundler:1234. Is the server running?'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get source map (server error)', async () => {
+  const err = new NetworkError('broken')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.SERVER_ERROR
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get source map (timeout)', async () => {
+  const err = new NetworkError('timeout')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.TIMEOUT
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('The request timed out.'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle (generic Error)', async () => {
   const directory = path.join(__dirname, 'fixtures/react-native-android')
   const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
 
-  const err = new NetworkError('misc upload error')
-  err.cause = new Error('network error')
+  const err = new Error('misc error')
 
   const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
   mockedFetch.mockResolvedValueOnce(sourceMap.toString())
@@ -1108,7 +1273,194 @@ test('uploadOne(): Fetch mode failure to get bundle', async () => {
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Unable to fetch bundle from http://react-native-bundler:1234. Is the server running?'
+      expect.stringContaining('An unexpected error occurred'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle (generic NetworkError)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+
+  const err = new NetworkError('misc error')
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('An unexpected error occurred'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle (connection refused)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+
+  const err = new NetworkError('connection refused')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.CONNECTION_REFUSED
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('Unable to connect to http://react-native-bundler:1234. Is the server running?'),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle (server error)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+
+  const err = new NetworkError('broken')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.SERVER_ERROR
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      err
+    )
+  }
+})
+
+test('uploadOne(): Fetch mode failure to get bundle (timeout)', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+
+  const err = new NetworkError('timeout')
+  err.cause = new Error('network error')
+  err.code = NetworkErrorCode.TIMEOUT
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockRejectedValue(err)
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  try {
+    await uploader.uploadOne({
+      endpoint: 'example.com',
+      apiKey: '123',
+      overwrite: false,
+      dev: true,
+      platformOptions: { type: Platform.Android },
+      retrieval: {
+        type: SourceMapRetrievalType.Fetch,
+        url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
+      },
+      version: {
+        type: VersionType.AppVersion,
+        appVersion: '1.2.3',
+      },
+      projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    })
+  } catch (e) {
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedRequest).not.toHaveBeenCalled()
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('The request timed out.'),
+      err
     )
   }
 })
