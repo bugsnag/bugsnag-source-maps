@@ -1,14 +1,17 @@
 steps:
 
-  - label: 'Maze Runner image'
-    key: "run-maze"
+  - label: 'Packager'
+    key: "packager"
     timeout_in_minutes: 3
     plugins:
       - docker-compose#v3.7.0:
-          build: publisher
+          build: packager
           image-repository: 855461928731.dkr.ecr.us-west-1.amazonaws.com/source-maps
-          cache-from:  publisher:855461928731.dkr.ecr.us-west-1.amazonaws.com/js:publiusher-${BRANCH_NAME}
-
+          cache-from:  packager:855461928731.dkr.ecr.us-west-1.amazonaws.com/source-maps:packager-${BRANCH_NAME}
+      - docker-compose#v3.7.0:
+          push: packager:855461928731.dkr.ecr.us-west-1.amazonaws.com/source-maps:packager-${BRANCH_NAME}
+      - docker-compose#v3.7.0:
+          run: packager
 
   - label: 'Maze Runner image'
     key: "run-maze"
@@ -16,6 +19,7 @@ steps:
     timeout_in_minutes: 20
     plugins:
       - docker-compose#v3.7.0:
+          use-aliases: true
           run: maze-runner
 
 #  - label: 'Browser end-to-end tests'
