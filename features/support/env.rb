@@ -3,7 +3,7 @@ require 'fileutils'
 def copy_package
   raise "bugsnag-source-maps.tgz not found." unless File.exist?("/app/build/bugsnag-source-maps.tgz")
   Dir['features/fixtures/*'].each do |entry|
-    target_dir = "features/fixtures/#{entry}/build"
+    target_dir = "#{entry}/build"
     if File.directory?(target_dir)
       puts "Copying bugsnag-source-maps.tgz into #{target_dir}"
       `cp /app/build/bugsnag-source-maps.tgz #{target_dir}`
