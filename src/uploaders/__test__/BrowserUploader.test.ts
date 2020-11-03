@@ -1,6 +1,6 @@
 import { uploadOne, uploadMultiple } from '../BrowserUploader'
 import request from '../../Request'
-import { UploadError, UploadErrorCode } from '../../UploadError'
+import { NetworkError, NetworkErrorCode } from '../../NetworkError'
 import path from 'path'
 
 jest.mock('../../Request')
@@ -85,7 +85,7 @@ test('uploadOne(): source map file could not be located', async () => {
 
 test('uploadOne(): failure (unexpected network error)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('misc upload error')
+  const err = new NetworkError('misc upload error')
   err.cause = new Error('network error')
   mockedRequest.mockRejectedValue(err)
   try {
@@ -163,8 +163,8 @@ test('uploadOne(): failure (sourcemap is invalid json)', async () => {
 
 test('uploadOne(): failure (empty bundle)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('network error')
-  err.code = UploadErrorCode.EMPTY_FILE
+  const err = new NetworkError('network error')
+  err.code = NetworkErrorCode.EMPTY_FILE
   err.responseText = 'empty'
   mockedRequest.mockRejectedValue(err)
   try {
@@ -179,15 +179,15 @@ test('uploadOne(): failure (empty bundle)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.EMPTY_FILE)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.EMPTY_FILE)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The uploaded source map was empty'), expect.any(Error))
   }
 })
 
 test('uploadOne(): failure (invalid api key)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('unauthed')
-  err.code = UploadErrorCode.INVALID_API_KEY
+  const err = new NetworkError('unauthed')
+  err.code = NetworkErrorCode.INVALID_API_KEY
   err.responseText = 'api key wrong'
   mockedRequest.mockRejectedValue(err)
   try {
@@ -202,15 +202,15 @@ test('uploadOne(): failure (invalid api key)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.INVALID_API_KEY)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.INVALID_API_KEY)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The provided API key was invalid'), expect.any(Error))
   }
 })
 
 test('uploadOne(): failure (misc bad request)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('misc bad request')
-  err.code = UploadErrorCode.MISC_BAD_REQUEST
+  const err = new NetworkError('misc bad request')
+  err.code = NetworkErrorCode.MISC_BAD_REQUEST
   err.responseText = 'server no likey'
   mockedRequest.mockRejectedValue(err)
   try {
@@ -225,15 +225,15 @@ test('uploadOne(): failure (misc bad request)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.MISC_BAD_REQUEST)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request was rejected by the server as invalid.\n\n  responseText = server no likey'), expect.any(Error))
   }
 })
 
 test('uploadOne(): failure (duplicate)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('duplicate')
-  err.code = UploadErrorCode.DUPLICATE
+  const err = new NetworkError('duplicate')
+  err.code = NetworkErrorCode.DUPLICATE
   err.responseText = 'duplicate'
   mockedRequest.mockRejectedValue(err)
   try {
@@ -248,15 +248,15 @@ test('uploadOne(): failure (duplicate)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.DUPLICATE)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.DUPLICATE)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('A source map matching the same criteria has already been uploaded. If you want to replace it, use the "overwrite" flag'), expect.any(Error))
   }
 })
 
 test('uploadOne(): failure (server error)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('server error')
-  err.code = UploadErrorCode.SERVER_ERROR
+  const err = new NetworkError('server error')
+  err.code = NetworkErrorCode.SERVER_ERROR
   err.responseText = 'internal server error'
   mockedRequest.mockRejectedValue(err)
   try {
@@ -271,15 +271,15 @@ test('uploadOne(): failure (server error)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.SERVER_ERROR)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.SERVER_ERROR)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('A server side error occurred while processing the upload.\n\n  responseText = internal server error'), expect.any(Error))
   }
 })
 
 test('uploadOne(): failure (timeout)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('timeout')
-  err.code = UploadErrorCode.TIMEOUT
+  const err = new NetworkError('timeout')
+  err.code = NetworkErrorCode.TIMEOUT
   mockedRequest.mockRejectedValue(err)
   try {
     await uploadOne({
@@ -293,7 +293,7 @@ test('uploadOne(): failure (timeout)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.TIMEOUT)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
   }
 })
@@ -385,8 +385,8 @@ test('uploadMultiple(): success', async () => {
 
 test('uploadMultiple(): no source maps', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('timeout')
-  err.code = UploadErrorCode.TIMEOUT
+  const err = new NetworkError('timeout')
+  err.code = NetworkErrorCode.TIMEOUT
   mockedRequest.mockRejectedValue(err)
   await uploadMultiple({
     apiKey: '123',
@@ -432,8 +432,8 @@ test('uploadMultiple(): invalid source map', async () => {
 
 test('uploadMultiple(): failure (timeout)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('timeout')
-  err.code = UploadErrorCode.TIMEOUT
+  const err = new NetworkError('timeout')
+  err.code = NetworkErrorCode.TIMEOUT
   mockedRequest.mockRejectedValue(err)
   try {
     await uploadMultiple({
@@ -446,15 +446,15 @@ test('uploadMultiple(): failure (timeout)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(3)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.TIMEOUT)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.TIMEOUT)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The request timed out'), expect.any(Error))
   }
 })
 
 test('uploadMultiple(): failure (connection error)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
-  const err = new UploadError('misc error')
-  err.code = UploadErrorCode.UNKNOWN
+  const err = new NetworkError('misc error')
+  err.code = NetworkErrorCode.UNKNOWN
   err.cause = new Error('the cause')
   mockedRequest.mockRejectedValue(err)
   try {
@@ -468,7 +468,7 @@ test('uploadMultiple(): failure (connection error)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(6)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect((e as UploadError).code).toBe(UploadErrorCode.UNKNOWN)
+    expect((e as NetworkError).code).toBe(NetworkErrorCode.UNKNOWN)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred'), expect.any(Error), expect.any(Error))
   }
 })

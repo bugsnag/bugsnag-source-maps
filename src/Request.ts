@@ -3,7 +3,7 @@ import http from 'http'
 import concat from 'concat-stream'
 import url from 'url'
 import FormData from 'form-data'
-import { UploadError, UploadErrorCode } from './UploadError'
+import { NetworkError, NetworkErrorCode } from './NetworkError'
 import File from './File'
 
 export const enum PayloadType { Browser, ReactNative, Node }
@@ -126,7 +126,7 @@ export async function send (endpoint: string, payload: Payload, requestOpts: htt
     }, res => {
       res.pipe(concat((bodyBuffer: Buffer) => {
         if (res.statusCode === 200) return resolve()
-        const err = new UploadError(`HTTP status ${res.statusCode} received from upload API`)
+        const err = new NetworkError(`HTTP status ${res.statusCode} received from upload API`)
         err.responseText = bodyBuffer.toString()
         if (!isRetryable(res.statusCode)) {
           err.isRetryable = false
@@ -134,33 +134,33 @@ export async function send (endpoint: string, payload: Payload, requestOpts: htt
         if (res.statusCode && (res.statusCode >= 400 && res.statusCode < 500)) {
           switch (res.statusCode) {
             case 401:
-              err.code = UploadErrorCode.INVALID_API_KEY
+              err.code = NetworkErrorCode.INVALID_API_KEY
               break
             case 409:
-              err.code = UploadErrorCode.DUPLICATE
+              err.code = NetworkErrorCode.DUPLICATE
               break
             case 422:
-              err.code = UploadErrorCode.EMPTY_FILE
+              err.code = NetworkErrorCode.EMPTY_FILE
               break
             default:
-              err.code = UploadErrorCode.MISC_BAD_REQUEST
+              err.code = NetworkErrorCode.MISC_BAD_REQUEST
           }
         } else {
-          err.code = UploadErrorCode.SERVER_ERROR
+          err.code = NetworkErrorCode.SERVER_ERROR
         }
         return reject(err)
       }))
     })
     formData.pipe(req)
     req.on('error', e => {
-      const err = new UploadError('Unknown connection error')
+      const err = new NetworkError('Unknown connection error')
       err.cause = e
-      err.code = UploadErrorCode.UNKNOWN
+      err.code = NetworkErrorCode.UNKNOWN
       reject(err)
     })
     req.setTimeout(TIMEOUT_MS, () => {
-      const err = new UploadError('Connection timed out')
-      err.code = UploadErrorCode.TIMEOUT
+      const err = new NetworkError('Connection timed out')
+      err.code = NetworkErrorCode.TIMEOUT
       reject(err)
       req.abort()
     })
@@ -189,7 +189,7 @@ export function fetch(endpoint: string): Promise<string> {
           return resolve(bodyBuffer.toString())
         }
 
-        const err = new UploadError(`HTTP status ${res.statusCode} received from bundle server`)
+        const err = new NetworkError(`HTTP status ${res.statusCode} received from bundle server`)
         err.responseText = bodyBuffer.toString()
 
         if (!isRetryable(res.statusCode)) {
@@ -197,9 +197,9 @@ export function fetch(endpoint: string): Promise<string> {
         }
 
         if (res.statusCode && (res.statusCode >= 400 && res.statusCode < 500)) {
-          err.code = UploadErrorCode.MISC_BAD_REQUEST
+          err.code = NetworkErrorCode.MISC_BAD_REQUEST
         } else {
-          err.code = UploadErrorCode.SERVER_ERROR
+          err.code = NetworkErrorCode.SERVER_ERROR
         }
 
         return reject(err)
@@ -207,15 +207,15 @@ export function fetch(endpoint: string): Promise<string> {
     })
 
     req.on('error', e => {
-      const err = new UploadError('Unknown connection error')
+      const err = new NetworkError('Unknown connection error')
       err.cause = e
-      err.code = UploadErrorCode.UNKNOWN
+      err.code = NetworkErrorCode.UNKNOWN
       reject(err)
     })
 
     req.setTimeout(TIMEOUT_MS, () => {
-      const err = new UploadError('Connection timed out')
-      err.code = UploadErrorCode.TIMEOUT
+      const err = new NetworkError('Connection timed out')
+      err.code = NetworkErrorCode.TIMEOUT
       reject(err)
       req.abort()
     })
