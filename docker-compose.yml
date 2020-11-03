@@ -12,7 +12,6 @@ services:
     environment:
       VERBOSE:
       DEBUG:
-      BUGSNAG_ENDPOINT:
     networks:
       default:
         aliases:

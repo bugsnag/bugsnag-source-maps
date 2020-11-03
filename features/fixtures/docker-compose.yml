@@ -5,7 +5,6 @@ services:
       context: single-source-map-webpack
     environment:
       - BUGSNAG_API_KEY
-      - BUGSNAG_ENDPOINT
     networks:
       default:
         aliases:
