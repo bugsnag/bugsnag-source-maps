@@ -739,6 +739,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
     retrieval: {
       type: SourceMapRetrievalType.Fetch,
       url: 'http://react-native-bundler:1234',
+      entryPoint: 'index.js',
     },
     version: {
       type: VersionType.AppVersion,
@@ -790,6 +791,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
     retrieval: {
       type: SourceMapRetrievalType.Fetch,
       url: 'http://react-native-bundler:1234',
+      entryPoint: 'index.js',
     },
     version: {
       type: VersionType.AppVersion,
@@ -841,6 +843,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
     retrieval: {
       type: SourceMapRetrievalType.Fetch,
       url: 'http://react-native-bundler:1234',
+      entryPoint: 'index.js',
     },
     version: {
       type: VersionType.AppVersion,
@@ -892,6 +895,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
     retrieval: {
       type: SourceMapRetrievalType.Fetch,
       url: 'http://react-native-bundler:1234',
+      entryPoint: 'index.js',
     },
     version: {
       type: VersionType.AppVersion,
@@ -911,6 +915,110 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
       apiKey: '123',
       overwrite: false,
       dev: true,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): dispatches a request with the correct params with custom entry point', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platformOptions: { type: Platform.Ios },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+      entryPoint: 'cool-app.js',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): dispatches a request with the correct params with custom entry point with no ".js" extension', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  const uploader = new ReactNativeUploader(mockLogger)
+
+  await uploader.uploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platformOptions: { type: Platform.Ios },
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://react-native-bundler:1234',
+      entryPoint: 'cool-app',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.2.3',
+    },
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
       sourceMap: expect.any(File),
@@ -942,6 +1050,7 @@ test('uploadOne(): Fetch mode failure to get source map', async () => {
       retrieval: {
         type: SourceMapRetrievalType.Fetch,
         url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
       },
       version: {
         type: VersionType.AppVersion,
@@ -985,6 +1094,7 @@ test('uploadOne(): Fetch mode failure to get bundle', async () => {
       retrieval: {
         type: SourceMapRetrievalType.Fetch,
         url: 'http://react-native-bundler:1234',
+        entryPoint: 'index.js',
       },
       version: {
         type: VersionType.AppVersion,

@@ -76,8 +76,11 @@ class ReactNativeUploader {
     switch (retrieval.type) {
       case SourceMapRetrievalType.Fetch: {
         const queryString = qs.stringify({ platform, dev })
-        const sourceMapUrl = `${retrieval.url}/index.js.map?${queryString}`
-        const bundleUrl = `${retrieval.url}/index.bundle?${queryString}`
+        const entryPoint = retrieval.entryPoint.replace(/\.js$/, '')
+
+        const sourceMapUrl = `${retrieval.url}/${entryPoint}.js.map?${queryString}`
+        const bundleUrl = `${retrieval.url}/${entryPoint}.bundle?${queryString}`
+
         let sourceMap
         let bundle
 

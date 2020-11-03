@@ -132,6 +132,12 @@ const reactNativeFetchOpts = [
     description: 'the URL of the React Native bundle server',
     typeLabel: '{underline url}',
   },
+  {
+    name: 'bundler-entry-point',
+    type: String,
+    description: 'the entry point of your React Native app',
+    typeLabel: '{underline file}',
+  },
 ]
 
 function validateReactNativeOpts (opts: Record<string, unknown>): ReactNativeUploadOptions {
@@ -260,9 +266,16 @@ function marshallRetrieval(opts: Record<string, unknown>): SourceMapRetrieval {
       url = opts.url
     }
 
+    let entryPoint = 'index.js'
+
+    if (opts.bundlerEntryPoint && typeof opts.bundlerEntryPoint === 'string') {
+      entryPoint = opts.bundlerEntryPoint
+    }
+
     return {
       type: SourceMapRetrievalType.Fetch,
       url,
+      entryPoint,
     }
   }
 
