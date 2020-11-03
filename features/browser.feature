@@ -7,16 +7,15 @@ Feature: Browser source map uploads
       bugsnag-source-maps upload-browser --api-key 123
                                          --source-map dist/main.js.map
                                          --bundle dist/main.js
-                                         --bundle-url http://myapp.url/static/js/main.js
-                                         --endpoint $BUGSNAG_ENDPOINT
+                                         --bundle-url "http://myapp.url/static/js/main.js"
+                                         --endpoint http://maze-runner:9339
       """
-#    And the server responds with HTTP 200
 #    Then the CLI terminates successfully (zero exitCode)
-    And I wait to receive 1 request
 #    Then the content-type header is form/multipart
-#    And the form field apiKey is '123'
 #    And the form field sourceMap matches the JSON in fixture xyz¹
-#    And the form field appVersion is 1.0.0²
 #    And the form field minifiedFile is the same as main.js
-#    And the form field bundleUrl is http://myapp.url/static/js/main.js
-#    And the form field overwrite is not set
+#    And the payload field "bundleUrl" equals "http://myapp.url/static/js/main.js"
+    And I wait to receive 1 request
+    And the payload field "apiKey" equals "123"
+    And the payload field "appVersion" equals "1.2.3"
+    And the payload field "overwrite" is null

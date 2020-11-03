@@ -9,4 +9,7 @@ services:
     networks:
       default:
         aliases:
-          - maze-runner
+          - single-source-map-webpack
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}
