@@ -1,5 +1,3 @@
-require 'fileutils'
-
 def copy_package
   raise "bugsnag-source-maps.tgz not found." unless File.exist?("/app/build/bugsnag-source-maps.tgz")
 
