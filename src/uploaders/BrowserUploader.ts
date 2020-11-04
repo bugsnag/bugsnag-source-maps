@@ -125,7 +125,6 @@ export async function uploadMultiple ({
   for (const sourceMap of sourceMaps) {
     n++
     logger.info(`${n} of ${sourceMaps.length}`)
-    logger.debug(`Reading source map "${sourceMap}"`)
 
     const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, absoluteSearchPath, logger)
     const sourceMapJson = parseSourceMap(sourceMapContent, fullSourceMapPath, logger)

@@ -67,22 +67,6 @@ test('uploadOne(): dispatches a request with the correct params (no bundle)', as
   )
 })
 
-test('uploadOne(): source map file could not be located', async () => {
-  const mockedRequest  = request as jest.MockedFunction<typeof request>
-  mockedRequest.mockRejectedValue(new Error('network error'))
-  try {
-    await uploadOne({
-      apiKey: '123',
-      bundleUrl: 'http://mybundle.jim',
-      sourceMap: 'bundle.js.map',
-      projectRoot: path.join(__dirname, 'fixtures/a')
-    })
-    expect(mockedRequest).toHaveBeenCalledTimes(1)
-  } catch (e) {
-    expect(e).toBeTruthy()
-  }
-})
-
 test('uploadOne(): failure (unexpected network error)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new NetworkError('misc upload error')
