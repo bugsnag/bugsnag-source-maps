@@ -20,9 +20,7 @@ steps:
     timeout_in_minutes: 20
     plugins:
       - artifacts#v1.3.0:
-          download:
-            from: build/bugsnag-source-maps.tgz
-            to: bugsnag-source-maps.tgz
+          download: build/bugsnag-source-maps.tgz
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
