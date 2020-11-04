@@ -50,7 +50,7 @@ export async function uploadOne ({
   const start = new Date().getTime()
   try {
     await request(endpoint, {
-      type: PayloadType.Browser,
+      type: PayloadType.Node,
       apiKey,
       appVersion,
       minifiedUrl: bundle,
@@ -134,7 +134,7 @@ export async function uploadMultiple ({
     const start = new Date().getTime()
     try {
       await request(endpoint, {
-        type: PayloadType.Browser,
+        type: PayloadType.Node,
         apiKey,
         appVersion,
         minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)),

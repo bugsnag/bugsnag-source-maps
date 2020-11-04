@@ -9,8 +9,11 @@ import File from './File'
 export const enum PayloadType { Browser, ReactNative, Node }
 type Payload = BrowserPayload | ReactNativePayload | NodePayload
 
-interface BrowserPayload {
-  type: PayloadType.Browser
+type BrowserPayload = JsPayload
+type NodePayload = JsPayload
+
+interface JsPayload {
+  type: PayloadType.Node | PayloadType.Browser
   apiKey: string
   appVersion?: string
   minifiedUrl: string
@@ -31,11 +34,6 @@ interface ReactNativePayload {
   dev: boolean
   sourceMap: File
   bundle: File
-}
-
-interface NodePayload {
-  type: PayloadType.Node
-  apiKey: string
 }
 
 const MAX_ATTEMPTS = 5
@@ -65,17 +63,15 @@ function createFormData (payload: Payload): FormData {
 
   switch (payload.type) {
     case PayloadType.Browser:
-      return appendBrowserFormData(formData, payload)
+    case PayloadType.Node:
+      return appendJsFormData(formData, payload)
 
     case PayloadType.ReactNative:
       return appendReactNativeFormData(formData, payload)
-
-    case PayloadType.Node:
-      throw new Error('Node is not implemented yet!')
   }
 }
 
-function appendBrowserFormData(formData: FormData, payload: BrowserPayload): FormData {
+function appendJsFormData(formData: FormData, payload: BrowserPayload | NodePayload): FormData {
   if (payload.appVersion) formData.append('appVersion', payload.appVersion)
   formData.append('minifiedUrl', payload.minifiedUrl)
   formData.append('sourceMap', payload.sourceMap.data, { filepath: payload.sourceMap.filepath})
