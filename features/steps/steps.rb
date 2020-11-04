@@ -35,14 +35,26 @@ def assert_payload_fields_match(field, expected, actual)
 end
 
 Then("the payload field {string} matches the expected source map for {string}") do |field, fixture|
-  expected = JSON.parse(read_expected_file(fixture, "source-map.json"))
+  steps %Q{
+    Then the payload field "#{field}" matches the source map "source-map.json" for "#{fixture}"
+  }
+end
+
+Then("the payload field {string} matches the expected minified file for {string}") do |field, fixture|
+  steps %Q{
+    Then the payload field "#{field}" matches the minified file "minified-file.js" for "#{fixture}"
+  }
+end
+
+Then("the payload field {string} matches the source map {string} for {string}") do |field, file_name, fixture|
+  expected = JSON.parse(read_expected_file(fixture, file_name))
   actual = JSON.parse(get_form_data_as_string(field))
 
   assert_payload_fields_match(field, expected, actual)
 end
 
-Then("the payload field {string} matches the expected minified file for {string}") do |field, fixture|
-  expected = read_expected_file(fixture, "minified-file.js").chomp
+Then("the payload field {string} matches the minified file {string} for {string}") do |field, file_name, fixture|
+  expected = read_expected_file(fixture, file_name).chomp
   actual = get_form_data_as_string(field)
 
   assert_payload_fields_match(field, expected, actual)

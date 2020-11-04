@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "sources": [
+        "dist/webpack:/multiple-source-map-webpack/src/lib/a.js"
+    ],
+    "names": [
+        "console",
+        "log"
+    ],
+    "mappings": "sHAAAA,QAAQC,IAAI",
+    "file": "main-cb48d68d.js",
+    "sourcesContent": [
+        "console.log('hi from a')\n"
+    ],
+    "sourceRoot": ""
+}
