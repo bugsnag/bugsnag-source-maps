@@ -1,0 +1,11 @@
+version: '3.6'
+services:
+  single-source-map-webpack:
+    build:
+      context: single-source-map-webpack
+    environment:
+      - BUGSNAG_API_KEY
+
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}

@@ -1,0 +1,5 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+
+CMD ["features/scripts/create_package.sh"]
