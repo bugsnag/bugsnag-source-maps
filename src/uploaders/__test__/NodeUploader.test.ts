@@ -205,11 +205,11 @@ test('uploadMultiple(): no bundles', async () => {
   mockedRequest.mockResolvedValue()
   await uploadMultiple({
     apiKey: '123',
-    directory: 'build',
-    projectRoot: path.join(__dirname, 'fixtures/e'),
+    directory: 'dist',
+    projectRoot: path.join(__dirname, 'fixtures/g'),
     logger: mockLogger
   })
-  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledTimes(3)
   expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('could not be found'))
 })
 
