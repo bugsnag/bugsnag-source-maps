@@ -4,7 +4,7 @@ import qs from 'querystring'
 
 import File from '../File'
 import request, { fetch, PayloadType } from '../Request'
-import formatErrorLog from './FormatErrorLog'
+import formatErrorLog from './lib/FormatErrorLog'
 import { Logger } from '../Logger'
 import AddSources from '../transformers/AddSources'
 import StripProjectRoot from '../transformers/StripProjectRoot'

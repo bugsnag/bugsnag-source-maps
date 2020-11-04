@@ -1,12 +1,14 @@
 import run from '../cli'
 import logger from '../../Logger'
 import * as browser from '../../uploaders/BrowserUploader'
+import * as node from '../../uploaders/NodeUploader'
 import { LogLevel } from 'consola'
 import { Platform } from '../../react-native/Platform'
 import { VersionType } from '../../react-native/Version'
 import { SourceMapRetrievalType } from '../../react-native/SourceMapRetrieval'
 
 jest.mock('../../uploaders/BrowserUploader')
+jest.mock('../../uploaders/NodeUploader')
 jest.mock('../../Logger')
 
 const mockReactNativeUploadOne = jest.fn()
@@ -40,11 +42,79 @@ test('cli: duplicate option', async () => {
   expect(logger.error).toHaveBeenCalledWith('Invalid options. Singular option already set [help=true]')
 })
 
+test('cli: unrecognised command', async () => {
+  await run(['xyz'])
+  expect(logger.error).toHaveBeenCalledWith('Unrecognized command "xyz".')
+})
+
+test('cli: unrecognised command', async () => {
+  await run(['--opt'])
+  expect(logger.error).toHaveBeenCalledWith('Command expected, nothing provided.')
+})
+
+// NODE
+
 test('cli: upload-node command', async () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
   run(['upload-node', '--help'])
-  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('TODO'))
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('bugsnag-source-maps upload-node'))
 })
+
+test('cli: upload-node invalid option', async () => {
+  await run(['upload-node', 'foo'])
+  expect(logger.error).toHaveBeenCalledWith('Invalid argument provided. Unknown value: foo')
+})
+
+test('cli: upload-node exit code for failure', async () => {
+  const mockedUpload = node.uploadOne as jest.MockedFunction<typeof node.uploadOne>
+  mockedUpload.mockRejectedValue(new Error('fail'))
+  await run(['upload-node', '--api-key', '123', '--source-map', 'bundle.js.map'])
+  expect(process.exitCode).toBe(1)
+})
+
+test('cli: upload-node single mode', async () => {
+  await run(['upload-node', '--api-key', '123', '--bundle', 'bundle.js', '--source-map', 'bundle.js.map'])
+  expect(node.uploadOne).toHaveBeenCalledTimes(1)
+  expect(node.uploadOne).toHaveBeenCalledWith(
+    expect.objectContaining({ apiKey: '123', bundle: 'bundle.js', sourceMap: 'bundle.js.map' })
+  )
+})
+
+test('cli: upload-node multiple mode', async () => {
+  await run(['upload-node', '--api-key', '123', '--directory', 'dist'])
+  expect(node.uploadMultiple).toHaveBeenCalledTimes(1)
+  expect(node.uploadMultiple).toHaveBeenCalledWith(
+    expect.objectContaining({ apiKey: '123', directory: 'dist' })
+  )
+})
+
+test('cli: upload-node single mode missing opts', async () => {
+  await run(['upload-node', '--api-key', '123', '--bundle', 'http://my.url/dist/bundle.js'])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--source-map is required')
+
+  await run(['upload-node', '--api-key', '123'])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('Not enough options supplied')
+
+  await run(['upload-node'])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--api-key is required')
+})
+
+test('cli: upload-node incompatible opts', async () => {
+  await run(['upload-node', '--api-key', '123', '--bundle', 'bundle.js', '--directory', 'dist'])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Incompatible options are set.'))
+})
+
+test('cli: upload-node --quiet', async () => {
+  await run(['upload-node', '--api-key', '123', '--bundle', 'bundle.js', '--source-map', 'bundle.js.map', '--quiet'])
+  expect(node.uploadOne).toHaveBeenCalledTimes(1)
+  expect(logger.level).toBe(LogLevel.Success)
+})
+
+// BROWSER
 
 test('cli: upload-browser --help', async () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
@@ -117,15 +187,7 @@ test('cli: upload-browser --quiet', async () => {
   expect(logger.level).toBe(LogLevel.Success)
 })
 
-test('cli: unrecognised command', async () => {
-  await run(['xyz'])
-  expect(logger.error).toHaveBeenCalledWith('Unrecognized command "xyz".')
-})
-
-test('cli: unrecognised command', async () => {
-  await run(['--opt'])
-  expect(logger.error).toHaveBeenCalledWith('Command expected, nothing provided.')
-})
+// REACT NATIVE
 
 test('cli: upload-react-native --help', async () => {
   const logSpy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
