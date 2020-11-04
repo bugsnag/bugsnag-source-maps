@@ -94,13 +94,18 @@ export async function uploadMultiple ({
   logger.debug(`Searching for source maps "${directory}"`)
   const absoluteSearchPath = path.join(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
-    glob('**/*.map', { ignore: '**/*.css.map', cwd: absoluteSearchPath }, (err, files) => {
+    glob('**/*.map', { ignore: '**/node_modules/**', cwd: absoluteSearchPath }, (err, files) => {
       if (err) return reject(err)
       resolve(files)
     })
   })
 
-  logger.debug(`Found ${sourceMaps.length} source map:`)
+  if (sourceMaps.length === 0) {
+    logger.warn('No source maps found.')
+    return
+  }
+
+  logger.debug(`Found ${sourceMaps.length} source map(s):`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
   if (!appVersion) {
@@ -108,11 +113,6 @@ export async function uploadMultiple ({
   }
 
   let n = 0
-  if (sourceMaps.length === 0) {
-    logger.warn('No source maps found.')
-    return
-  }
-
   for (const sourceMap of sourceMaps) {
     n++
     logger.info(`${n} of ${sourceMaps.length}`)

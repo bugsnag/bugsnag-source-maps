@@ -109,6 +109,11 @@ export async function uploadMultiple ({
     })
   })
 
+  if (sourceMaps.length === 0) {
+    logger.warn('No source maps found.')
+    return
+  }
+
   logger.debug(`Found ${sourceMaps.length} source map:`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
@@ -117,11 +122,6 @@ export async function uploadMultiple ({
   }
 
   let n = 0
-  if (sourceMaps.length === 0) {
-    logger.warn('No source maps found.')
-    return
-  }
-
   for (const sourceMap of sourceMaps) {
     n++
     logger.info(`${n} of ${sourceMaps.length}`)
