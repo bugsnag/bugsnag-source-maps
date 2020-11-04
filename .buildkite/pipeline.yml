@@ -18,6 +18,8 @@ steps:
     key: "run-maze"
     depends_on: "packager"
     timeout_in_minutes: 20
+    env:
+      DEBUG: true
     plugins:
       - artifacts#v1.3.0:
           download: build/bugsnag-source-maps.tgz

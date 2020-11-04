@@ -10,12 +10,9 @@ services:
   maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner:tms-docker-services-cli
     environment:
+      BUILDKITE_JOB_ID:
       VERBOSE:
       DEBUG:
-    networks:
-      default:
-        aliases:
-          - maze-runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./features:/app/features
