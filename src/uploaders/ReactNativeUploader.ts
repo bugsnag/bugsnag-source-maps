@@ -1,12 +1,14 @@
 import path from 'path'
 import { promises as fs } from 'fs'
+import qs from 'querystring'
 
 import File from '../File'
-import request, { PayloadType } from '../Request'
+import request, { fetch, PayloadType } from '../Request'
 import formatErrorLog from './FormatErrorLog'
 import { Logger } from '../Logger'
 import AddSources from '../transformers/AddSources'
 import StripProjectRoot from '../transformers/StripProjectRoot'
+import { NetworkError, NetworkErrorCode } from '../NetworkError'
 import { Platform, PlatformOptions } from '../react-native/Platform'
 import { Version, VersionType } from '../react-native/Version'
 import { SourceMapRetrieval, SourceMapRetrievalType } from '../react-native/SourceMapRetrieval'
@@ -41,7 +43,9 @@ class ReactNativeUploader {
   async uploadOne(options: ReactNativeUploadOptions): Promise<void> {
     const { sourceMap, bundle } = await this.getSourceMapAndBundle(
       options.projectRoot,
-      options.retrieval
+      options.retrieval,
+      options.platformOptions.type,
+      options.dev
     )
 
     this.logger.debug(`Initiating upload "${options.endpoint}"`)
@@ -66,11 +70,46 @@ class ReactNativeUploader {
 
   private async getSourceMapAndBundle(
     projectRoot: string,
-    retrieval: SourceMapRetrieval
+    retrieval: SourceMapRetrieval,
+    platform: Platform,
+    dev: boolean
   ): Promise<SourceMapBundlePair> {
     switch (retrieval.type) {
-      case SourceMapRetrievalType.Fetch:
-        throw new Error('SourceMapRetrievalType.Fetch is not implemented!')
+      case SourceMapRetrievalType.Fetch: {
+        const queryString = qs.stringify({ platform, dev })
+        const entryPoint = retrieval.entryPoint.replace(/\.js$/, '')
+
+        const sourceMapUrl = `${retrieval.url}/${entryPoint}.js.map?${queryString}`
+        const bundleUrl = `${retrieval.url}/${entryPoint}.bundle?${queryString}`
+
+        let sourceMap
+        let bundle
+
+        try {
+          this.logger.debug(`Fetching source map from ${sourceMapUrl}`)
+          sourceMap = await fetch(sourceMapUrl)
+        } catch (e) {
+          this.logger.error(
+            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
+          )
+          throw e
+        }
+
+        try {
+          this.logger.debug(`Fetching bundle from ${bundleUrl}`)
+          bundle = await fetch(bundleUrl)
+        } catch (e) {
+          this.logger.error(
+            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
+          )
+          throw e
+        }
+
+        return {
+          sourceMap: new File(sourceMapUrl, sourceMap),
+          bundle: new File(bundleUrl, bundle),
+        }
+      }
 
       case SourceMapRetrievalType.Provided:
         return {
@@ -197,3 +236,23 @@ class ReactNativeUploader {
 }
 
 export default ReactNativeUploader
+
+function formatFetchError(err: Error, url: string, entryPoint: string): string {
+  if (!(err instanceof NetworkError)) {
+    return `An unexpected error occurred.\n\n`
+  }
+
+  switch (err.code) {
+    case NetworkErrorCode.CONNECTION_REFUSED:
+      return `Unable to connect to ${url}. Is the server running?\n\n`
+
+    case NetworkErrorCode.SERVER_ERROR:
+      return `Recieved an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
+
+    case NetworkErrorCode.TIMEOUT:
+      return `The request timed out.\n\n`
+
+    default:
+      return `An unexpected error occurred.\n\n`
+  }
+}

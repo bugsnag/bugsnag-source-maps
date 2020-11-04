@@ -121,7 +121,23 @@ const reactNativeProvideOpts = [
 ]
 
 const reactNativeFetchOpts = [
-  { name: 'fetch', type: Boolean },
+  {
+    name: 'fetch',
+    type: Boolean,
+    description: 'enable fetch mode {bold required}',
+  },
+  {
+    name: 'bundler-url',
+    type: String,
+    description: 'the URL of the React Native bundle server',
+    typeLabel: '{underline url}',
+  },
+  {
+    name: 'bundler-entry-point',
+    type: String,
+    description: 'the entry point of your React Native app',
+    typeLabel: '{underline file}',
+  },
 ]
 
 function validateReactNativeOpts (opts: Record<string, unknown>): ReactNativeUploadOptions {
@@ -244,7 +260,23 @@ function marshallPlatformOptions(platform: Platform, version: Version, opts: Rec
 
 function marshallRetrieval(opts: Record<string, unknown>): SourceMapRetrieval {
   if (opts.fetch) {
-    return { type: SourceMapRetrievalType.Fetch }
+    let url = 'http://localhost:8081'
+
+    if (opts.bundlerUrl && typeof opts.bundlerUrl === 'string') {
+      url = opts.bundlerUrl
+    }
+
+    let entryPoint = 'index.js'
+
+    if (opts.bundlerEntryPoint && typeof opts.bundlerEntryPoint === 'string') {
+      entryPoint = opts.bundlerEntryPoint
+    }
+
+    return {
+      type: SourceMapRetrievalType.Fetch,
+      url,
+      entryPoint,
+    }
   }
 
   if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {

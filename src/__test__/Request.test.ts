@@ -1,5 +1,5 @@
-import request, { PayloadType, send, isRetryable } from '../Request'
-import { UploadErrorCode } from '../UploadError'
+import request, { PayloadType, send, isRetryable, fetch } from '../Request'
+import { NetworkErrorCode } from '../NetworkError'
 import http from 'http'
 import { AddressInfo } from 'net'
 import multiparty from 'multiparty'
@@ -176,7 +176,7 @@ test('request: send() unsuccessful upload (invalid, no retry)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(UploadErrorCode.MISC_BAD_REQUEST)
+    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
   }
 })
 
@@ -200,7 +200,7 @@ test('request: send() unsuccessful upload (invalid, empty file)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(UploadErrorCode.EMPTY_FILE)
+    expect(e.code).toBe(NetworkErrorCode.EMPTY_FILE)
   }
 })
 
@@ -224,7 +224,7 @@ test('request: send() unsuccessful upload (misc 40x code)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(UploadErrorCode.MISC_BAD_REQUEST)
+    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
   }
 })
 
@@ -248,7 +248,7 @@ test('request: send() unsuccessful upload (unauthed, no retry)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(UploadErrorCode.INVALID_API_KEY)
+    expect(e.code).toBe(NetworkErrorCode.INVALID_API_KEY)
   }
 })
 
@@ -272,7 +272,7 @@ test('request: send() unsuccessful upload (retryable status)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(UploadErrorCode.SERVER_ERROR)
+    expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
     expect(e.responseText).toBe('server error')
   }
 })
@@ -296,7 +296,7 @@ test('request: send() unsuccessful upload (timeout)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(UploadErrorCode.TIMEOUT)
+    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
   }
 })
 
@@ -320,7 +320,7 @@ test('request: send() unsuccessful upload (duplicate)', async () => {
     }, {})
   } catch (e) {
     expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(UploadErrorCode.DUPLICATE)
+    expect(e.code).toBe(NetworkErrorCode.DUPLICATE)
   }
 })
 
@@ -345,7 +345,7 @@ test('request: request() multiple attempts at retryable errors', async () => {
     }, {})
   } catch (e) {
     expect(requestsReceived).toBe(5)
-    expect(e.code).toBe(UploadErrorCode.TIMEOUT)
+    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
   }
 })
 
@@ -404,4 +404,68 @@ test('request: request() throws when given a Node payload', async () => {
       apiKey: '123'
     }, {})
   }).rejects.toThrow()
+})
+
+test('request: fetch() successful request', async () => {
+  server = http.createServer((req, res) => { res.end('OK') })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+
+  const port = (server.address() as AddressInfo).port
+  const response = await fetch(`http://localhost:${port}`)
+
+  expect(response).toBe('OK')
+})
+
+test('request: fetch() unsuccessful (bad request)', async () => {
+  server = http.createServer((req, res) => {
+    res.statusCode = 400
+    res.end('invalid')
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(false)
+    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+  }
+})
+
+test('request: fetch() unsuccessful (server error)', async () => {
+  server = http.createServer((req, res) => {
+    res.statusCode = 500
+    res.end('invalid')
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(true)
+    expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
+  }
+})
+
+test('request: fetch() unsuccessful (timeout)', async () => {
+  server = http.createServer(async () => {
+    // intentionally hang
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+  const port = (server.address() as AddressInfo).port
+
+  try {
+    const response = await fetch(`http://localhost:${port}`)
+    expect(response).toBe('abc')
+  } catch (e) {
+    expect(e.isRetryable).toBe(true)
+    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+  }
 })

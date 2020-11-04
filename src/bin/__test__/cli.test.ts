@@ -359,6 +359,74 @@ test('cli: upload-react-native success with "fetch" mode', async () => {
     projectRoot: process.cwd(),
     retrieval: {
       type: SourceMapRetrievalType.Fetch,
+      url: 'http://localhost:8081',
+      entryPoint: 'index.js',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.0.2',
+    }
+  })
+
+  expect(process.exitCode).toBe(0)
+})
+
+test('cli: upload-react-native success with "fetch" mode and custom URL', async () => {
+  await run([
+    'upload-react-native',
+    '--api-key', '1234',
+    '--platform', 'ios',
+    '--app-version', '1.0.2',
+    '--fetch',
+    '--bundler-url', 'http://example.com:1100/rn-bundler'
+  ])
+
+  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+    apiKey: '1234',
+    dev: false,
+    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
+    overwrite: false,
+    platformOptions: {
+      type: Platform.Ios,
+    },
+    projectRoot: process.cwd(),
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://example.com:1100/rn-bundler',
+      entryPoint: 'index.js',
+    },
+    version: {
+      type: VersionType.AppVersion,
+      appVersion: '1.0.2',
+    }
+  })
+
+  expect(process.exitCode).toBe(0)
+})
+
+test('cli: upload-react-native success with "fetch" mode and custom entry point', async () => {
+  await run([
+    'upload-react-native',
+    '--api-key', '1234',
+    '--platform', 'ios',
+    '--app-version', '1.0.2',
+    '--fetch',
+    '--bundler-entry-point', 'cool-app.js'
+  ])
+
+  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+    apiKey: '1234',
+    dev: false,
+    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
+    overwrite: false,
+    platformOptions: {
+      type: Platform.Ios,
+    },
+    projectRoot: process.cwd(),
+    retrieval: {
+      type: SourceMapRetrievalType.Fetch,
+      url: 'http://localhost:8081',
+      entryPoint: 'cool-app.js',
     },
     version: {
       type: VersionType.AppVersion,
