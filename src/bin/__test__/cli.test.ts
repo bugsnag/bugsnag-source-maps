@@ -93,9 +93,13 @@ test('cli: upload-node single mode missing opts', async () => {
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('--source-map is required')
 
+  process.exitCode = undefined
+
   await run(['upload-node', '--api-key', '123'])
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('Not enough options supplied')
+
+  process.exitCode = undefined
 
   await run(['upload-node'])
   expect(process.exitCode).toBe(1)
@@ -147,28 +151,31 @@ test('cli: upload-browser single mode missing opts', async () => {
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('--source-map is required')
 
+  process.exitCode = undefined
+
   await run(['upload-browser', '--api-key', '123', '--source-map', 'bundle.js.map'])
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('--bundle-url is required')
 
+  process.exitCode = undefined
+
   await run(['upload-browser', '--api-key', '123'])
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('Not enough options supplied')
+
+  process.exitCode = undefined
 
   await run(['upload-browser'])
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('--api-key is required')
 })
 
-test('cli: upload-browser multiple mode', async () => {
-  await run(['upload-browser', '--api-key', '123', '--base-url', 'http://my.url/dist', '--directory', 'dist'])
-  // TODO
-})
-
 test('cli: upload-browser multiple mode missing opts', async () => {
   await run(['upload-browser', '--api-key', '123', '--directory', 'dist'])
   expect(process.exitCode).toBe(1)
   expect(logger.error).toHaveBeenCalledWith('--base-url is required')
+
+  process.exitCode = undefined
 
   await run(['upload-browser', '--api-key', '123', '--base-url', 'http://my.url/dist'])
   expect(process.exitCode).toBe(1)
