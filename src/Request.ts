@@ -208,7 +208,7 @@ function addErrorHandler(req: http.ClientRequest, reject: (reason: NetworkError)
     const err = new NetworkError('Unknown connection error')
     err.cause = e
 
-    const failureReason = (e as any).code
+    const failureReason = (e as NodeJS.ErrnoException).code
 
     if (failureReason === 'ECONNREFUSED') {
       err.code = NetworkErrorCode.CONNECTION_REFUSED
