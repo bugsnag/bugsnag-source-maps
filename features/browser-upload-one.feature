@@ -76,21 +76,17 @@ Feature: Browser source map upload one
       """
     And I wait to receive 2 requests
     Then the exit code is successful
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
+    And the Content-Type header is valid multipart form-data for all requests
+    And the payload field "apiKey" equals "123" for all requests
+    And the payload field "appVersion" equals "2.0.0" for all requests
+    And the payload field "overwrite" is null for all requests
     And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
     And I discard the oldest request
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
     And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
 
   Scenario: A request will be retried up to 5 times on a server failure (500 status code)
     When I set the HTTP status code to 500
@@ -108,43 +104,13 @@ Feature: Browser source map upload one
     Then the exit code is not successful
     And the shell has output "A server side error occurred while processing the upload." to stdout
     And the shell has output "HTTP status 500 received from upload API" to stdout
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
-    And I discard the oldest request
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
-    And I discard the oldest request
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
-    And the payload field "apiKey" equals "123"
-    And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And the Content-Type header is valid multipart form-data
+    And the Content-Type header is valid multipart form-data for all requests
+    And the payload field "apiKey" equals "123" for all requests
+    And the payload field "appVersion" equals "2.0.0" for all requests
+    And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js" for all requests
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack" for all requests
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack" for all requests
 
   Scenario: A request will not be retried if the API key is invalid (401 status code)
     When I set the HTTP status code for the next request to 401

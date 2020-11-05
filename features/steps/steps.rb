@@ -5,6 +5,15 @@ Then("the Content-Type header is valid multipart form-data") do
   assert_match(expected, actual)
 end
 
+Then("the Content-Type header is valid multipart form-data for all requests") do
+  Server.stored_requests.each do |request|
+    expected = /^multipart\/form-data; boundary=--------------------------\d+$/
+    actual = request[:request]["content-type"]
+
+    assert_match(expected, actual)
+  end
+end
+
 def read_expected_file(fixture, file_name)
   path = "#{__dir__}/../expected/#{fixture}/#{file_name}"
 
@@ -13,8 +22,8 @@ def read_expected_file(fixture, file_name)
   File.read(path)
 end
 
-def get_form_data_as_string(field)
-  form_data = read_key_path(Server.current_request[:body], field)
+def get_form_data_as_string(field, request = Server.current_request)
+  form_data = read_key_path(request[:body], field)
 
   assert_instance_of(
     WEBrick::HTTPUtils::FormData,
@@ -57,7 +66,7 @@ Then("the payload field {string} matches the minified file {string} for {string}
   expected = read_expected_file(fixture, file_name).chomp
   actual = get_form_data_as_string(field)
 
-  assert_payload_fields_match(field, expected, actual)
+  assert_equal(expected, actual)
 end
 
 Then("the exit code is successful") do
@@ -85,4 +94,57 @@ Then('the shell has output {string} to stdout') do |expected_line|
       #{Docker.output.join("")}
     TEXT
   )
+end
+
+Then("the payload field {string} equals {string} for all requests") do |field, expected|
+  Server.stored_requests.each_with_index do |request, index|
+    actual = read_key_path(request[:body], field)
+
+    assert_equal(
+      expected,
+      actual,
+      "Request ##{index + 1} had an unexpected value for '#{field}'. Expected '#{expected}' but got '#{actual}'"
+    )
+  end
+end
+
+Then("the payload field {string} is null for all requests") do |field|
+  Server.stored_requests.each_with_index do |request, index|
+    actual = read_key_path(request[:body], field)
+
+    assert_nil(
+      actual,
+      "Request ##{index + 1} had an unexpected value for '#{field}'. Expected null but got '#{actual}'"
+    )
+  end
+end
+
+Then("the payload field {string} matches the expected source map for {string} for all requests") do |field, fixture|
+  steps %Q{
+    Then the payload field "#{field}" matches the source map "source-map.json" for "#{fixture}" for all requests
+  }
+end
+
+Then("the payload field {string} matches the expected minified file for {string} for all requests") do |field, fixture|
+  steps %Q{
+    Then the payload field "#{field}" matches the minified file "minified-file.js" for "#{fixture}" for all requests
+  }
+end
+
+Then("the payload field {string} matches the source map {string} for {string} for all requests") do |field, file_name, fixture|
+  Server.stored_requests.each do |request|
+    expected = JSON.parse(read_expected_file(fixture, file_name))
+    actual = JSON.parse(get_form_data_as_string(field, request))
+
+    assert_payload_fields_match(field, expected, actual)
+  end
+end
+
+Then("the payload field {string} matches the minified file {string} for {string} for all requests") do |field, file_name, fixture|
+  Server.stored_requests.each do |request|
+    expected = read_expected_file(fixture, file_name).chomp
+    actual = get_form_data_as_string(field, request)
+
+    assert_equal(expected, actual)
+  end
 end
