@@ -1,5 +1,5 @@
 Feature: Browser source map upload one
-  Scenario: Basic success case
+  Scenario: Basic success case (webpack)
     When I run the service "single-source-map-webpack" with the command
       """
       bugsnag-source-maps upload-browser
@@ -17,6 +17,27 @@ Feature: Browser source map upload one
     And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
+    And the Content-Type header is valid multipart form-data
+    And the exit code is successful
+
+  Scenario: Basic success case (typescript)
+    When I run the service "single-source-map-typescript" with the command
+      """
+      bugsnag-source-maps upload-browser
+        --api-key 123
+        --app-version 2.0.0
+        --source-map dist/out.js.map
+        --bundle dist/out.js
+        --bundle-url "http://myapp.url/static/js/out.js"
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 1 request
+    Then the payload field "apiKey" equals "123"
+    And the payload field "appVersion" equals "2.0.0"
+    And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/out.js"
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-typescript"
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-typescript"
     And the Content-Type header is valid multipart form-data
     And the exit code is successful
 
