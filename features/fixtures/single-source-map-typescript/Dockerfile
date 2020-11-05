@@ -1,0 +1,13 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY build/bugsnag-source-maps.tgz build/bugsnag-source-maps.tgz
+COPY src/ src/
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
+
+RUN npm ci
+RUN npm install -g ./build/bugsnag-source-maps.tgz
+RUN npm run build
