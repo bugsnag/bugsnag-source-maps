@@ -25,12 +25,13 @@ Before do
   # don't run commands themselves. In which case, why would they care about the
   # last exit code??
   module RecordExitCode
+    attr_reader :output
     attr_reader :last_exit_code
 
     def run_docker_compose_command(...)
       raise "You can't use RecordExitCode without a super class!" unless defined?(super)
 
-      _output, @last_exit_code = super(...)
+      @output, @last_exit_code = super(...)
     end
   end
 

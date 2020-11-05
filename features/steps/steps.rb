@@ -75,3 +75,14 @@ Then("the exit code is not successful") do
     "Expected the last command to exit unsuccessfully, but it exited with code 0"
   )
 end
+
+Then('the shell has output {string} to stdout') do |expected_line|
+  assert(
+    Docker.output.any? { |line| line.include?(expected_line) },
+    <<~TEXT
+      No line of output included '#{expected_line}'.
+      Full output:
+      #{Docker.output.join("")}
+    TEXT
+  )
+end

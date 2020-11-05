@@ -165,6 +165,8 @@ Feature: Browser source map upload multiple
       """
     And I wait to receive 5 requests
     Then the exit code is not successful
+    And the shell has output "A server side error occurred while processing the upload." to stdout
+    And the shell has output "HTTP status 500 received from upload API" to stdout
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
@@ -218,6 +220,8 @@ Feature: Browser source map upload multiple
       """
     And I wait to receive 1 request
     Then the exit code is not successful
+    And the shell has output "The provided API key was invalid." to stdout
+    And the shell has output "HTTP status 401 received from upload API" to stdout
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
@@ -239,6 +243,8 @@ Feature: Browser source map upload multiple
       """
     And I wait to receive 1 request
     Then the exit code is not successful
+    And the shell has output "A source map matching the same criteria has already been uploaded. If you want to replace it, use the \"overwrite\" flag." to stdout
+    And the shell has output "HTTP status 409 received from upload API" to stdout
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
@@ -260,6 +266,8 @@ Feature: Browser source map upload multiple
       """
     And I wait to receive 1 request
     Then the exit code is not successful
+    And the shell has output "The uploaded source map was empty." to stdout
+    And the shell has output "HTTP status 422 received from upload API" to stdout
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
@@ -281,6 +289,8 @@ Feature: Browser source map upload multiple
       """
     And I wait to receive 1 request
     Then the exit code is not successful
+    And the shell has output "The request was rejected by the server as invalid." to stdout
+    And the shell has output "HTTP status 400 received from upload API" to stdout
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
@@ -288,4 +298,3 @@ Feature: Browser source map upload multiple
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     And the Content-Type header is valid multipart form-data
-
