@@ -5,4 +5,5 @@ dist
 # don't lint nyc coverage output
 coverage
 
-**/fixtures/**/*/*.js
+fixtures
+features

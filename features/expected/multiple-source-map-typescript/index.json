@@ -1,0 +1,13 @@
+{
+    "version": 3,
+    "file": "index.js",
+    "sourceRoot": "",
+    "sources": [
+        "src/index.ts"
+    ],
+    "names": [],
+    "mappings": ";AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA",
+    "sourcesContent": [
+        "console.log('hi from index')\n"
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "sources": [
+        "dist/webpack:/multiple-source-map-webpack/src/index.js"
+    ],
+    "names": [
+        "console",
+        "log"
+    ],
+    "mappings": "2HAAAA,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ",
+    "file": "main-d89fcf10.js",
+    "sourcesContent": [
+        "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
+    ],
+    "sourceRoot": ""
+}

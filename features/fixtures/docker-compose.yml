@@ -6,6 +6,24 @@ services:
     environment:
       - BUGSNAG_API_KEY
 
+  multiple-source-map-webpack:
+    build:
+      context: multiple-source-map-webpack
+    environment:
+      - BUGSNAG_API_KEY
+
+  single-source-map-typescript:
+    build:
+      context: single-source-map-typescript
+    environment:
+      - BUGSNAG_API_KEY
+
+  multiple-source-map-typescript:
+    build:
+      context: multiple-source-map-typescript
+    environment:
+      - BUGSNAG_API_KEY
+
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}

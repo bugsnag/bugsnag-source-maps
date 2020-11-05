@@ -4,8 +4,9 @@ WORKDIR /app
 
 COPY build/bugsnag-source-maps.tgz build/bugsnag-source-maps.tgz
 COPY src/ src/
-COPY package.json package-lock.json ./
-COPY webpack.config.js ./
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
 
 RUN npm ci
 RUN npm install -g ./build/bugsnag-source-maps.tgz

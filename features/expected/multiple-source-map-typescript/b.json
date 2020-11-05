@@ -1,0 +1,13 @@
+{
+    "version": 3,
+    "file": "b.js",
+    "sourceRoot": "",
+    "sources": [
+        "src/lib/b.ts"
+    ],
+    "names": [],
+    "mappings": "AAAA,gBAAe,cAAc,OAAO,CAAC,GAAG,CAAC,YAAY,CAAC,CAAA,CAAC,CAAC,EAAA",
+    "sourcesContent": [
+        "export default (): void => { console.log('hey from b') }\n"
+    ]
+}
