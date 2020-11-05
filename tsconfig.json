@@ -10,5 +10,8 @@
     "esModuleInterop": true,
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": [
+    "features"
+  ]
 }
