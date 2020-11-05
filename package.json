@@ -6,6 +6,9 @@
   "bin": {
     "bugsnag-source-maps": "bin/cli"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rm -fr dist",
     "build": "npm run clean && tsc -p tsconfig.build.json",
