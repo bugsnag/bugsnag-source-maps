@@ -397,13 +397,48 @@ test('request: request() React Native payload, multiple attempts, eventually suc
   expect(requestsReceived).toBe(4)
 })
 
-test('request: request() throws when given a Node payload', async () => {
-  expect(async () => {
-    await request(`http://localhost`, {
-      type: PayloadType.Node,
-      apiKey: '123'
-    }, {})
-  }).rejects.toThrow()
+test('request: send() successful Node upload', async () => {
+  const received: {
+    fields: Record<string, string[]>
+    files: Record<string, multiparty.File[]>
+  }[] = []
+  server = http.createServer(async (req, res) => {
+    await new Promise((resolve) => {
+      const form = new multiparty.Form()
+      form.parse(req, function(err, fields, files) {
+        received.push({ fields, files })
+        res.end('OK')
+        resolve()
+      });
+    })
+  })
+
+  await new Promise((resolve) => server.listen(() => resolve()))
+
+  const port = (server.address() as AddressInfo).port
+
+  await send(`http://localhost:${port}`, {
+    type: PayloadType.Node,
+    apiKey: '123',
+    appVersion: '1.2.3',
+    sourceMap: new File('dist/app.js.map', '{}'),
+    minifiedFile: new File('dist/app.js', 'console.log("hello")'),
+    minifiedUrl: 'dist/app.js'
+  }, {})
+
+  expect(received.length).toBe(1)
+
+  expect(received[0].fields).toEqual({
+    apiKey: ['123'],
+    appVersion: ['1.2.3'],
+    minifiedUrl: ['dist/app.js']
+  })
+
+  expect(received[0].files.sourceMap[0].originalFilename).toBe('dist/app.js.map')
+  expect(received[0].files.sourceMap[0].headers['content-type']).toBe('application/json')
+
+  expect(received[0].files.minifiedFile[0].originalFilename).toBe('dist/app.js')
+  expect(received[0].files.minifiedFile[0].headers['content-type']).toBe('application/javascript')
 })
 
 test('request: fetch() successful request', async () => {

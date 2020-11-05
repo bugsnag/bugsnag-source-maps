@@ -14,8 +14,7 @@ import stringifyFileAccessError from './lib/StringifyFileAccessError'
 interface UploadSingleOpts {
   apiKey: string
   sourceMap: string
-  bundleUrl: string
-  bundle?: string
+  bundle: string
   appVersion?: string
   overwrite?: boolean
   projectRoot?: string
@@ -26,7 +25,6 @@ interface UploadSingleOpts {
 
 export async function uploadOne ({
   apiKey,
-  bundleUrl,
   bundle,
   sourceMap,
   appVersion,
@@ -36,15 +34,10 @@ export async function uploadOne ({
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading browser source map for "${bundleUrl}"`)
+  logger.info(`Uploading node source map for "${bundle}"`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
-
-  let bundleContent
-  let fullBundlePath
-  if (bundle) {
-    [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
-  }
+  const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
 
   const sourceMapJson = parseSourceMap(sourceMapContent, sourceMap, logger)
   const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
@@ -57,11 +50,11 @@ export async function uploadOne ({
   const start = new Date().getTime()
   try {
     await request(endpoint, {
-      type: PayloadType.Browser,
+      type: PayloadType.Node,
       apiKey,
       appVersion,
-      minifiedUrl: bundleUrl,
-      minifiedFile: (bundleContent && fullBundlePath) ? { filepath: fullBundlePath, data: bundleContent } : undefined,
+      minifiedUrl: bundle,
+      minifiedFile: { filepath: fullBundlePath, data: bundleContent },
       sourceMap: { filepath: fullSourceMapPath, data: JSON.stringify(transformedSourceMap) },
       overwrite: overwrite
     }, requestOpts)
@@ -78,7 +71,6 @@ export async function uploadOne ({
 
 interface UploadMultipleOpts {
   apiKey: string
-  baseUrl: string
   directory: string
   appVersion?: string
   overwrite?: boolean
@@ -90,7 +82,6 @@ interface UploadMultipleOpts {
 
 export async function uploadMultiple ({
   apiKey,
-  baseUrl,
   directory,
   appVersion,
   overwrite = false,
@@ -99,11 +90,11 @@ export async function uploadMultiple ({
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
-  logger.info(`Uploading browser source maps for "${baseUrl}"`)
+  logger.info(`Uploading node source maps for "${directory}"`)
   logger.debug(`Searching for source maps "${directory}"`)
   const absoluteSearchPath = path.join(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
-    glob('**/*.map', { ignore: '**/*.css.map', cwd: absoluteSearchPath }, (err, files) => {
+    glob('**/*.map', { ignore: '**/node_modules/**', cwd: absoluteSearchPath }, (err, files) => {
       if (err) return reject(err)
       resolve(files)
     })
@@ -114,7 +105,7 @@ export async function uploadMultiple ({
     return
   }
 
-  logger.debug(`Found ${sourceMaps.length} source map:`)
+  logger.debug(`Found ${sourceMaps.length} source map(s):`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
   if (!appVersion) {
@@ -134,7 +125,7 @@ export async function uploadMultiple ({
     try {
       [ bundleContent, fullBundlePath ] = await readBundleContent(bundlePath, absoluteSearchPath, sourceMap, logger)
     } catch (e) {
-      // bundle file is optional – ignore and carry on with the error logged out
+      // ignore error – it's already logged out
     }
 
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
@@ -143,10 +134,10 @@ export async function uploadMultiple ({
     const start = new Date().getTime()
     try {
       await request(endpoint, {
-        type: PayloadType.Browser,
+        type: PayloadType.Node,
         apiKey,
         appVersion,
-        minifiedUrl: `${baseUrl.replace(/\/$/, '')}/${bundlePath}`,
+        minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)),
         minifiedFile: (bundleContent && fullBundlePath) ? { filepath: fullBundlePath, data: bundleContent } : undefined,
         sourceMap: { filepath: fullSourceMapPath, data: JSON.stringify(transformedSourceMap) },
         overwrite: overwrite

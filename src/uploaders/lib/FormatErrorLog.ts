@@ -1,4 +1,4 @@
-import { NetworkErrorCode, NetworkError } from '../NetworkError'
+import { NetworkErrorCode, NetworkError } from '../../NetworkError'
 
 function formatErrorLog (e: NetworkError): string {
   let str = ''
