@@ -1,5 +1,5 @@
 Feature: Browser source map upload multiple
-  Scenario: Basic success case
+  Scenario: Basic success case (webpack)
     When I run the service "multiple-source-map-webpack" with the command
       """
       bugsnag-source-maps upload-browser
@@ -26,6 +26,34 @@ Feature: Browser source map upload multiple
     And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main-d89fcf10.js"
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
+
+  Scenario: Basic success case (typescript)
+    When I run the service "multiple-source-map-typescript" with the command
+      """
+      bugsnag-source-maps upload-browser
+        --api-key 123
+        --app-version 2.0.0
+        --directory dist
+        --base-url "http://mytypescriptapp.url/js/"
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 3 requests
+    Then the exit code is successful
+    And the Content-Type header is valid multipart form-data for all requests
+    And the payload field "apiKey" equals "123" for all requests
+    And the payload field "appVersion" equals "2.0.0" for all requests
+    And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "http://mytypescriptapp.url/js/index.js"
+    And the payload field "sourceMap" matches the source map "index.json" for "multiple-source-map-typescript"
+    And the payload field "minifiedFile" matches the minified file "index.js" for "multiple-source-map-typescript"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "http://mytypescriptapp.url/js/lib/a.js"
+    And the payload field "sourceMap" matches the source map "a.json" for "multiple-source-map-typescript"
+    And the payload field "minifiedFile" matches the minified file "a.js" for "multiple-source-map-typescript"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "http://mytypescriptapp.url/js/lib/b.js"
+    And the payload field "sourceMap" matches the source map "b.json" for "multiple-source-map-typescript"
+    And the payload field "minifiedFile" matches the minified file "b.js" for "multiple-source-map-typescript"
 
   Scenario: Auto detecting app version
     When I run the service "multiple-source-map-webpack" with the command
