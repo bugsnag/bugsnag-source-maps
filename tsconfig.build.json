@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "exclude": [
-    "__test__",
+    "**/__test__/**",
     "features"
   ]
 }
