@@ -18,6 +18,25 @@ Feature: Node source map upload one
     And the Content-Type header is valid multipart form-data
     And the exit code is successful
 
+  Scenario: Basic success case (babel)
+    When I run the service "single-source-map-babel-node" with the command
+      """
+      bugsnag-source-maps upload-node
+        --api-key 123
+        --app-version 2.0.0
+        --source-map dist/compiled.js.map
+        --bundle dist/compiled.js
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 1 request
+    Then the payload field "apiKey" equals "123"
+    And the payload field "appVersion" equals "2.0.0"
+    And the payload field "overwrite" is null
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-babel-node"
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-babel-node"
+    And the Content-Type header is valid multipart form-data
+    And the exit code is successful
+
   Scenario: Basic success case (typescript)
     When I run the service "single-source-map-typescript" with the command
       """

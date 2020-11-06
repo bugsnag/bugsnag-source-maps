@@ -1,0 +1,17 @@
+{
+    "version": 3,
+    "sources": [
+        "src/lib/b.js"
+    ],
+    "names": [
+        "B",
+        "hey",
+        "console",
+        "log"
+    ],
+    "mappings": ";;;;;;;AAAe,MAAMA,CAAN,CAAQ;AACrBC,EAAAA,GAAG,GAAG;AACJC,IAAAA,OAAO,CAACC,GAAR,CAAY,KAAZ;AACD;;AAHoB",
+    "sourcesContent": [
+        "export default class B {\n  hey() {\n    console.log('hey')\n  }\n}\n"
+    ],
+    "file": "b.js"
+}
