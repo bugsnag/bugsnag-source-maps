@@ -17,6 +17,7 @@ interface UploadSingleOpts {
   bundleUrl: string
   bundle?: string
   appVersion?: string
+  codeBundleId?: string
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -30,6 +31,7 @@ export async function uploadOne ({
   bundle,
   sourceMap,
   appVersion,
+  codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = 'https://upload.bugsnag.com/',
@@ -59,7 +61,8 @@ export async function uploadOne ({
     await request(endpoint, {
       type: PayloadType.Browser,
       apiKey,
-      appVersion,
+      appVersion: codeBundleId ? undefined : appVersion,
+      codeBundleId,
       minifiedUrl: bundleUrl,
       minifiedFile: (bundleContent && fullBundlePath) ? { filepath: fullBundlePath, data: bundleContent } : undefined,
       sourceMap: { filepath: fullSourceMapPath, data: JSON.stringify(transformedSourceMap) },
