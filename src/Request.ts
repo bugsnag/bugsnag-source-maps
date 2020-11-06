@@ -16,6 +16,7 @@ interface JsPayload {
   type: PayloadType.Node | PayloadType.Browser
   apiKey: string
   appVersion?: string
+  codeBundleId?: string
   minifiedUrl: string
   sourceMap: File
   minifiedFile?: File
@@ -73,6 +74,7 @@ function createFormData (payload: Payload): FormData {
 
 function appendJsFormData(formData: FormData, payload: BrowserPayload | NodePayload): FormData {
   if (payload.appVersion) formData.append('appVersion', payload.appVersion)
+  if (payload.codeBundleId) formData.append('codeBundleId', payload.codeBundleId)
   formData.append('minifiedUrl', payload.minifiedUrl)
   formData.append('sourceMap', payload.sourceMap.data, { filepath: payload.sourceMap.filepath})
   if (payload.minifiedFile) formData.append('minifiedFile', payload.minifiedFile.data, { filepath: payload.minifiedFile.filepath})
