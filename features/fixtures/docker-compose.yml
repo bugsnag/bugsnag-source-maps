@@ -36,6 +36,38 @@ services:
       context: source-map-babel
       dockerfile: Dockerfile.browser-multiple
 
+  single-source-map-react-native-0-60-ios:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-ios
+
+  single-source-map-react-native-0-60-android:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-android
+
+  single-source-map-react-native-0-60-ios-dev:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-ios-dev
+
+  single-source-map-react-native-0-60-android-dev:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-android-dev
+
+  # rn0_61:
+  #   build:
+  #     context: rn0_61
+
+  # rn0_62:
+  #   build:
+  #     context: rn0_62
+
+  # rn0_63:
+  #   build:
+  #     context: rn0_63
+
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}
