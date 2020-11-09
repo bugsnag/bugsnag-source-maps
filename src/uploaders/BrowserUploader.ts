@@ -1,15 +1,15 @@
-import { promises as fs } from 'fs'
 import path from 'path'
 import http from 'http'
-import readPkgUp from 'read-pkg-up'
 import glob from 'glob'
 
 import { Logger, noopLogger } from '../Logger'
 import request, { PayloadType } from '../Request'
-import AddSources from '../transformers/AddSources'
-import StripProjectRoot from '../transformers/StripProjectRoot'
 import formatErrorLog from './lib/FormatErrorLog'
-import stringifyFileAccessError from './lib/StringifyFileAccessError'
+import applyTransformations from './lib/ApplyTransformations'
+import readBundleContent from './lib/ReadBundleContent'
+import readSourceMap from './lib/ReadSourceMap'
+import parseSourceMap from './lib/ParseSourceMap'
+import detectAppVersion from './lib/DetectAppVersion'
 
 interface UploadSingleOpts {
   apiKey: string
@@ -163,55 +163,5 @@ export async function uploadMultiple ({
       }
       throw e
     }
-  }
-}
-
-async function detectAppVersion (projectRoot: string, logger: Logger): Promise<string | undefined> {
-  const pkg = await readPkgUp({ cwd: projectRoot })
-  const version = pkg?.packageJson.version
-  if (version) logger.debug(`Detected appVersion "${version}"`)
-  return version ? version : undefined
-}
-
-async function applyTransformations(fullSourceMapPath: string, sourceMapJson: unknown, projectRoot: string, logger: Logger): Promise<unknown> {
-  logger.info('Applying transformations to source map')
-  try {
-    return await Promise.resolve(sourceMapJson)
-      .then(json => AddSources(fullSourceMapPath, json, projectRoot, logger))
-      .then(json => StripProjectRoot(fullSourceMapPath, json, projectRoot, logger))
-  } catch (e) {
-    logger.error('Error applying transforms to source map', e)
-    throw e
-  }
-}
-
-async function readSourceMap (sourceMapPath: string, basePath: string, logger: Logger): Promise<[string, string]> {
-  logger.debug(`Reading source map "${sourceMapPath}"`)
-  const fullSourceMapPath = path.resolve(basePath, sourceMapPath)
-  try {
-    return [ await fs.readFile(fullSourceMapPath, 'utf-8'), fullSourceMapPath ]
-  } catch (e) {
-    logger.error(`The source map "${sourceMapPath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullSourceMapPath}"`)
-    throw e
-  }
-}
-
-function parseSourceMap (sourceMapContent: string, sourceMapPath: string, logger: Logger) {
-  try {
-    return JSON.parse(sourceMapContent)
-  } catch (e) {
-    logger.error(`The source map was not valid JSON.\n\n  "${sourceMapPath}"`)
-    throw e
-  }
-}
-
-async function readBundleContent (bundlePath: string, basePath: string, sourceMapName: string, logger: Logger): Promise<[string, string]> {
-  const fullBundlePath = path.resolve(basePath, bundlePath)
-  logger.debug(`Reading bundle file "${bundlePath}"`)
-  try {
-    return [ await fs.readFile(fullBundlePath, 'utf-8'), fullBundlePath ]
-  } catch (e) {
-    logger.error(`The bundle "${bundlePath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullBundlePath}"`)
-    throw e
   }
 }
