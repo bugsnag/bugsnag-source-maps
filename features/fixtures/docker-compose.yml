@@ -96,25 +96,25 @@ services:
       context: rn0_62
       dockerfile: Dockerfile.single-source-map-android-dev
 
-  # single-source-map-react-native-0-63-ios:
-  #   build:
-  #     context: rn0_63
-  #     dockerfile: Dockerfile.single-source-map-ios
+  single-source-map-react-native-0-63-ios:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-ios
 
-  # single-source-map-react-native-0-63-android:
-  #   build:
-  #     context: rn0_63
-  #     dockerfile: Dockerfile.single-source-map-android
+  single-source-map-react-native-0-63-android:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-android
 
-  # single-source-map-react-native-0-63-ios-dev:
-  #   build:
-  #     context: rn0_63
-  #     dockerfile: Dockerfile.single-source-map-ios-dev
+  single-source-map-react-native-0-63-ios-dev:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-ios-dev
 
-  # single-source-map-react-native-0-63-android-dev:
-  #   build:
-  #     context: rn0_63
-  #     dockerfile: Dockerfile.single-source-map-android-dev
+  single-source-map-react-native-0-63-android-dev:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-android-dev
 
 networks:
   default:
