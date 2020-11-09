@@ -49,3 +49,15 @@ steps:
           use-aliases: true
           run: maze-runner
           command: ["features/react-native-upload-one.feature"]
+
+  - label: 'Run Maze Runner tests (react native fetch)'
+    key: "run-maze-react-native-fetch"
+    depends_on: "packager"
+    timeout_in_minutes: 20
+    plugins:
+      - artifacts#v1.3.0:
+          download: build/bugsnag-source-maps.tgz
+      - docker-compose#v3.7.0:
+          use-aliases: true
+          run: maze-runner
+          command: ["features/react-native-fetch.feature"]
