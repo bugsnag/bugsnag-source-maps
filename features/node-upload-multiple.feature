@@ -14,12 +14,15 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
     And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
@@ -38,12 +41,15 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/index.js"
     And the payload field "sourceMap" matches the source map "index.json" for "multiple-source-map-babel-node"
     And the payload field "minifiedFile" matches the minified file "index.js" for "multiple-source-map-babel-node"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/lib/a.js"
     And the payload field "sourceMap" matches the source map "a.json" for "multiple-source-map-babel-node"
     And the payload field "minifiedFile" matches the minified file "a.js" for "multiple-source-map-babel-node"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/lib/b.js"
     And the payload field "sourceMap" matches the source map "b.json" for "multiple-source-map-babel-node"
     And the payload field "minifiedFile" matches the minified file "b.js" for "multiple-source-map-babel-node"
 
@@ -62,12 +68,15 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/index.js"
     And the payload field "sourceMap" matches the source map "index.json" for "multiple-source-map-typescript"
     And the payload field "minifiedFile" matches the minified file "index.js" for "multiple-source-map-typescript"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/lib/a.js"
     And the payload field "sourceMap" matches the source map "a.json" for "multiple-source-map-typescript"
     And the payload field "minifiedFile" matches the minified file "a.js" for "multiple-source-map-typescript"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/lib/b.js"
     And the payload field "sourceMap" matches the source map "b.json" for "multiple-source-map-typescript"
     And the payload field "minifiedFile" matches the minified file "b.js" for "multiple-source-map-typescript"
 
@@ -85,12 +94,15 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "4.5.6" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
     And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
@@ -110,12 +122,15 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" equals "true" for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
     And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
@@ -135,15 +150,19 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
     And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
     When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
@@ -165,6 +184,7 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js" for all requests
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack" for all requests
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack" for all requests
 
@@ -185,6 +205,7 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -206,6 +227,7 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -227,6 +249,7 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -248,6 +271,7 @@ Feature: Node source map upload multiple
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
     And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
     And the Content-Type header is valid multipart form-data
