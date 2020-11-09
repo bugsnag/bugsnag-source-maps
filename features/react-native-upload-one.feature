@@ -27,12 +27,16 @@ Feature: React native source map upload one
     | ios      | true  | --dev | single-source-map-react-native-0-60-ios-dev     |
     | ios      | true  | --dev | single-source-map-react-native-0-61-ios-dev     |
     | ios      | true  | --dev | single-source-map-react-native-0-62-ios-dev     |
+    | ios      | true  | --dev | single-source-map-react-native-0-63-ios-dev     |
     | ios      | false |       | single-source-map-react-native-0-60-ios         |
     | ios      | false |       | single-source-map-react-native-0-61-ios         |
     | ios      | false |       | single-source-map-react-native-0-62-ios         |
+    | ios      | false |       | single-source-map-react-native-0-63-ios         |
     | android  | true  | --dev | single-source-map-react-native-0-60-android-dev |
     | android  | true  | --dev | single-source-map-react-native-0-61-android-dev |
     | android  | true  | --dev | single-source-map-react-native-0-62-android-dev |
+    | android  | true  | --dev | single-source-map-react-native-0-63-android-dev |
     | android  | false |       | single-source-map-react-native-0-60-android     |
     | android  | false |       | single-source-map-react-native-0-61-android     |
     | android  | false |       | single-source-map-react-native-0-62-android     |
+    | android  | false |       | single-source-map-react-native-0-63-android     |
