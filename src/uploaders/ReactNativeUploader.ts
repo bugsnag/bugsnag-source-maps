@@ -43,7 +43,7 @@ export async function uploadOne ({
   appBundleVersion,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/',
+  endpoint = 'https://upload.bugsnag.com/react-native-source-map',
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
@@ -96,7 +96,7 @@ export async function fetchAndUploadOne ({
   appBundleVersion,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/',
+  endpoint = 'https://upload.bugsnag.com/react-native-source-map',
   requestOpts = {},
   bundlerUrl = 'http://localhost:8081',
   bundlerEntryPoint = 'index.js',
