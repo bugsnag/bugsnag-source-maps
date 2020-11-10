@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "sources": [
+        "src/index.js",
+        "src/lib/a.js",
+        "src/lib/b.js"
+    ],
+    "names": [],
+    "mappings": ";;AAAA;;AACA;;;;AAEA,OAAO,CAAC,GAAR,CAAY,eAAZ;AAEA,MAAM,CAAC,GAAG,IAAI,UAAJ,EAAV;AACA,MAAM,CAAC,GAAG,IAAI,UAAJ,CAAM,CAAN,CAAV;AAEA,CAAC,CAAC,KAAF;;;;;;;;ACRe,MAAM,CAAN,CAAQ;AACrB,EAAA,WAAW,CAAC,CAAD,EAAI;AACb,SAAK,CAAL,GAAS,CAAT;AACD;;AAED,EAAA,KAAK,GAAG;AACN,SAAK,CAAL,CAAO,GAAP;AAEA,IAAA,OAAO,CAAC,GAAR,CAAY,OAAZ;AACD;;AAToB;;;;;;;;;;ACAR,MAAM,CAAN,CAAQ;AACrB,EAAA,GAAG,GAAG;AACJ,IAAA,OAAO,CAAC,GAAR,CAAY,KAAZ;AACD;;AAHoB",
+    "file": "compiled.js",
+    "sourcesContent": [
+        "import A from './lib/a'\nimport B from './lib/b'\n\nconsole.log('hi from index')\n\nconst b = new B()\nconst a = new A(b)\n\na.hello()\n",
+        "export default class A {\n  constructor(b) {\n    this.b = b\n  }\n\n  hello() {\n    this.b.hey()\n\n    console.log('hello')\n  }\n}\n",
+        "export default class B {\n  hey() {\n    console.log('hey')\n  }\n}\n"
+    ]
+}

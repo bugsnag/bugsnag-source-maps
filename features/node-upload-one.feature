@@ -1,62 +1,59 @@
-Feature: Browser source map upload one
+Feature: Node source map upload one
   Scenario: Basic success case (webpack)
     When I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
     Then the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
     And the exit code is successful
 
   Scenario: Basic success case (babel)
-    When I run the service "single-source-map-babel-browser" with the command
+    When I run the service "single-source-map-babel-node" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/compiled.js.map
         --bundle dist/compiled.js
-        --bundle-url "http://mybabelapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
     Then the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://mybabelapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-babel-browser"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-babel-browser"
+    And the payload field "minifiedUrl" equals "dist/compiled.js"
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-babel-node"
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-babel-node"
     And the Content-Type header is valid multipart form-data
     And the exit code is successful
 
   Scenario: Basic success case (typescript)
     When I run the service "single-source-map-typescript" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/out.js.map
         --bundle dist/out.js
-        --bundle-url "http://myapp.url/static/js/out.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
     Then the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/out.js"
+    And the payload field "minifiedUrl" equals "dist/out.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-typescript"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-typescript"
     And the Content-Type header is valid multipart form-data
@@ -65,18 +62,17 @@ Feature: Browser source map upload one
   Scenario: Auto detecting app version
     When I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
     Then the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "1.2.3"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -85,12 +81,11 @@ Feature: Browser source map upload one
   Scenario: Overwrite enabled
     When I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
         --overwrite
       """
@@ -98,7 +93,7 @@ Feature: Browser source map upload one
     Then the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" equals "true"
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -108,12 +103,11 @@ Feature: Browser source map upload one
     When I set the HTTP status code for the next request to 500
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 2 requests
@@ -122,24 +116,19 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
-    And I discard the oldest request
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
+    And the payload field "minifiedUrl" equals "dist/main.js" for all requests
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack" for all requests
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack" for all requests
 
   Scenario: A request will be retried up to 5 times on a server failure (500 status code)
     When I set the HTTP status code to 500
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 5 requests
@@ -150,7 +139,7 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" is null for all requests
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js" for all requests
+    And the payload field "minifiedUrl" equals "dist/main.js" for all requests
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack" for all requests
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack" for all requests
 
@@ -158,12 +147,11 @@ Feature: Browser source map upload one
     When I set the HTTP status code for the next request to 401
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
@@ -173,7 +161,7 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js" for all requests
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -182,12 +170,11 @@ Feature: Browser source map upload one
     When I set the HTTP status code for the next request to 409
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
@@ -197,7 +184,7 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -206,12 +193,11 @@ Feature: Browser source map upload one
     When I set the HTTP status code for the next request to 422
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
@@ -221,7 +207,7 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
@@ -230,12 +216,11 @@ Feature: Browser source map upload one
     When I set the HTTP status code for the next request to 400
     And I run the service "single-source-map-webpack" with the command
       """
-      bugsnag-source-maps upload-browser
+      bugsnag-source-maps upload-node
         --api-key 123
         --app-version 2.0.0
         --source-map dist/main.js.map
         --bundle dist/main.js
-        --bundle-url "http://myapp.url/static/js/main.js"
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 1 request
@@ -245,7 +230,7 @@ Feature: Browser source map upload one
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" is null
-    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "minifiedUrl" equals "dist/main.js"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data

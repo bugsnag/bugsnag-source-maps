@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "sources": [
+        "src/lib/a.js"
+    ],
+    "names": [
+        "A",
+        "constructor",
+        "b",
+        "hello",
+        "hey",
+        "console",
+        "log"
+    ],
+    "mappings": ";;;;;;;AAAe,MAAMA,CAAN,CAAQ;AACrBC,EAAAA,WAAW,CAACC,CAAD,EAAI;AACb,SAAKA,CAAL,GAASA,CAAT;AACD;;AAEDC,EAAAA,KAAK,GAAG;AACN,SAAKD,CAAL,CAAOE,GAAP;AAEAC,IAAAA,OAAO,CAACC,GAAR,CAAY,OAAZ;AACD;;AAToB",
+    "sourcesContent": [
+        "export default class A {\n  constructor(b) {\n    this.b = b\n  }\n\n  hello() {\n    this.b.hey()\n\n    console.log('hello')\n  }\n}\n"
+    ],
+    "file": "a.js"
+}

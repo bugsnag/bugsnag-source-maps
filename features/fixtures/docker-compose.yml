@@ -3,26 +3,38 @@ services:
   single-source-map-webpack:
     build:
       context: single-source-map-webpack
-    environment:
-      - BUGSNAG_API_KEY
 
   multiple-source-map-webpack:
     build:
       context: multiple-source-map-webpack
-    environment:
-      - BUGSNAG_API_KEY
 
   single-source-map-typescript:
     build:
       context: single-source-map-typescript
-    environment:
-      - BUGSNAG_API_KEY
 
   multiple-source-map-typescript:
     build:
       context: multiple-source-map-typescript
-    environment:
-      - BUGSNAG_API_KEY
+
+  single-source-map-babel-node:
+    build:
+      context: source-map-babel
+      dockerfile: Dockerfile.node-single
+
+  multiple-source-map-babel-node:
+    build:
+      context: source-map-babel
+      dockerfile: Dockerfile.node-multiple
+
+  single-source-map-babel-browser:
+    build:
+      context: source-map-babel
+      dockerfile: Dockerfile.browser-single
+
+  multiple-source-map-babel-browser:
+    build:
+      context: source-map-babel
+      dockerfile: Dockerfile.browser-multiple
 
 networks:
   default:
