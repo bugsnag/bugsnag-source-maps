@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "sources": [
+        "src/index.js"
+    ],
+    "names": [
+        "console",
+        "log",
+        "b",
+        "B",
+        "a",
+        "A",
+        "hello"
+    ],
+    "mappings": ";;AAAA;;AACA;;;;AAEAA,OAAO,CAACC,GAAR,CAAY,eAAZ;AAEA,IAAMC,CAAC,GAAG,IAAIC,aAAJ,EAAV;AACA,IAAMC,CAAC,GAAG,IAAIC,aAAJ,CAAMH,CAAN,CAAV;AAEAE,CAAC,CAACE,KAAF",
+    "sourcesContent": [
+        "import A from './lib/a'\nimport B from './lib/b'\n\nconsole.log('hi from index')\n\nconst b = new B()\nconst a = new A(b)\n\na.hello()\n"
+    ],
+    "file": "index.js"
+}

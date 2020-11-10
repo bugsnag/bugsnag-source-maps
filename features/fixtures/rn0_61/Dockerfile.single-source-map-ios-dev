@@ -1,0 +1,30 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY build/bugsnag-source-maps.tgz build/bugsnag-source-maps.tgz
+COPY android/ android/
+COPY ios/ ios/
+COPY .buckconfig .
+COPY .eslintrc.js .
+COPY .flowconfig .
+COPY .gitattributes .
+COPY .gitignore .
+COPY .prettierrc.js .
+COPY .watchmanconfig .
+COPY App.js .
+COPY app.json .
+COPY babel.config.js .
+COPY index.js .
+COPY metro.config.js .
+COPY package.json .
+COPY package-lock.json .
+
+RUN npm ci
+RUN npm install -g ./build/bugsnag-source-maps.tgz
+RUN npx react-native bundle \
+    --entry-file index.js \
+    --bundle-output build/bundle.js \
+    --sourcemap-output build/source-map.json \
+    --platform ios \
+    --dev true

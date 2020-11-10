@@ -1,0 +1,19 @@
+{
+  "name": "single-source-map-babel",
+  "version": "1.2.3",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-single": "babel src --out-file dist/compiled.js --source-maps",
+    "build-multiple": "babel src --out-dir dist --source-maps",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1"
+  }
+}
