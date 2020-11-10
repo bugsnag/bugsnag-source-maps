@@ -132,6 +132,12 @@ Then("the payload field {string} matches the expected minified file for {string}
   }
 end
 
+Then("the payload field {string} matches the expected bundle for {string} for all requests") do |field, fixture|
+  steps %Q{
+    Then the payload field "#{field}" matches the minified file "bundle.js" for "#{fixture}" for all requests
+  }
+end
+
 Then("the payload field {string} matches the source map {string} for {string} for all requests") do |field, file_name, fixture|
   Server.stored_requests.each do |request|
     assert_source_map_matches(field, file_name, fixture, request)
