@@ -1,241 +1,185 @@
-import path from 'path'
-import { promises as fs } from 'fs'
+import http from 'http'
 import qs from 'querystring'
 
+import { Logger, noopLogger } from '../Logger'
 import File from '../File'
 import request, { fetch, PayloadType } from '../Request'
 import formatErrorLog from './lib/FormatErrorLog'
-import { Logger } from '../Logger'
-import AddSources from '../transformers/AddSources'
-import StripProjectRoot from '../transformers/StripProjectRoot'
+import applyTransformations from './lib/ApplyTransformations'
+import readBundleContent from './lib/ReadBundleContent'
+import readSourceMap from './lib/ReadSourceMap'
+import parseSourceMap from './lib/ParseSourceMap'
 import { NetworkError, NetworkErrorCode } from '../NetworkError'
-import { Platform, PlatformOptions } from '../react-native/Platform'
-import { Version, VersionType } from '../react-native/Version'
-import { SourceMapRetrieval, SourceMapRetrievalType } from '../react-native/SourceMapRetrieval'
 
-export interface ReactNativeUploadOptions {
-  readonly apiKey: string
-  readonly platformOptions: PlatformOptions
-  readonly dev: boolean
-  readonly overwrite: boolean
-  readonly endpoint: string
-  readonly projectRoot: string
-  readonly version: Version
-  readonly retrieval: SourceMapRetrieval
+interface CommonUploadOpts {
+  apiKey: string
+  platform: 'ios' | 'android'
+  dev: boolean
+  appVersion?: string
+  codeBundleId?: string
+  appVersionCode?: string
+  appBundleVersion?: string
+  overwrite?: boolean
+  projectRoot?: string
+  endpoint?: string
+  requestOpts?: http.RequestOptions
+  logger?: Logger
 }
 
-interface SourceMapBundlePair {
-  readonly sourceMap: File
-  readonly bundle: File
+interface UploadSingleOpts extends CommonUploadOpts {
+  sourceMap: string
+  bundle: string
 }
 
-type PayloadVersionFields
-  = { codeBundleId: string }
-  | { appVersion: string, appVersionCode?: string, appBundleVersion?: string }
+export async function uploadOne ({
+  apiKey,
+  sourceMap,
+  bundle,
+  platform,
+  dev = false,
+  appVersion,
+  codeBundleId,
+  appVersionCode,
+  appBundleVersion,
+  overwrite = false,
+  projectRoot = process.cwd(),
+  endpoint = 'https://upload.bugsnag.com/',
+  requestOpts = {},
+  logger = noopLogger
+}: UploadSingleOpts): Promise<void> {
+  logger.info(`Uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
-class ReactNativeUploader {
-  private logger: Logger
+  const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
+  const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
 
-  constructor(logger: Logger) {
-    this.logger = logger
+  const sourceMapJson = parseSourceMap(sourceMapContent, sourceMap, logger)
+  const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
+
+  const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
+
+  logger.debug(`Initiating upload "${endpoint}"`)
+  const start = new Date().getTime()
+  try {
+    await request(endpoint, {
+      type: PayloadType.ReactNative,
+      apiKey,
+      sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
+      bundle: new File(fullBundlePath, bundleContent),
+      platform,
+      dev,
+      ...marshalledVersions,
+      overwrite
+    }, requestOpts)
+    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+  } catch (e) {
+    if (e.cause) {
+      logger.error(formatErrorLog(e), e, e.cause)
+    } else {
+      logger.error(formatErrorLog(e), e)
+    }
+    throw e
   }
+}
 
-  async uploadOne(options: ReactNativeUploadOptions): Promise<void> {
-    const { sourceMap, bundle } = await this.getSourceMapAndBundle(
-      options.projectRoot,
-      options.retrieval,
-      options.platformOptions.type,
-      options.dev
+interface FetchUploadOpts extends CommonUploadOpts {
+  bundlerUrl?: string
+  bundlerEntryPoint?: string
+}
+
+export async function fetchAndUploadOne ({
+  apiKey,
+  platform,
+  dev = false,
+  appVersion,
+  codeBundleId,
+  appVersionCode,
+  appBundleVersion,
+  overwrite = false,
+  projectRoot = process.cwd(),
+  endpoint = 'https://upload.bugsnag.com/',
+  requestOpts = {},
+  bundlerUrl = 'http://localhost:8081',
+  bundlerEntryPoint = 'index.js',
+  logger = noopLogger
+}: FetchUploadOpts): Promise<void> {
+  logger.info(`Fetching and uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+
+  const queryString = qs.stringify({ platform, dev })
+  const entryPoint = bundlerEntryPoint.replace(/\.js$/, '')
+
+  const sourceMapUrl = `${bundlerUrl}/${entryPoint}.js.map?${queryString}`
+  const bundleUrl = `${bundlerUrl}/${entryPoint}.bundle?${queryString}`
+
+  let sourceMap: string
+  let bundle
+
+  try {
+    logger.debug(`Fetching source map from ${sourceMapUrl}`)
+    sourceMap = await fetch(sourceMapUrl)
+  } catch (e) {
+    logger.error(
+      formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
     )
+    throw e
+  }
 
-    this.logger.debug(`Initiating upload "${options.endpoint}"`)
-
-    const start = new Date().getTime()
-
-    await this.upload(
-      options.endpoint,
-      options.apiKey,
-      options.version,
-      options.platformOptions,
-      options.overwrite,
-      options.dev,
-      sourceMap,
-      bundle
+  try {
+    logger.debug(`Fetching bundle from ${bundleUrl}`)
+    bundle = await fetch(bundleUrl)
+  } catch (e) {
+    logger.error(
+      formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
     )
-
-    const timeTaken = new Date().getTime() - start
-
-    this.logger.success(`Success, uploaded to ${options.endpoint} in ${timeTaken}ms`)
+    throw e
   }
 
-  private async getSourceMapAndBundle(
-    projectRoot: string,
-    retrieval: SourceMapRetrieval,
-    platform: Platform,
-    dev: boolean
-  ): Promise<SourceMapBundlePair> {
-    switch (retrieval.type) {
-      case SourceMapRetrievalType.Fetch: {
-        const queryString = qs.stringify({ platform, dev })
-        const entryPoint = retrieval.entryPoint.replace(/\.js$/, '')
+  const sourceMapJson = parseSourceMap(sourceMap, sourceMapUrl, logger)
+  const transformedSourceMap = await applyTransformations(sourceMapUrl, sourceMapJson, projectRoot, logger)
 
-        const sourceMapUrl = `${retrieval.url}/${entryPoint}.js.map?${queryString}`
-        const bundleUrl = `${retrieval.url}/${entryPoint}.bundle?${queryString}`
+  const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
-        let sourceMap
-        let bundle
-
-        try {
-          this.logger.debug(`Fetching source map from ${sourceMapUrl}`)
-          sourceMap = await fetch(sourceMapUrl)
-        } catch (e) {
-          this.logger.error(
-            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
-          )
-          throw e
-        }
-
-        try {
-          this.logger.debug(`Fetching bundle from ${bundleUrl}`)
-          bundle = await fetch(bundleUrl)
-        } catch (e) {
-          this.logger.error(
-            formatFetchError(e, retrieval.url, retrieval.entryPoint), e
-          )
-          throw e
-        }
-
-        return {
-          sourceMap: new File(sourceMapUrl, sourceMap),
-          bundle: new File(bundleUrl, bundle),
-        }
-      }
-
-      case SourceMapRetrievalType.Provided:
-        return {
-          sourceMap: await this.readSourceMap(projectRoot, retrieval.sourceMap),
-          bundle: await this.readBundle(projectRoot, retrieval.bundle)
-        }
+  logger.debug(`Initiating upload "${endpoint}"`)
+  const start = new Date().getTime()
+  try {
+    await request(endpoint, {
+      type: PayloadType.ReactNative,
+      apiKey,
+      sourceMap: new File(sourceMapUrl, JSON.stringify(transformedSourceMap)),
+      bundle: new File(bundleUrl, bundle),
+      platform,
+      dev,
+      ...marshalledVersions,
+      overwrite
+    }, requestOpts)
+    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+  } catch (e) {
+    if (e.cause) {
+      logger.error(formatErrorLog(e), e, e.cause)
+    } else {
+      logger.error(formatErrorLog(e), e)
     }
-  }
-
-  private async readSourceMap(
-    projectRoot: string,
-    sourceMapFilePath: string
-  ): Promise<File> {
-    const fullPath = path.resolve(projectRoot, sourceMapFilePath)
-    this.logger.debug(`Reading source map "${sourceMapFilePath}"`)
-
-    let sourceMap
-
-    try {
-      sourceMap = await fs.readFile(fullPath, 'utf-8')
-    } catch (e) {
-      this.logger.error(`There was an error attempting to find a source map at the following location. Is the path correct?\n\n  "${fullPath}"`)
-      throw e
-    }
-
-    let parsedSourceMap
-
-    try {
-      parsedSourceMap = JSON.parse(sourceMap)
-    } catch (e) {
-      this.logger.error(`The provided source map was not valid JSON. Is this the correct file?\n\n  "${fullPath}"`)
-      throw e
-    }
-
-    let transformedSourceMap
-    this.logger.info('Applying transformations to source map')
-
-    try {
-      transformedSourceMap = await Promise.resolve(parsedSourceMap)
-        .then(json => AddSources(fullPath, json, projectRoot, this.logger))
-        .then(json => StripProjectRoot(fullPath, json, projectRoot, this.logger))
-    } catch (e) {
-      this.logger.error('Error applying transforms to source map', e)
-      throw e
-    }
-
-    return new File(fullPath, JSON.stringify(transformedSourceMap))
-  }
-
-  private async readBundle(
-    projectRoot: string,
-    bundle: string
-  ): Promise<File> {
-    const fullPath = path.resolve(projectRoot, bundle)
-    this.logger.debug(`Reading bundle file "${bundle}"`)
-
-    try {
-      return new File(fullPath, await fs.readFile(fullPath, 'utf-8'))
-    } catch (e) {
-      this.logger.error(`There was an error attempting to find a bundle file at the following location. Is the path correct?\n\n  "${fullPath}"`)
-      throw e
-    }
-  }
-
-  private async upload(
-    endpoint: string,
-    apiKey: string,
-    version: Version,
-    platformOptions: PlatformOptions,
-    overwrite: boolean,
-    dev: boolean,
-    sourceMap: File,
-    bundle: File
-  ): Promise<void> {
-    try {
-      await request(endpoint, {
-        type: PayloadType.ReactNative,
-        apiKey,
-        overwrite,
-        dev,
-        sourceMap,
-        bundle,
-        platform: platformOptions.type,
-        ...this.marshallVersionOptions(version, platformOptions)
-      }, {})
-    } catch (e) {
-      if (e.cause) {
-        this.logger.error(formatErrorLog(e), e, e.cause)
-      } else {
-        this.logger.error(formatErrorLog(e), e)
-      }
-
-      throw e
-    }
-  }
-
-  private marshallVersionOptions(
-    version: Version,
-    platformOptions: PlatformOptions
-  ): PayloadVersionFields {
-    switch (version.type) {
-      case VersionType.AppVersion: {
-        // Currently appVersionCode/appBundleVersion are only for when appVersion
-        // is given and are not allowed when codeBundleId is given
-        const versionOptions: PayloadVersionFields = { appVersion: version.appVersion }
-
-        switch (platformOptions.type) {
-          case Platform.Android:
-            versionOptions.appVersionCode = platformOptions.appVersionCode
-            break
-
-          case Platform.Ios:
-            versionOptions.appBundleVersion = platformOptions.appBundleVersion
-            break
-        }
-
-        return versionOptions
-      }
-
-      case VersionType.CodeBundleId:
-        return { codeBundleId: version.codeBundleId }
-    }
+    throw e
   }
 }
 
-export default ReactNativeUploader
+interface VersionOpts {
+  appVersion?: string
+  codeBundleId?: string
+  appBundleVersion?: string
+  appVersionCode?: string
+}
+
+function marshallVersionOptions ({ appVersion, codeBundleId, appVersionCode, appBundleVersion }: VersionOpts, platform: string): VersionOpts {
+  if (codeBundleId) return { codeBundleId }
+  switch (platform) {
+    case 'android':
+      return { appVersion, appVersionCode }
+    case 'ios':
+      return { appVersion, appBundleVersion }
+    default:
+      return { appVersion }
+  }
+}
 
 function formatFetchError(err: Error, url: string, entryPoint: string): string {
   if (!(err instanceof NetworkError)) {

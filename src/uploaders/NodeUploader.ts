@@ -3,6 +3,7 @@ import http from 'http'
 import glob from 'glob'
 
 import { Logger, noopLogger } from '../Logger'
+import File from '../File'
 import request, { PayloadType } from '../Request'
 import formatErrorLog from './lib/FormatErrorLog'
 import applyTransformations from './lib/ApplyTransformations'
@@ -54,8 +55,8 @@ export async function uploadOne ({
       apiKey,
       appVersion,
       minifiedUrl: bundle,
-      minifiedFile: { filepath: fullBundlePath, data: bundleContent },
-      sourceMap: { filepath: fullSourceMapPath, data: JSON.stringify(transformedSourceMap) },
+      minifiedFile: new File(fullBundlePath, bundleContent),
+      sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
     }, requestOpts)
     logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
@@ -138,8 +139,8 @@ export async function uploadMultiple ({
         apiKey,
         appVersion,
         minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)),
-        minifiedFile: (bundleContent && fullBundlePath) ? { filepath: fullBundlePath, data: bundleContent } : undefined,
-        sourceMap: { filepath: fullSourceMapPath, data: JSON.stringify(transformedSourceMap) },
+        minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
+        sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
       }, requestOpts)
       logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
