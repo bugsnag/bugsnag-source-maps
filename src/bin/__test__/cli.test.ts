@@ -2,24 +2,15 @@ import run from '../cli'
 import logger from '../../Logger'
 import * as browser from '../../uploaders/BrowserUploader'
 import * as node from '../../uploaders/NodeUploader'
+import * as reactNative from '../../uploaders/ReactNativeUploader'
 import { LogLevel } from 'consola'
-import { Platform } from '../../react-native/Platform'
-import { VersionType } from '../../react-native/Version'
-import { SourceMapRetrievalType } from '../../react-native/SourceMapRetrieval'
 
 jest.mock('../../uploaders/BrowserUploader')
 jest.mock('../../uploaders/NodeUploader')
+jest.mock('../../uploaders/ReactNativeUploader')
 jest.mock('../../Logger')
 
-const mockReactNativeUploadOne = jest.fn()
-jest.mock('../../uploaders/ReactNativeUploader', () => {
-  return jest.fn(() => ({
-    uploadOne: mockReactNativeUploadOne
-  }))
-})
-
 beforeEach(() => {
-  mockReactNativeUploadOne.mockClear()
   process.exitCode = 0
 })
 
@@ -214,25 +205,13 @@ test('cli: upload-react-native success (ios)', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -248,26 +227,14 @@ test('cli: upload-react-native success (ios with app bundle version)', async () 
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-      appBundleVersion: '1.2.3',
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    appBundleVersion: '1.2.3',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -282,25 +249,13 @@ test('cli: upload-react-native success (android)', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Android,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'android',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -316,26 +271,14 @@ test('cli: upload-react-native success (android with app version code)', async (
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Android,
-      appVersionCode: '1.2.3',
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'android',
+    appVersionCode: '1.2.3',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2',
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -351,25 +294,14 @@ test('cli: upload-react-native success with custom endpoint', async () => {
     '--endpoint', 'https://example.com',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
     endpoint: 'https://example.com',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -385,25 +317,14 @@ test('cli: upload-react-native success with custom project root', async () => {
     '--project-root', '/a/b/c',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
+    platform: 'ios',
     projectRoot: '/a/b/c',
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -417,25 +338,11 @@ test('cli: upload-react-native success with "fetch" mode', async () => {
     '--fetch',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.fetchAndUploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Fetch,
-      url: 'http://localhost:8081',
-      entryPoint: 'index.js',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -450,25 +357,12 @@ test('cli: upload-react-native success with "fetch" mode and custom URL', async 
     '--bundler-url', 'http://example.com:1100/rn-bundler'
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.fetchAndUploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Fetch,
-      url: 'http://example.com:1100/rn-bundler',
-      entryPoint: 'index.js',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundlerUrl: 'http://example.com:1100/rn-bundler',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -483,25 +377,12 @@ test('cli: upload-react-native success with "fetch" mode and custom entry point'
     '--bundler-entry-point', 'cool-app.js'
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.fetchAndUploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Fetch,
-      url: 'http://localhost:8081',
-      entryPoint: 'cool-app.js',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundlerEntryPoint: 'cool-app.js',
+    appVersion: '1.0.2'
+  }))
 
   expect(process.exitCode).toBe(0)
 })
@@ -517,25 +398,13 @@ test('cli: upload-react-native --quiet', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2'
+  }))
 
   expect(logger.level).toBe(LogLevel.Success)
   expect(process.exitCode).toBe(0)
@@ -544,7 +413,8 @@ test('cli: upload-react-native --quiet', async () => {
 test('cli: upload-react-native invalid value', async () => {
   await run(['upload-react-native', 'abc'])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('Invalid argument provided. Unknown value: abc')
   expect(process.exitCode).toBe(1)
 })
@@ -552,13 +422,14 @@ test('cli: upload-react-native invalid value', async () => {
 test('cli: upload-react-native invalid option', async () => {
   await run(['upload-react-native', '--abc'])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('Invalid argument provided. Unknown option: --abc')
   expect(process.exitCode).toBe(1)
 })
 
 test('cli: upload-react-native exit code for failure', async () => {
-  mockReactNativeUploadOne.mockRejectedValueOnce(new Error('fail'))
+  (reactNative.uploadOne as jest.MockedFunction<typeof reactNative.uploadOne>).mockRejectedValueOnce(new Error('fail'))
 
   await run([
     'upload-react-native',
@@ -569,25 +440,13 @@ test('cli: upload-react-native exit code for failure', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).toHaveBeenCalledWith({
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: '1234',
-    dev: false,
-    endpoint: 'https://upload.bugsnag.com/react-native-source-map',
-    overwrite: false,
-    platformOptions: {
-      type: Platform.Ios,
-    },
-    projectRoot: process.cwd(),
-    retrieval: {
-      type: SourceMapRetrievalType.Provided,
-      bundle: 'some/file.js',
-      sourceMap: 'some/file.js.map',
-    },
-    version: {
-      type: VersionType.AppVersion,
-      appVersion: '1.0.2',
-    }
-  })
+    platform: 'ios',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+    appVersion: '1.0.2',
+  }))
 
   expect(process.exitCode).toBe(1)
 })
@@ -601,7 +460,8 @@ test('cli: upload-react-native fails with no api key', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--api-key is a required parameter')
   expect(process.exitCode).toBe(1)
 })
@@ -615,7 +475,8 @@ test('cli: upload-react-native fails with no platform', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--platform is a required parameter')
   expect(process.exitCode).toBe(1)
 })
@@ -630,7 +491,8 @@ test('cli: upload-react-native fails with invalid platform', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--platform must be either "android" or "ios"')
   expect(process.exitCode).toBe(1)
 })
@@ -646,7 +508,8 @@ test('cli: upload-react-native fails with app version and code bundle ID', async
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--app-version and --code-bundle-id cannot both be given')
   expect(process.exitCode).toBe(1)
 })
@@ -662,7 +525,8 @@ test('cli: upload-react-native fails with code bundle id and app bundle version'
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--app-bundle-version and --code-bundle-id cannot both be given')
   expect(process.exitCode).toBe(1)
 })
@@ -678,7 +542,8 @@ test('cli: upload-react-native fails with code bundle id and app version code', 
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--app-version-code and --code-bundle-id cannot both be given')
   expect(process.exitCode).toBe(1)
 })
@@ -692,7 +557,8 @@ test('cli: upload-react-native fails without app version or code bundle id', asy
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('Either --app-version or --code-bundle-id must be given')
   expect(process.exitCode).toBe(1)
 })
@@ -706,7 +572,8 @@ test('cli: upload-react-native fails when source map is missing', async () => {
     '--bundle', 'some/file.js',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--source-map is a required parameter')
   expect(process.exitCode).toBe(1)
 })
@@ -720,7 +587,8 @@ test('cli: upload-react-native fails when bundle is missing', async () => {
     '--source-map', 'some/file.js.map',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--bundle is a required parameter')
   expect(process.exitCode).toBe(1)
 })
@@ -735,7 +603,8 @@ test('cli: upload-react-native fails when app version code is given for ios', as
     '--source-map', 'some/file.js.map',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--app-version-code cannot be given with --platform "ios"')
   expect(process.exitCode).toBe(1)
 })
@@ -750,7 +619,8 @@ test('cli: upload-react-native fails when app bundle version is given for androi
     '--source-map', 'some/file.js.map',
   ])
 
-  expect(mockReactNativeUploadOne).not.toHaveBeenCalled()
+  expect(reactNative.uploadOne).not.toHaveBeenCalled()
+  expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
   expect(logger.error).toHaveBeenCalledWith('--app-bundle-version cannot be given with --platform "android"')
   expect(process.exitCode).toBe(1)
 })

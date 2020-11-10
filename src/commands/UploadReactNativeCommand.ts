@@ -3,10 +3,7 @@ import commandLineUsage from 'command-line-usage'
 import logger from '../Logger'
 import { LogLevel } from 'consola'
 import { commonCommandDefs } from './CommandDefinitions'
-import ReactNativeUploader, { ReactNativeUploadOptions } from '../uploaders/ReactNativeUploader'
-import { Platform, PlatformOptions } from '../react-native/Platform'
-import { Version, VersionType } from '../react-native/Version'
-import { SourceMapRetrieval, SourceMapRetrievalType } from '../react-native/SourceMapRetrieval'
+import { uploadOne, fetchAndUploadOne } from '../uploaders/ReactNativeUploader'
 
 export default async function uploadReactNative (argv: string[], opts: Record<string, unknown>): Promise<void> {
   if (opts.help) {
@@ -23,13 +20,13 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
   let reactNativeOpts
 
   try {
-    const rawOpts = commandLineArgs(defs, { argv, camelCase: true })
+    reactNativeOpts = commandLineArgs(defs, { argv, camelCase: true })
 
-    if (rawOpts.quiet) {
+    if (reactNativeOpts.quiet) {
       logger.level = LogLevel.Success
     }
 
-    reactNativeOpts = validateReactNativeOpts(rawOpts)
+    validateReactNativeOpts(reactNativeOpts)
   } catch (e) {
     process.exitCode = 1
 
@@ -43,8 +40,39 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
   }
 
   try {
-    const uploader = new ReactNativeUploader(logger)
-    await uploader.uploadOne(reactNativeOpts)
+    if (reactNativeOpts.fetch) {
+      await fetchAndUploadOne({
+        apiKey: reactNativeOpts.apiKey,
+        projectRoot: reactNativeOpts.projectRoot,
+        overwrite: reactNativeOpts.overwrite,
+        appVersion: reactNativeOpts.appVersion,
+        codeBundleId: reactNativeOpts.codeBundleId,
+        appBundleVersion: reactNativeOpts.appBundleVersion,
+        appVersionCode: reactNativeOpts.appVersionCode,
+        platform: reactNativeOpts.platform,
+        dev: reactNativeOpts.dev,
+        endpoint: reactNativeOpts.endpoint,
+        bundlerUrl: reactNativeOpts.bundlerUrl,
+        bundlerEntryPoint: reactNativeOpts.bundlerEntryPoint,
+        logger
+      })
+    } else {
+      await uploadOne({
+        apiKey: reactNativeOpts.apiKey,
+        sourceMap: reactNativeOpts.sourceMap,
+        bundle: reactNativeOpts.bundle,
+        projectRoot: reactNativeOpts.projectRoot,
+        overwrite: reactNativeOpts.overwrite,
+        appVersion: reactNativeOpts.appVersion,
+        codeBundleId: reactNativeOpts.codeBundleId,
+        appBundleVersion: reactNativeOpts.appBundleVersion,
+        appVersionCode: reactNativeOpts.appVersionCode,
+        platform: reactNativeOpts.platform,
+        dev: reactNativeOpts.dev,
+        endpoint: reactNativeOpts.endpoint,
+        logger
+      })
+    }
   } catch (e) {
     process.exitCode = 1
   }
@@ -140,68 +168,34 @@ const reactNativeFetchOpts = [
   },
 ]
 
-function validateReactNativeOpts (opts: Record<string, unknown>): ReactNativeUploadOptions {
+function validateReactNativeOpts (opts: Record<string, unknown>): void {
   if (!opts.apiKey || typeof opts.apiKey !== 'string') {
     throw new Error('--api-key is a required parameter')
   }
 
-  const platform = marshallPlatform(opts)
-  const version = marshallVersion(platform, opts)
-  const platformOptions = marshallPlatformOptions(platform, version, opts)
-  const retrieval = marshallRetrieval(opts)
-
-  let endpoint = 'https://upload.bugsnag.com/react-native-source-map'
-  if (opts.endpoint && typeof opts.endpoint === 'string') {
-    endpoint = opts.endpoint
-  }
-
-  let projectRoot = process.cwd()
-  if (opts.projectRoot && typeof opts.projectRoot === 'string') {
-    projectRoot = opts.projectRoot
-  }
-
-  return {
-    apiKey: opts.apiKey,
-    dev: !!opts.dev,
-    overwrite: !!opts.overwrite,
-    endpoint,
-    projectRoot,
-    platformOptions,
-    version,
-    retrieval,
-  }
+  validatePlatform(opts)
+  validateVersion(opts)
+  validatePlatformOptions(opts)
+  validateRetrieval(opts)
 }
 
-function marshallPlatform(opts: Record<string, unknown>): Platform {
+function validatePlatform(opts: Record<string, unknown>): void {
   if (!opts.platform) {
     throw new Error('--platform is a required parameter')
   }
 
-  if (opts.platform === 'ios') {
-    return Platform.Ios
+  if (opts.platform !== 'ios' && opts.platform !== 'android') {
+    throw new Error('--platform must be either "android" or "ios"')
   }
 
-  if (opts.platform === 'android') {
-    return Platform.Android
-  }
-
-  throw new Error('--platform must be either "android" or "ios"')
 }
 
-function marshallVersion(platform: Platform, opts: Record<string, unknown>): Version {
+function validateVersion(opts: Record<string, unknown>): void {
   if (opts.appVersion) {
     if (opts.codeBundleId) {
       throw new Error('--app-version and --code-bundle-id cannot both be given')
     }
-
-    if (typeof opts.appVersion !== 'string') {
-      throw new Error('--app-version must be a string')
-    }
-
-    return {
-      type: VersionType.AppVersion,
-      appVersion: opts.appVersion,
-    }
+    return
   }
 
   if (opts.codeBundleId) {
@@ -213,83 +207,35 @@ function marshallVersion(platform: Platform, opts: Record<string, unknown>): Ver
       throw new Error('--app-version-code and --code-bundle-id cannot both be given')
     }
 
-    if (typeof opts.codeBundleId !== 'string') {
-      throw new Error('--code-bundle-id must be a string')
-    }
-
-    return {
-      type: VersionType.CodeBundleId,
-      codeBundleId: opts.codeBundleId,
-    }
+    return
   }
 
   throw new Error('Either --app-version or --code-bundle-id must be given')
 }
 
-function marshallPlatformOptions(platform: Platform, version: Version, opts: Record<string, unknown>): PlatformOptions {
-  switch (platform) {
-    case Platform.Ios: {
-      if (opts.appVersionCode) {
-        throw new Error('--app-version-code cannot be given with --platform "ios"')
-      }
-
-      let appBundleVersion
-
-      if (opts.appBundleVersion && typeof opts.appBundleVersion === 'string') {
-        appBundleVersion = opts.appBundleVersion
-      }
-
-      return { type: platform, appBundleVersion }
+function validatePlatformOptions(opts: Record<string, unknown>): void {
+  switch (opts.platform) {
+    case 'ios': {
+      if (opts.appVersionCode) throw new Error('--app-version-code cannot be given with --platform "ios"')
+      break
     }
-
-    case Platform.Android: {
-      if (opts.appBundleVersion) {
-        throw new Error('--app-bundle-version cannot be given with --platform "android"')
-      }
-
-      let appVersionCode
-
-      if (opts.appVersionCode && typeof opts.appVersionCode === 'string') {
-        appVersionCode = opts.appVersionCode
-      }
-
-      return { type: platform, appVersionCode }
+    case 'android': {
+      if (opts.appBundleVersion) throw new Error('--app-bundle-version cannot be given with --platform "android"')
+      break
     }
   }
 }
 
-function marshallRetrieval(opts: Record<string, unknown>): SourceMapRetrieval {
-  if (opts.fetch) {
-    let url = 'http://localhost:8081'
-
-    if (opts.bundlerUrl && typeof opts.bundlerUrl === 'string') {
-      url = opts.bundlerUrl
+function validateRetrieval(opts: Record<string, unknown>): void {
+  if (!opts.fetch){
+    if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {
+      throw new Error('--source-map is a required parameter')
     }
 
-    let entryPoint = 'index.js'
-
-    if (opts.bundlerEntryPoint && typeof opts.bundlerEntryPoint === 'string') {
-      entryPoint = opts.bundlerEntryPoint
+    if (!opts.bundle || typeof opts.bundle !== 'string') {
+      throw new Error('--bundle is a required parameter')
     }
-
-    return {
-      type: SourceMapRetrievalType.Fetch,
-      url,
-      entryPoint,
-    }
-  }
-
-  if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {
-    throw new Error('--source-map is a required parameter')
-  }
-
-  if (!opts.bundle || typeof opts.bundle !== 'string') {
-    throw new Error('--bundle is a required parameter')
-  }
-
-  return {
-    type: SourceMapRetrievalType.Provided,
-    sourceMap: opts.sourceMap,
-    bundle: opts.bundle,
+  } else {
+    if (opts.bundle || opts.sourceMap) throw new Error('--bundle and --source-map cannot be given with --fetch')
   }
 }
