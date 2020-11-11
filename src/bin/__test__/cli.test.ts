@@ -221,6 +221,27 @@ test('cli: upload-react-native success (ios with app bundle version)', async () 
     'upload-react-native',
     '--api-key', '1234',
     '--platform', 'ios',
+    '--app-bundle-version', '1.2.3',
+    '--source-map', 'some/file.js.map',
+    '--bundle', 'some/file.js',
+  ])
+
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
+    apiKey: '1234',
+    platform: 'ios',
+    appBundleVersion: '1.2.3',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+  }))
+
+  expect(process.exitCode).toBe(0)
+})
+
+test('cli: upload-react-native success (ios with app bundle version and app version)', async () => {
+  await run([
+    'upload-react-native',
+    '--api-key', '1234',
+    '--platform', 'ios',
     '--app-version', '1.0.2',
     '--app-bundle-version', '1.2.3',
     '--source-map', 'some/file.js.map',
@@ -261,6 +282,27 @@ test('cli: upload-react-native success (android)', async () => {
 })
 
 test('cli: upload-react-native success (android with app version code)', async () => {
+  await run([
+    'upload-react-native',
+    '--api-key', '1234',
+    '--platform', 'android',
+    '--app-version-code', '1.2.3',
+    '--source-map', 'some/file.js.map',
+    '--bundle', 'some/file.js',
+  ])
+
+  expect(reactNative.uploadOne).toHaveBeenCalledWith(expect.objectContaining({
+    apiKey: '1234',
+    platform: 'android',
+    appVersionCode: '1.2.3',
+    bundle: 'some/file.js',
+    sourceMap: 'some/file.js.map',
+  }))
+
+  expect(process.exitCode).toBe(0)
+})
+
+test('cli: upload-react-native success (android with app version code and app version)', async () => {
   await run([
     'upload-react-native',
     '--api-key', '1234',
@@ -548,7 +590,7 @@ test('cli: upload-react-native fails with code bundle id and app version code', 
   expect(process.exitCode).toBe(1)
 })
 
-test('cli: upload-react-native fails without app version or code bundle id', async () => {
+test('cli: upload-react-native fails without any version given', async () => {
   await run([
     'upload-react-native',
     '--api-key', '1234',
@@ -559,7 +601,7 @@ test('cli: upload-react-native fails without app version or code bundle id', asy
 
   expect(reactNative.uploadOne).not.toHaveBeenCalled()
   expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
-  expect(logger.error).toHaveBeenCalledWith('Either --app-version or --code-bundle-id must be given')
+  expect(logger.error).toHaveBeenCalledWith('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
   expect(process.exitCode).toBe(1)
 })
 
