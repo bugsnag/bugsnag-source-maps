@@ -36,6 +36,126 @@ services:
       context: source-map-babel
       dockerfile: Dockerfile.browser-multiple
 
+  single-source-map-react-native-0-60-ios:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-ios
+
+  single-source-map-react-native-0-60-android:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-android
+
+  single-source-map-react-native-0-60-ios-dev:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-ios-dev
+
+  single-source-map-react-native-0-60-android-dev:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.single-source-map-android-dev
+
+  single-source-map-react-native-0-61-ios:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.single-source-map-ios
+
+  single-source-map-react-native-0-61-android:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.single-source-map-android
+
+  single-source-map-react-native-0-61-ios-dev:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.single-source-map-ios-dev
+
+  single-source-map-react-native-0-61-android-dev:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.single-source-map-android-dev
+
+  single-source-map-react-native-0-62-ios:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.single-source-map-ios
+
+  single-source-map-react-native-0-62-android:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.single-source-map-android
+
+  single-source-map-react-native-0-62-ios-dev:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.single-source-map-ios-dev
+
+  single-source-map-react-native-0-62-android-dev:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.single-source-map-android-dev
+
+  single-source-map-react-native-0-63-ios:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-ios
+
+  single-source-map-react-native-0-63-android:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-android
+
+  single-source-map-react-native-0-63-ios-dev:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-ios-dev
+
+  single-source-map-react-native-0-63-android-dev:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.single-source-map-android-dev
+
+  react-native-0-60-bundler:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.bundler
+
+  react-native-0-60-fetch:
+    build:
+      context: rn0_60
+      dockerfile: Dockerfile.fetch
+
+  react-native-0-61-bundler:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.bundler
+
+  react-native-0-61-fetch:
+    build:
+      context: rn0_61
+      dockerfile: Dockerfile.fetch
+
+  react-native-0-62-bundler:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.bundler
+
+  react-native-0-62-fetch:
+    build:
+      context: rn0_62
+      dockerfile: Dockerfile.fetch
+
+  react-native-0-63-bundler:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.bundler
+
+  react-native-0-63-fetch:
+    build:
+      context: rn0_63
+      dockerfile: Dockerfile.fetch
+
 networks:
   default:
     name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}
