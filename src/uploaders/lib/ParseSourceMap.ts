@@ -1,6 +1,6 @@
 import { Logger } from '../../Logger'
 
-export default function parseSourceMap (sourceMapContent: string, sourceMapPath: string, logger: Logger): string {
+export default function parseSourceMap (sourceMapContent: string, sourceMapPath: string, logger: Logger): unknown {
   try {
     return JSON.parse(sourceMapContent)
   } catch (e) {

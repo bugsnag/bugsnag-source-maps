@@ -1,4 +1,5 @@
 import http from 'http'
+import path from 'path'
 import qs from 'querystring'
 
 import { Logger, noopLogger } from '../Logger'
@@ -111,7 +112,7 @@ export async function fetchAndUploadOne ({
   const bundleUrl = `${bundlerUrl}/${entryPoint}.bundle?${queryString}`
 
   let sourceMap: string
-  let bundle
+  let bundle: string
 
   try {
     logger.debug(`Fetching source map from ${sourceMapUrl}`)
@@ -133,8 +134,10 @@ export async function fetchAndUploadOne ({
     throw e
   }
 
-  const sourceMapJson = parseSourceMap(sourceMap, sourceMapUrl, logger)
-  const transformedSourceMap = await applyTransformations(sourceMapUrl, sourceMapJson, projectRoot, logger)
+  const sourceMapPath = path.resolve(projectRoot, bundlerEntryPoint)
+
+  const sourceMapJson = parseSourceMap(sourceMap, sourceMapPath, logger)
+  const transformedSourceMap = await applyTransformations(sourceMapPath, sourceMapJson, projectRoot, logger)
 
   const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
