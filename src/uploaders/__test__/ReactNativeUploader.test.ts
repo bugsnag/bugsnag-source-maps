@@ -333,7 +333,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
     bundlerUrl: 'http://react-native-bundler:1234',
     bundlerEntryPoint: 'index.js',
     appVersion: '1.2.3',
-    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android'),
+    logger: mockLogger,
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
@@ -354,6 +355,10 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
     }),
     expect.objectContaining({})
   )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded index.js.map to example.com in'
+  ))
 })
 
 test('fetchAndUploadOne(): dispatches a request with the correct params for iOS with appVersion in Fetch mode', async () => {
@@ -376,7 +381,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
     appVersion: '1.2.3',
-    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger,
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
@@ -397,6 +403,10 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
     }),
     expect.objectContaining({})
   )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded index.js.map to example.com in'
+  ))
 })
 
 test('fetchAndUploadOne(): dispatches a request with the correct params for Android with appVersion in Fetch mode (dev build)', async () => {
@@ -506,7 +516,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     bundlerUrl: 'http://react-native-bundler:1234',
     bundlerEntryPoint: 'cool-app.js',
     appVersion: '1.2.3',
-    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger,
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
@@ -527,6 +538,10 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     }),
     expect.objectContaining({})
   )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded cool-app.js.map to example.com in'
+  ))
 })
 
 test('fetchAndUploadOne(): dispatches a request with the correct params with custom entry point with no ".js" extension', async () => {
@@ -550,7 +565,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     bundlerUrl: 'http://react-native-bundler:1234',
     bundlerEntryPoint: 'cool-app',
     appVersion: '1.2.3',
-    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger,
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
@@ -571,6 +587,10 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     }),
     expect.objectContaining({})
   )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded cool-app.js.map to example.com in'
+  ))
 })
 
 test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)', async () => {

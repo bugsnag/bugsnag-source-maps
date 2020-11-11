@@ -151,7 +151,7 @@ export async function fetchAndUploadOne ({
       ...marshalledVersions,
       overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${entryPoint}.js.map to ${endpoint} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
