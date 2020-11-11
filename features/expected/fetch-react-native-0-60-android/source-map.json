@@ -1,7 +1,7 @@
 {
     "version": 3,
     "sources": [
-        "http:/react-native-0-60-bundler:9449/__prelude__",
+        "__prelude__",
         "node_modules/metro/src/lib/polyfills/require.js",
         "node_modules/react-native/Libraries/polyfills/console.js",
         "node_modules/react-native/Libraries/polyfills/error-guard.js",
