@@ -21,8 +21,7 @@ Feature: React native source map fetch mode
     And the payload field "overwrite" equals "false"
     And the payload field "dev" equals "<dev>"
     And the payload field "platform" equals "<platform>"
-    # TODO(PLAT-5396) transforms are not applied so the source maps won't match
-    # And the payload field "sourceMap" matches the expected source map for "<TODO>"
+    And the payload field "sourceMap" matches the expected source map for "<expected directory>"
     And the payload field "bundle" matches the expected bundle for "<expected directory>"
 
   Examples:
@@ -64,8 +63,7 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" equals "false" for all requests
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios" for all requests
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios" for all requests
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios" for all requests
 
   Scenario: A request will be retried up to 5 times on a server failure (500 status code)
@@ -90,8 +88,7 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
     And the payload field "overwrite" equals "false" for all requests
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios" for all requests
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios" for all requests
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios" for all requests
 
   Scenario: A request will not be retried if the API key is invalid (401 status code)
@@ -115,8 +112,7 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" equals "false"
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
 
@@ -141,8 +137,7 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" equals "false"
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
 
@@ -167,8 +162,7 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" equals "false"
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
 
@@ -193,8 +187,6 @@ Feature: React native source map fetch mode
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
     And the payload field "overwrite" equals "false"
-    # TODO(PLAT-5396)
-    # And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
+    And the payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
-
