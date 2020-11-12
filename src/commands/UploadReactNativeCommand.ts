@@ -187,18 +187,14 @@ function validatePlatform(opts: Record<string, unknown>): void {
   if (opts.platform !== 'ios' && opts.platform !== 'android') {
     throw new Error('--platform must be either "android" or "ios"')
   }
-
 }
 
 function validateVersion(opts: Record<string, unknown>): void {
-  if (opts.appVersion) {
-    if (opts.codeBundleId) {
+  if (opts.codeBundleId) {
+    if (opts.appVersion) {
       throw new Error('--app-version and --code-bundle-id cannot both be given')
     }
-    return
-  }
 
-  if (opts.codeBundleId) {
     if (opts.appBundleVersion) {
       throw new Error('--app-bundle-version and --code-bundle-id cannot both be given')
     }
@@ -210,7 +206,9 @@ function validateVersion(opts: Record<string, unknown>): void {
     return
   }
 
-  throw new Error('Either --app-version or --code-bundle-id must be given')
+  if (!opts.appVersion && !opts.appVersionCode && !opts.appBundleVersion) {
+    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+  }
 }
 
 function validatePlatformOptions(opts: Record<string, unknown>): void {
