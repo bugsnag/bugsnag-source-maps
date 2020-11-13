@@ -56,4 +56,4 @@ Most updates to this repo will be made by Bugsnag employees. We are unable to ac
 
 ## License
 
-MIT
+This package is free software released under the MIT License. See [LICENSE.txt](./LICENSE.txt) for details.
