@@ -25,15 +25,34 @@ yarn global add @bugsnag/source-maps
 
 ## Usage
 
-TODO link to docs
+See the [Bugsnag docs website](https://docs.bugsnag.com/build-integrations/js/#uploading-source-maps) for full usage documentation.
+
+```
+bugsnag-source-maps --help
+
+  bugsnag-source-maps <command>
+
+Available commands
+
+  upload-browser
+  upload-node
+  upload-react-native
+
+Options
+
+  -h, --help    show this message
+  --version     output the version of the CLI module
+```
 
 ## Support
 
-TODO
+* Check out the [documentation](https://docs.bugsnag.com/build-integrations/js/#uploading-source-maps)
+* [Search open and closed issues](https://github.com/bugsnag/bugsnag-source-maps/issues?q=+) for similar problems
+* [Report a bug or request a feature](https://github.com/bugsnag/bugsnag-source-maps/issues/new)
 
 ## Contributing
 
-TODO
+Most updates to this repo will be made by Bugsnag employees. We are unable to accommodate significant external PRs such as features additions or any large refactoring, however minor fixes are welcome.
 
 ## License
 
