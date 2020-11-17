@@ -1,3 +1,4 @@
+
 # @bugsnag/source-maps
 
 ## Installation
