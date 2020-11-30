@@ -69,6 +69,7 @@ test('request: send() successful React Native upload', async () => {
       const form = new multiparty.Form()
       form.parse(req, function(err, fields, files) {
         received.push({ fields, files })
+        res.statusCode = 202
         res.end('OK')
         resolve()
       });
