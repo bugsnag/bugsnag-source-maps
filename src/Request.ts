@@ -123,7 +123,7 @@ export async function send (endpoint: string, payload: Payload, requestOpts: htt
       agent: requestOpts && requestOpts.agent
     }, res => {
       res.pipe(concat((bodyBuffer: Buffer) => {
-        if (res.statusCode === 200) return resolve()
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) return resolve()
         const err = new NetworkError(`HTTP status ${res.statusCode} received from upload API`)
         err.responseText = bodyBuffer.toString()
         if (!isRetryable(res.statusCode)) {
