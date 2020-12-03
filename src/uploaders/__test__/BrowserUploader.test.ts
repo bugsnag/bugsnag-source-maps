@@ -367,6 +367,92 @@ test('uploadMultiple(): success', async () => {
   )
 })
 
+test('uploadMultiple(): success using absolute path for "directory"', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: path.join(__dirname, 'fixtures/c/build'),
+    projectRoot: path.join(__dirname, 'fixtures/c'),
+    logger: mockLogger
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/2.e5bb21a6.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/2.e5bb21a6.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/3.1b8b4fc7.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/3.1b8b4fc7.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/main.286ac573.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/main.286ac573.chunk.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/c/build/static/js/runtime-main.ad66c902.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/runtime-main.ad66c902.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+})
+
 test('uploadMultiple(): no source maps', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new NetworkError('timeout')
