@@ -26,6 +26,33 @@ Feature: Node source map upload multiple
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
+  Scenario: Basic success case (webpack) with absolute path --directory
+    When I run the service "multiple-source-map-webpack" with the command
+      """
+      bugsnag-source-maps upload-node
+        --api-key 123
+        --app-version 2.0.0
+        --directory /app/dist
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 3 requests
+    Then the exit code is successful
+    And the Content-Type header is valid multipart form-data for all requests
+    And the payload field "apiKey" equals "123" for all requests
+    And the payload field "appVersion" equals "2.0.0" for all requests
+    And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
+    And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
+    And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
+    And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
+
   Scenario: Basic success case (babel)
     When I run the service "multiple-source-map-babel-node" with the command
       """
