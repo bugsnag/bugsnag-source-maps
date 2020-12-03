@@ -186,6 +186,73 @@ test('uploadMultiple(): success', async () => {
   )
 })
 
+test('uploadMultiple(): success using absolute path for "directory"', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    directory: path.join(__dirname, 'fixtures/f/dist'),
+    projectRoot: path.join(__dirname, 'fixtures/f'),
+    logger: mockLogger,
+    appVersion: '1.2.3'
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(3)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/a.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/a.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'dist/a.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/b.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/b.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'dist/b.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/index.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/f/dist/index.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'dist/index.js',
+      appVersion: '1.2.3'
+    }),
+    expect.objectContaining({})
+  )
+})
+
 test('uploadMultiple(): no source maps', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new NetworkError('timeout')

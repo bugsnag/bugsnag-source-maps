@@ -93,7 +93,7 @@ export async function uploadMultiple ({
 }: UploadMultipleOpts): Promise<void> {
   logger.info(`Uploading node source maps for "${directory}"`)
   logger.debug(`Searching for source maps "${directory}"`)
-  const absoluteSearchPath = path.join(projectRoot, directory)
+  const absoluteSearchPath = path.resolve(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
     glob('**/*.map', { ignore: '**/node_modules/**', cwd: absoluteSearchPath }, (err, files) => {
       if (err) return reject(err)
