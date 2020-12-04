@@ -226,7 +226,7 @@ function validatePlatformOptions(opts: Record<string, unknown>): void {
 
 function validateRetrieval(opts: Record<string, unknown>): void {
   if (!opts.fetch && !opts.sourceMap && !opts.bundle) {
-    throw new Error('--fetch or both --source-map and --bundle are required parameters')
+    throw new Error('Not enough arguments provided. Either use --fetch mode, or provide both --source-map and --bundle.')
   }
 
   if (!opts.fetch) {
