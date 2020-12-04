@@ -194,7 +194,7 @@ function formatFetchError(err: Error, url: string, entryPoint: string): string {
       return `Unable to connect to ${url}. Is the server running?\n\n`
 
     case NetworkErrorCode.SERVER_ERROR:
-      return `Recieved an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
+      return `Received an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
 
     case NetworkErrorCode.TIMEOUT:
       return `The request timed out.\n\n`

@@ -719,7 +719,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server. Does the entry point file 'index.js' exist?"),
       err
     )
   }
@@ -905,7 +905,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server. Does the entry point file 'index.js' exist?"),
       err
     )
   }
