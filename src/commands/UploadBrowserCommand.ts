@@ -97,7 +97,7 @@ const browserCommandSingleDefs = [
   {
     name: 'bundle-url',
     type: String,
-    description: 'the URL the bundle is served at (may contain * wildcards) {bold required}',
+    description: 'the URL of the bundle file (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
   {
@@ -117,7 +117,7 @@ const browserCommandMultipleDefs = [
   {
     name: 'base-url',
     type: String,
-    description: 'the base URL that JS bundles are served from (may contain * wildcards) {bold required}',
+    description: 'the URL of the base directory that bundles are served from (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
 ]
