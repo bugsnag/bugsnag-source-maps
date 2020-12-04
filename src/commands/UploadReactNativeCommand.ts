@@ -225,7 +225,11 @@ function validatePlatformOptions(opts: Record<string, unknown>): void {
 }
 
 function validateRetrieval(opts: Record<string, unknown>): void {
-  if (!opts.fetch){
+  if (!opts.fetch && !opts.sourceMap && !opts.bundle) {
+    throw new Error('--fetch or both --source-map and --bundle are required parameters')
+  }
+
+  if (!opts.fetch) {
     if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {
       throw new Error('--source-map is a required parameter')
     }
