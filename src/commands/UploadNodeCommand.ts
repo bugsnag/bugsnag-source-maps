@@ -90,13 +90,13 @@ const nodeCommandSingleDefs = [
     name: 'source-map',
     type: String,
     description: 'the path to the source map {bold required}',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   },
   {
     name: 'bundle',
     type: String,
     description: 'the path to the bundle {bold required}',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   }
 ]
 const nodeCommandMultipleDefs = [
