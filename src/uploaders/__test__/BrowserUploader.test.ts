@@ -145,6 +145,25 @@ test('uploadOne(): failure (sourcemap is invalid json)', async () => {
   }
 })
 
+test('uploadOne(): fails when unable to detect appVersion', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadOne({
+      apiKey: '123',
+      bundleUrl: 'http://mybundle.jim/',
+      projectRoot: path.join(__dirname, 'fixtures/h'),
+      sourceMap: 'build/static/js/2.e5bb21a6.chunk.js.map',
+      bundle: 'build/static/js/2.e5bb21a6.chunk.js',
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+    expect(mockLogger.error).toHaveBeenCalledWith('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+  }
+})
+
 test('uploadOne(): failure (empty bundle)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new NetworkError('network error')
@@ -367,6 +386,92 @@ test('uploadMultiple(): success', async () => {
   )
 })
 
+test('uploadMultiple(): success passing appVersion', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    baseUrl: 'http://mybundle.jim/',
+    directory: 'build',
+    projectRoot: path.join(__dirname, 'fixtures/h'),
+    appVersion: '4.5.6',
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/2.e5bb21a6.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/2.e5bb21a6.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/2.e5bb21a6.chunk.js',
+      appVersion: '4.5.6'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/3.1b8b4fc7.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/3.1b8b4fc7.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/3.1b8b4fc7.chunk.js',
+      appVersion: '4.5.6'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/main.286ac573.chunk.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/main.286ac573.chunk.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/main.286ac573.chunk.js',
+      appVersion: '4.5.6'
+    }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/runtime-main.ad66c902.js'),
+        data: expect.any(String)
+      }),
+      sourceMap: expect.objectContaining({
+        filepath: path.join(__dirname, 'fixtures/h/build/static/js/runtime-main.ad66c902.js.map'),
+        data: expect.any(String)
+      }),
+      overwrite: false,
+      minifiedUrl: 'http://mybundle.jim/static/js/runtime-main.ad66c902.js',
+      appVersion: '4.5.6'
+    }),
+    expect.objectContaining({})
+  )
+})
+
 test('uploadMultiple(): success using absolute path for "directory"', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   mockedRequest.mockResolvedValue()
@@ -497,6 +602,24 @@ test('uploadMultiple(): invalid source map', async () => {
     expect(e).toBeTruthy()
     expect(e.message).toBe('Unexpected token h in JSON at position 0')
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
+  }
+})
+
+test('uploadMultiple(): fails when unable to detect appVersion', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      baseUrl: 'http://mybundle.jim/',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/h'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+    expect(mockLogger.error).toHaveBeenCalledWith('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
   }
 })
 
