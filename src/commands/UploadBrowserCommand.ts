@@ -28,7 +28,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
       const wildcardArgument = argv.find(arg => arg === '--bundle-url' || arg === '--base-url')
 
       if (wildcardArgument) {
-        logger.info(`Values that contain a wildcard must be wrapped in quotes, for example ${wildcardArgument} "*"`)
+        logger.info(`Values that contain a wildcard must be wrapped in quotes to prevent shell expansion, for example ${wildcardArgument} "*"`)
       }
     } else {
       logger.error(e.message)
