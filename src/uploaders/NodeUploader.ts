@@ -47,7 +47,7 @@ export async function uploadOne ({
     appVersion = await detectAppVersion(projectRoot, logger)
   }
 
-  logger.debug(`Initiating upload "${endpoint}"`)
+  logger.debug(`Initiating upload to "${endpoint}"`)
   const start = new Date().getTime()
   try {
     await request(endpoint, {
@@ -131,7 +131,7 @@ export async function uploadMultiple ({
 
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-    logger.debug(`Initiating upload "${endpoint}"`)
+    logger.debug(`Initiating upload to "${endpoint}"`)
     const start = new Date().getTime()
     try {
       await request(endpoint, {
