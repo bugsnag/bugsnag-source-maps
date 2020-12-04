@@ -601,7 +601,7 @@ test('cli: upload-react-native fails without any version given', async () => {
 
   expect(reactNative.uploadOne).not.toHaveBeenCalled()
   expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
-  expect(logger.error).toHaveBeenCalledWith('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+  expect(logger.error).toHaveBeenCalledWith('--code-bundle-id or at least one of --app-version, --app-version-code or --app-bundle-version must be given')
   expect(process.exitCode).toBe(1)
 })
 

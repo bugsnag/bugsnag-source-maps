@@ -207,7 +207,7 @@ function validateVersion(opts: Record<string, unknown>): void {
   }
 
   if (!opts.appVersion && !opts.appVersionCode && !opts.appBundleVersion) {
-    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code or --app-bundle-version must be given')
   }
 }
 
