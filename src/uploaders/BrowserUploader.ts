@@ -53,7 +53,13 @@ export async function uploadOne ({
   const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
   if (!appVersion) {
-    appVersion = await detectAppVersion(projectRoot, logger)
+    try {
+      appVersion = await detectAppVersion(projectRoot, logger)
+    } catch (e) {
+      logger.error(e.message)
+
+      throw e
+    }
   }
 
   logger.debug(`Initiating upload "${endpoint}"`)
@@ -122,7 +128,13 @@ export async function uploadMultiple ({
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
   if (!appVersion) {
-    appVersion = await detectAppVersion(projectRoot, logger)
+    try {
+      appVersion = await detectAppVersion(projectRoot, logger)
+    } catch (e) {
+      logger.error(e.message)
+
+      throw e
+    }
   }
 
   let n = 0

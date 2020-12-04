@@ -41,6 +41,24 @@ test('uploadOne(): dispatches a request with the correct params', async () => {
   )
 })
 
+test('uploadOne(): fails when unable to detect appVersion', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadOne({
+      apiKey: '123',
+      projectRoot: path.join(__dirname, 'fixtures/h'),
+      sourceMap: 'build/static/js/2.e5bb21a6.chunk.js.map',
+      bundle: 'build/static/js/2.e5bb21a6.chunk.js',
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+    expect(mockLogger.error).toHaveBeenCalledWith('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+  }
+})
+
 test('uploadOne(): failure (unexpected network error)', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   const err = new NetworkError('misc upload error')
@@ -294,6 +312,23 @@ test('uploadMultiple(): invalid source map', async () => {
     expect(e).toBeTruthy()
     expect(e.message).toBe('Unexpected token h in JSON at position 0')
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('The source map was not valid JSON.'))
+  }
+})
+
+test('uploadMultiple(): fails when unable to detect appVersion', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadMultiple({
+      apiKey: '123',
+      directory: 'build',
+      projectRoot: path.join(__dirname, 'fixtures/h'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).not.toHaveBeenCalled()
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
+    expect(mockLogger.error).toHaveBeenCalledWith('Unable to automatically detect app version. Provide the "--app-version" argument or add a "version" key to your package.json file.')
   }
 })
 
