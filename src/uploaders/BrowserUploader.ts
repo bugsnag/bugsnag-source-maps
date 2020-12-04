@@ -39,7 +39,7 @@ export async function uploadOne ({
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading browser source map for "${bundleUrl}"`)
+  logger.info(`Preparing upload of browser source map for "${bundleUrl}"`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
 
@@ -103,7 +103,7 @@ export async function uploadMultiple ({
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
-  logger.info(`Uploading browser source maps for "${baseUrl}"`)
+  logger.info(`Preparing upload of browser source maps for "${baseUrl}"`)
   logger.debug(`Searching for source maps "${directory}"`)
   const absoluteSearchPath = path.resolve(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {

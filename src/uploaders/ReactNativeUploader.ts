@@ -48,7 +48,7 @@ export async function uploadOne ({
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+  logger.info(`Preparing upload of React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
   const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
@@ -103,7 +103,7 @@ export async function fetchAndUploadOne ({
   bundlerEntryPoint = 'index.js',
   logger = noopLogger
 }: FetchUploadOpts): Promise<void> {
-  logger.info(`Fetching and uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+  logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   const queryString = qs.stringify({ platform, dev })
   const entryPoint = bundlerEntryPoint.replace(/\.js$/, '')
