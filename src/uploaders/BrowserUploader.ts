@@ -69,7 +69,10 @@ export async function uploadOne ({
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+
+    const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundle}` : sourceMap
+
+    logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -155,7 +158,10 @@ export async function uploadMultiple ({
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
       }, requestOpts)
-      logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+
+      const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
+
+      logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
     } catch (e) {
       if (e.cause) {
         logger.error(formatErrorLog(e), e, e.cause)
