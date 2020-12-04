@@ -118,7 +118,7 @@ export async function uploadMultiple ({
     return
   }
 
-  logger.debug(`Found ${sourceMaps.length} source map:`)
+  logger.debug(`Found ${sourceMaps.length} source map(s):`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
   if (!appVersion) {
