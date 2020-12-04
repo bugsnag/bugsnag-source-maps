@@ -127,7 +127,7 @@ function validateBrowserOpts (opts: Record<string, unknown>): void {
   const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']
   const anyMultipleSet = opts['baseUrl'] || opts['directory']
   if (anySingleSet && anyMultipleSet) {
-    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory,--base-url).')
+    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory, --base-url).')
   }
   if (!anySingleSet && !anyMultipleSet) throw new Error('Not enough options supplied')
 
