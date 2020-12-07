@@ -186,7 +186,7 @@ function marshallVersionOptions ({ appVersion, codeBundleId, appVersionCode, app
 
 function formatFetchError(err: Error, url: string, entryPoint: string): string {
   if (!(err instanceof NetworkError)) {
-    return `An unexpected error occurred.\n\n`
+    return `An unexpected error occurred during the request to ${url}.\n\n`
   }
 
   switch (err.code) {
@@ -194,12 +194,12 @@ function formatFetchError(err: Error, url: string, entryPoint: string): string {
       return `Unable to connect to ${url}. Is the server running?\n\n`
 
     case NetworkErrorCode.SERVER_ERROR:
-      return `Received an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
+      return `Received an error from the server at ${url}. Does the entry point file '${entryPoint}' exist?\n\n`
 
     case NetworkErrorCode.TIMEOUT:
-      return `The request timed out.\n\n`
+      return `The request to ${url} timed out.\n\n`
 
     default:
-      return `An unexpected error occurred.\n\n`
+      return `An unexpected error occurred during the request to ${url}.\n\n`
   }
 }
