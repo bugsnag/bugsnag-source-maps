@@ -5,6 +5,9 @@ import { AddressInfo } from 'net'
 import multiparty from 'multiparty'
 import File from '../File'
 
+// Allow 10x the request timeout time per-test
+jest.setTimeout(+(process.env.BUGSNAG_TIMEOUT_MS as string) * 10)
+
 let server: http.Server
 afterEach(() => server?.close())
 
