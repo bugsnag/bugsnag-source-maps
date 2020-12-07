@@ -1,2 +1,2 @@
-process.env.BUGSNAG_RETRY_INTERVAL_MS = '10'
-process.env.BUGSNAG_TIMEOUT_MS = '250'
+process.env.BUGSNAG_RETRY_INTERVAL_MS = process.env.BUGSNAG_RETRY_INTERVAL_MS || '10'
+process.env.BUGSNAG_TIMEOUT_MS = process.env.BUGSNAG_TIMEOUT_MS || '100'

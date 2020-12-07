@@ -27,3 +27,5 @@ jobs:
 
     - name: Test
       run: npm run test
+      env:
+        BUGSNAG_TIMEOUT_MS: 5000
