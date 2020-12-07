@@ -22,7 +22,6 @@ export default async function addSources (sourceMapPath: string, sourceMap: unkn
 
 async function addSourcesContent (sourceMapPath: string, map: UnsafeSourceMap, projectRoot: string, logger: Logger) {
   if (map.sources?.length === map.sourcesContent?.length) {
-    logger.debug('sourcesContent is already included in source map')
     return map
   }
 
