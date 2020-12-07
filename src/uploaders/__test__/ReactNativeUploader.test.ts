@@ -619,7 +619,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)'
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -651,7 +651,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Network
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -719,7 +719,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Received an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
       err
     )
   }
@@ -753,7 +753,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (timeout)', asyn
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('The request timed out.'),
+      expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
       err
     )
   }
@@ -790,7 +790,7 @@ test('fethchAndUploadOne(): Fetch mode failure to get bundle (generic Error)', a
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -827,7 +827,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (generic NetworkErro
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -905,7 +905,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Received an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
       err
     )
   }
@@ -944,7 +944,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('The request timed out.'),
+      expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
       err
     )
   }
