@@ -125,7 +125,7 @@ const browserCommandMultipleDefs = [
   {
     name: 'base-url',
     type: String,
-    description: 'the URL of the base directory that bundles are served from (may contain * wildcards) {bold required}',
+    description: 'the URL of the base directory that JS files are served from (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
 ]
