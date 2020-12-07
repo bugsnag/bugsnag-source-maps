@@ -152,7 +152,7 @@ const reactNativeFetchOpts = [
   {
     name: 'fetch',
     type: Boolean,
-    description: 'enable fetch mode {bold required}',
+    description: 'enable fetch mode',
   },
   {
     name: 'bundler-url',
