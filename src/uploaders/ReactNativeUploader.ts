@@ -106,7 +106,7 @@ export async function fetchAndUploadOne ({
   logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   const queryString = qs.stringify({ platform, dev })
-  const entryPoint = bundlerEntryPoint.replace(/\.js$/, '')
+  const entryPoint = bundlerEntryPoint.replace(/\.(js|bundle)$/, '')
 
   const sourceMapUrl = `${bundlerUrl}/${entryPoint}.js.map?${queryString}`
   const bundleUrl = `${bundlerUrl}/${entryPoint}.bundle?${queryString}`

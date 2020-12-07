@@ -163,7 +163,7 @@ const reactNativeFetchOpts = [
   {
     name: 'bundler-entry-point',
     type: String,
-    description: 'the entry point of your React Native app',
+    description: 'the entry point file of your React Native app',
     typeLabel: '{underline filepath}',
   },
 ]
