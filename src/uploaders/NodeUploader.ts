@@ -35,7 +35,7 @@ export async function uploadOne ({
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading node source map for "${bundle}"`)
+  logger.info(`Preparing upload of node source map for "${bundle}"`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
   const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
@@ -53,7 +53,7 @@ export async function uploadOne ({
     }
   }
 
-  logger.debug(`Initiating upload "${endpoint}"`)
+  logger.debug(`Initiating upload to "${endpoint}"`)
   const start = new Date().getTime()
   try {
     await request(endpoint, {
@@ -65,7 +65,7 @@ export async function uploadOne ({
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -97,7 +97,7 @@ export async function uploadMultiple ({
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
-  logger.info(`Uploading node source maps for "${directory}"`)
+  logger.info(`Preparing upload of node source maps for "${directory}"`)
   logger.debug(`Searching for source maps "${directory}"`)
   const absoluteSearchPath = path.resolve(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
@@ -143,7 +143,7 @@ export async function uploadMultiple ({
 
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-    logger.debug(`Initiating upload "${endpoint}"`)
+    logger.debug(`Initiating upload to "${endpoint}"`)
     const start = new Date().getTime()
     try {
       await request(endpoint, {
@@ -155,7 +155,10 @@ export async function uploadMultiple ({
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
       }, requestOpts)
-      logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+
+      const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
+
+      logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
     } catch (e) {
       if (e.cause) {
         logger.error(formatErrorLog(e), e, e.cause)

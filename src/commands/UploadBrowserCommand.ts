@@ -105,7 +105,7 @@ const browserCommandSingleDefs = [
   {
     name: 'bundle-url',
     type: String,
-    description: 'the URL the bundle is served at (may contain * wildcards) {bold required}',
+    description: 'the URL of the bundle file (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
   {
@@ -125,7 +125,7 @@ const browserCommandMultipleDefs = [
   {
     name: 'base-url',
     type: String,
-    description: 'the base URL that JS bundles are served from (may contain * wildcards) {bold required}',
+    description: 'the URL of the base directory that bundles are served from (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
 ]
@@ -135,7 +135,7 @@ function validateBrowserOpts (opts: Record<string, unknown>): void {
   const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']
   const anyMultipleSet = opts['baseUrl'] || opts['directory']
   if (anySingleSet && anyMultipleSet) {
-    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory,--base-url).')
+    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory, --base-url).')
   }
   if (!anySingleSet && !anyMultipleSet) throw new Error('Not enough options supplied')
 

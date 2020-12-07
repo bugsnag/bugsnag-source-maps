@@ -207,7 +207,7 @@ function validateVersion(opts: Record<string, unknown>): void {
   }
 
   if (!opts.appVersion && !opts.appVersionCode && !opts.appBundleVersion) {
-    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code or --app-bundle-version must be given')
   }
 }
 
@@ -225,7 +225,11 @@ function validatePlatformOptions(opts: Record<string, unknown>): void {
 }
 
 function validateRetrieval(opts: Record<string, unknown>): void {
-  if (!opts.fetch){
+  if (!opts.fetch && !opts.sourceMap && !opts.bundle) {
+    throw new Error('Not enough arguments provided. Either use --fetch mode, or provide both --source-map and --bundle.')
+  }
+
+  if (!opts.fetch) {
     if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {
       throw new Error('--source-map is a required parameter')
     }
