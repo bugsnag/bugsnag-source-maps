@@ -109,6 +109,18 @@ test('cli: upload-node --quiet', async () => {
   expect(logger.level).toBe(LogLevel.Success)
 })
 
+test('cli: upload-node --app-version and --detect-app-version', async () => {
+  await run([
+    'upload-node',
+    '--api-key', '123',
+    '--source-map', 'bundle.js.map',
+    '--app-version', '123',
+    '--detect-app-version'
+  ])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--app-version and --detect-app-version cannot both be given')
+})
+
 // BROWSER
 
 test('cli: upload-browser --help', async () => {
