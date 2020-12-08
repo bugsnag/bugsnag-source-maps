@@ -111,11 +111,12 @@ Feature: Browser source map upload multiple
     And the payload field "sourceMap" matches the source map "b.json" for "multiple-source-map-typescript"
     And the payload field "minifiedFile" matches the minified file "b.js" for "multiple-source-map-typescript"
 
-  Scenario: Auto detecting app version
+  Scenario: Detected app version
     When I run the service "multiple-source-map-webpack" with the command
       """
       bugsnag-source-maps upload-browser
         --api-key 123
+        --detect-app-version
         --directory dist
         --base-url "http://myapp.url/static/js/"
         --endpoint http://maze-runner:9339
