@@ -185,6 +185,19 @@ test('cli: upload-browser --quiet', async () => {
   expect(logger.level).toBe(LogLevel.Success)
 })
 
+test('cli: upload-browser --app-version and --detect-app-version', async () => {
+  await run([
+    'upload-browser',
+    '--api-key', '123',
+    '--source-map', 'bundle.js.map',
+    '--bundle-url', 'http://my.url/dist/bundle.js',
+    '--app-version', '123',
+    '--detect-app-version'
+  ])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--app-version and --detect-app-version cannot both be given')
+})
+
 // REACT NATIVE
 
 test('cli: upload-react-native --help', async () => {

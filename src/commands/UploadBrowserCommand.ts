@@ -47,6 +47,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         overwrite: browserOpts.overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
+        detectAppVersion: browserOpts.detectAppVersion,
         logger
       })
     } else {
@@ -59,6 +60,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         overwrite: browserOpts.overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
+        detectAppVersion: browserOpts.detectAppVersion,
         logger
       })
     }
@@ -93,7 +95,17 @@ function browserUsage (): void {
   )
 }
 
-const browserCommandCommonDefs = [ { name: 'app-version', type: String } ]
+const browserCommandCommonDefs = [
+  {
+    name: 'app-version',
+    type: String
+  },
+  {
+    name: 'detect-app-version',
+    type: Boolean,
+    description: 'detect the app version from the package.json file'
+  }
+]
 
 const browserCommandSingleDefs = [
   {
@@ -131,7 +143,14 @@ const browserCommandMultipleDefs = [
 ]
 
 function validateBrowserOpts (opts: Record<string, unknown>): void {
-  if (!opts['apiKey']) throw new Error('--api-key is required')
+  if (!opts['apiKey']) {
+    throw new Error('--api-key is required')
+  }
+
+  if (opts['appVersion'] && opts['detectAppVersion']) {
+    throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
   const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']
   const anyMultipleSet = opts['baseUrl'] || opts['directory']
   if (anySingleSet && anyMultipleSet) {
