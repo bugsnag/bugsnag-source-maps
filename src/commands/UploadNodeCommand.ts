@@ -103,7 +103,7 @@ const nodeCommandMultipleDefs = [
   {
     name: 'directory',
     type: String,
-    description: 'the directory to start searching for source maps in {bold required}',
+    description: 'the directory to start searching for source maps in, relative to the project root {bold required}',
     typeLabel: '{underline path}'
   }
 ]
