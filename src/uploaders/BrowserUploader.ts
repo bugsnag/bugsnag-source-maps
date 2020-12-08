@@ -10,7 +10,7 @@ import applyTransformations from './lib/ApplyTransformations'
 import readBundleContent from './lib/ReadBundleContent'
 import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
-import detectAppVersion from './lib/DetectAppVersion'
+import _detectAppVersion from './lib/DetectAppVersion'
 
 interface UploadSingleOpts {
   apiKey: string
@@ -22,6 +22,7 @@ interface UploadSingleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
+  detectAppVersion?: boolean,
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -36,6 +37,7 @@ export async function uploadOne ({
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = 'https://upload.bugsnag.com/',
+  detectAppVersion = false,
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
@@ -52,9 +54,9 @@ export async function uploadOne ({
   const sourceMapJson = parseSourceMap(sourceMapContent, sourceMap, logger)
   const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-  if (!appVersion) {
+  if (detectAppVersion) {
     try {
-      appVersion = await detectAppVersion(projectRoot, logger)
+      appVersion = await _detectAppVersion(projectRoot, logger)
     } catch (e) {
       logger.error(e.message)
 
@@ -97,6 +99,7 @@ interface UploadMultipleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
+  detectAppVersion?: boolean,
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -109,6 +112,7 @@ export async function uploadMultiple ({
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = 'https://upload.bugsnag.com/',
+  detectAppVersion = false,
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
@@ -130,9 +134,9 @@ export async function uploadMultiple ({
   logger.debug(`Found ${sourceMaps.length} source map(s):`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
-  if (!appVersion) {
+  if (detectAppVersion) {
     try {
-      appVersion = await detectAppVersion(projectRoot, logger)
+      appVersion = await _detectAppVersion(projectRoot, logger)
     } catch (e) {
       logger.error(e.message)
 

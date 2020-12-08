@@ -154,6 +154,7 @@ test('uploadOne(): fails when unable to detect appVersion', async () => {
       projectRoot: path.join(__dirname, 'fixtures/h'),
       sourceMap: 'build/static/js/2.e5bb21a6.chunk.js.map',
       bundle: 'build/static/js/2.e5bb21a6.chunk.js',
+      detectAppVersion: true,
       logger: mockLogger
     })
     expect(mockedRequest).not.toHaveBeenCalled()
@@ -301,7 +302,7 @@ test('uploadOne(): failure (timeout)', async () => {
   }
 })
 
-test('uploadMultiple(): success', async () => {
+test('uploadMultiple(): success with detected appVersion', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   mockedRequest.mockResolvedValue()
   await uploadMultiple({
@@ -309,6 +310,7 @@ test('uploadMultiple(): success', async () => {
     baseUrl: 'http://mybundle.jim/',
     directory: 'build',
     projectRoot: path.join(__dirname, 'fixtures/c'),
+    detectAppVersion: true,
     logger: mockLogger
   })
   expect(mockedRequest).toHaveBeenCalledTimes(4)
@@ -480,6 +482,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     baseUrl: 'http://mybundle.jim/',
     directory: path.join(__dirname, 'fixtures/c/build'),
     projectRoot: path.join(__dirname, 'fixtures/c'),
+    detectAppVersion: true,
     logger: mockLogger
   })
 
@@ -613,6 +616,7 @@ test('uploadMultiple(): fails when unable to detect appVersion', async () => {
       baseUrl: 'http://mybundle.jim/',
       directory: 'build',
       projectRoot: path.join(__dirname, 'fixtures/h'),
+      detectAppVersion: true,
       logger: mockLogger
     })
     expect(mockedRequest).not.toHaveBeenCalled()
