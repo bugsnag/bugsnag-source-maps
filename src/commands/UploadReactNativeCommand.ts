@@ -157,13 +157,13 @@ const reactNativeFetchOpts = [
   {
     name: 'bundler-url',
     type: String,
-    description: 'the URL of the React Native bundle server',
+    description: 'the URL of the React Native bundle server (defaults to http://localhost:8081)',
     typeLabel: '{underline url}',
   },
   {
     name: 'bundler-entry-point',
     type: String,
-    description: 'the entry point of your React Native app',
+    description: 'the entry point file of your React Native app (defaults to index.js)',
     typeLabel: '{underline filepath}',
   },
 ]

@@ -544,6 +544,55 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   ))
 })
 
+test('fetchAndUploadOne(): dispatches a request with the correct params with custom entry point with ".bundle" extension', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await fetchAndUploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platform: 'ios',
+    bundlerUrl: 'http://react-native-bundler:1234',
+    bundlerEntryPoint: 'cool-app.bundle',
+    appVersion: '1.2.3',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger,
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded cool-app.js.map to example.com in'
+  ))
+})
+
 test('fetchAndUploadOne(): dispatches a request with the correct params with custom entry point with no ".js" extension', async () => {
   const directory = path.join(__dirname, 'fixtures/react-native-android')
   const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
