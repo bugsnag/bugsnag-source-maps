@@ -12,6 +12,8 @@ import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import _detectAppVersion from './lib/DetectAppVersion'
 
+const UPLOAD_ENDPOINT = 'https://upload.bugsnag.com/source-map'
+
 interface UploadSingleOpts {
   apiKey: string
   sourceMap: string
@@ -36,7 +38,7 @@ export async function uploadOne ({
   codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/',
+  endpoint = UPLOAD_ENDPOINT,
   detectAppVersion = false,
   requestOpts = {},
   logger = noopLogger
@@ -110,9 +112,9 @@ export async function uploadMultiple ({
   directory,
   appVersion,
   overwrite = false,
-  projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/',
   detectAppVersion = false,
+  projectRoot = process.cwd(),
+  endpoint = UPLOAD_ENDPOINT,
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
