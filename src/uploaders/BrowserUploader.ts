@@ -10,7 +10,7 @@ import applyTransformations from './lib/ApplyTransformations'
 import readBundleContent from './lib/ReadBundleContent'
 import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
-import detectAppVersion from './lib/DetectAppVersion'
+import _detectAppVersion from './lib/DetectAppVersion'
 
 const UPLOAD_ENDPOINT = 'https://upload.bugsnag.com/source-map'
 
@@ -24,6 +24,7 @@ interface UploadSingleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
+  detectAppVersion?: boolean,
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -38,10 +39,11 @@ export async function uploadOne ({
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = UPLOAD_ENDPOINT,
+  detectAppVersion = false,
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading browser source map for "${bundleUrl}"`)
+  logger.info(`Preparing upload of browser source map for "${bundleUrl}"`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
 
@@ -54,11 +56,17 @@ export async function uploadOne ({
   const sourceMapJson = parseSourceMap(sourceMapContent, sourceMap, logger)
   const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-  if (!appVersion) {
-    appVersion = await detectAppVersion(projectRoot, logger)
+  if (detectAppVersion) {
+    try {
+      appVersion = await _detectAppVersion(projectRoot, logger)
+    } catch (e) {
+      logger.error(e.message)
+
+      throw e
+    }
   }
 
-  logger.debug(`Initiating upload "${endpoint}"`)
+  logger.debug(`Initiating upload to "${endpoint}"`)
   const start = new Date().getTime()
   try {
     await request(endpoint, {
@@ -71,7 +79,10 @@ export async function uploadOne ({
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+
+    const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundle}` : sourceMap
+
+    logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -90,6 +101,7 @@ interface UploadMultipleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
+  detectAppVersion?: boolean,
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -100,14 +112,15 @@ export async function uploadMultiple ({
   directory,
   appVersion,
   overwrite = false,
+  detectAppVersion = false,
   projectRoot = process.cwd(),
   endpoint = UPLOAD_ENDPOINT,
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
-  logger.info(`Uploading browser source maps for "${baseUrl}"`)
+  logger.info(`Preparing upload of browser source maps for "${baseUrl}"`)
   logger.debug(`Searching for source maps "${directory}"`)
-  const absoluteSearchPath = path.join(projectRoot, directory)
+  const absoluteSearchPath = path.resolve(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
     glob('**/*.map', { ignore: '**/*.css.map', cwd: absoluteSearchPath }, (err, files) => {
       if (err) return reject(err)
@@ -120,11 +133,17 @@ export async function uploadMultiple ({
     return
   }
 
-  logger.debug(`Found ${sourceMaps.length} source map:`)
+  logger.debug(`Found ${sourceMaps.length} source map(s):`)
   logger.debug(`  ${sourceMaps.join(', ')}`)
 
-  if (!appVersion) {
-    appVersion = await detectAppVersion(projectRoot, logger)
+  if (detectAppVersion) {
+    try {
+      appVersion = await _detectAppVersion(projectRoot, logger)
+    } catch (e) {
+      logger.error(e.message)
+
+      throw e
+    }
   }
 
   let n = 0
@@ -145,7 +164,7 @@ export async function uploadMultiple ({
 
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-    logger.debug(`Initiating upload "${endpoint}"`)
+    logger.debug(`Initiating upload to "${endpoint}"`)
     const start = new Date().getTime()
     try {
       await request(endpoint, {
@@ -157,7 +176,10 @@ export async function uploadMultiple ({
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
       }, requestOpts)
-      logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+
+      const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
+
+      logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
     } catch (e) {
       if (e.cause) {
         logger.error(formatErrorLog(e), e, e.cause)

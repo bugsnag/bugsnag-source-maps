@@ -109,6 +109,18 @@ test('cli: upload-node --quiet', async () => {
   expect(logger.level).toBe(LogLevel.Success)
 })
 
+test('cli: upload-node --app-version and --detect-app-version', async () => {
+  await run([
+    'upload-node',
+    '--api-key', '123',
+    '--source-map', 'bundle.js.map',
+    '--app-version', '123',
+    '--detect-app-version'
+  ])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--app-version and --detect-app-version cannot both be given')
+})
+
 // BROWSER
 
 test('cli: upload-browser --help', async () => {
@@ -183,6 +195,19 @@ test('cli: upload-browser --quiet', async () => {
   await run(['upload-browser', '--api-key', '123', '--bundle-url', 'http://my.url/dist/bundle.js', '--source-map', 'bundle.js.map', '--quiet'])
   expect(browser.uploadOne).toHaveBeenCalledTimes(1)
   expect(logger.level).toBe(LogLevel.Success)
+})
+
+test('cli: upload-browser --app-version and --detect-app-version', async () => {
+  await run([
+    'upload-browser',
+    '--api-key', '123',
+    '--source-map', 'bundle.js.map',
+    '--bundle-url', 'http://my.url/dist/bundle.js',
+    '--app-version', '123',
+    '--detect-app-version'
+  ])
+  expect(process.exitCode).toBe(1)
+  expect(logger.error).toHaveBeenCalledWith('--app-version and --detect-app-version cannot both be given')
 })
 
 // REACT NATIVE
@@ -601,7 +626,7 @@ test('cli: upload-react-native fails without any version given', async () => {
 
   expect(reactNative.uploadOne).not.toHaveBeenCalled()
   expect(reactNative.fetchAndUploadOne).not.toHaveBeenCalled()
-  expect(logger.error).toHaveBeenCalledWith('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+  expect(logger.error).toHaveBeenCalledWith('--code-bundle-id or at least one of --app-version, --app-version-code or --app-bundle-version must be given')
   expect(process.exitCode).toBe(1)
 })
 

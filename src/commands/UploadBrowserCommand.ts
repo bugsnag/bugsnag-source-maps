@@ -22,6 +22,14 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
     process.exitCode = 1
     if (e.name === 'UNKNOWN_VALUE') {
       logger.error(`Invalid argument provided. ${e.message}`)
+
+      // Check if the user provided an argument that allows a wildcard ('*') and
+      // if so, warn them about wrapping the value in quotes
+      const wildcardArgument = argv.find(arg => arg === '--bundle-url' || arg === '--base-url')
+
+      if (wildcardArgument) {
+        logger.info(`Values that contain a wildcard must be wrapped in quotes to prevent shell expansion, for example ${wildcardArgument} "*"`)
+      }
     } else {
       logger.error(e.message)
     }
@@ -39,6 +47,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         overwrite: browserOpts.overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
+        detectAppVersion: browserOpts.detectAppVersion,
         logger
       })
     } else {
@@ -51,6 +60,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         overwrite: browserOpts.overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
+        detectAppVersion: browserOpts.detectAppVersion,
         logger
       })
     }
@@ -85,49 +95,66 @@ function browserUsage (): void {
   )
 }
 
-const browserCommandCommonDefs = [ { name: 'app-version', type: String } ]
+const browserCommandCommonDefs = [
+  {
+    name: 'app-version',
+    type: String
+  },
+  {
+    name: 'detect-app-version',
+    type: Boolean,
+    description: 'detect the app version from the package.json file'
+  }
+]
 
 const browserCommandSingleDefs = [
   {
     name: 'source-map',
     type: String,
     description: 'the path to the source map {bold required}',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   },
   {
     name: 'bundle-url',
     type: String,
-    description: 'the URL the bundle is served at (may contain * wildcards) {bold required}',
+    description: 'the URL of the bundle file (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
   {
     name: 'bundle',
     type: String,
     description: 'the path to the bundle',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   },
 ]
 const browserCommandMultipleDefs = [
   {
     name: 'directory',
     type: String,
-    description: 'the directory to start searching for source maps in {bold required}',
+    description: 'the directory to start searching for source maps in, relative to the project root {bold required}',
     typeLabel: '{underline path}'
   },
   {
     name: 'base-url',
     type: String,
-    description: 'the base URL that JS bundles are served from (may contain * wildcards) {bold required}',
+    description: 'the URL of the base directory that JS files are served from (may contain * wildcards) {bold required}',
     typeLabel: '{underline url}'
   },
 ]
 
 function validateBrowserOpts (opts: Record<string, unknown>): void {
-  if (!opts['apiKey']) throw new Error('--api-key is required')
+  if (!opts['apiKey']) {
+    throw new Error('--api-key is required')
+  }
+
+  if (opts['appVersion'] && opts['detectAppVersion']) {
+    throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
   const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']
   const anyMultipleSet = opts['baseUrl'] || opts['directory']
   if (anySingleSet && anyMultipleSet) {
-    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory,--base-url).')
+    throw new Error('Incompatible options are set. Use either single mode options (--source-map, --bundle, --bundle-url) or multiple mode options (--directory, --base-url).')
   }
   if (!anySingleSet && !anyMultipleSet) throw new Error('Not enough options supplied')
 

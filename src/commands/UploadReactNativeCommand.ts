@@ -138,13 +138,13 @@ const reactNativeProvideOpts = [
     name: 'source-map',
     type: String,
     description: 'the path to the source map {bold required}',
-    typeLabel: '{underline file}',
+    typeLabel: '{underline filepath}',
   },
   {
     name: 'bundle',
     type: String,
     description: 'the path to the bundle {bold required}',
-    typeLabel: '{underline file}',
+    typeLabel: '{underline filepath}',
   },
 ]
 
@@ -152,19 +152,19 @@ const reactNativeFetchOpts = [
   {
     name: 'fetch',
     type: Boolean,
-    description: 'enable fetch mode {bold required}',
+    description: 'enable fetch mode',
   },
   {
     name: 'bundler-url',
     type: String,
-    description: 'the URL of the React Native bundle server',
+    description: 'the URL of the React Native bundle server (defaults to http://localhost:8081)',
     typeLabel: '{underline url}',
   },
   {
     name: 'bundler-entry-point',
     type: String,
-    description: 'the entry point of your React Native app',
-    typeLabel: '{underline file}',
+    description: 'the entry point file of your React Native app (defaults to index.js)',
+    typeLabel: '{underline filepath}',
   },
 ]
 
@@ -207,7 +207,7 @@ function validateVersion(opts: Record<string, unknown>): void {
   }
 
   if (!opts.appVersion && !opts.appVersionCode && !opts.appBundleVersion) {
-    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code and --app-bundle-version must be given')
+    throw new Error('--code-bundle-id or at least one of --app-version, --app-version-code or --app-bundle-version must be given')
   }
 }
 
@@ -225,7 +225,11 @@ function validatePlatformOptions(opts: Record<string, unknown>): void {
 }
 
 function validateRetrieval(opts: Record<string, unknown>): void {
-  if (!opts.fetch){
+  if (!opts.fetch && !opts.sourceMap && !opts.bundle) {
+    throw new Error('Not enough arguments provided. Either use --fetch mode, or provide both --source-map and --bundle.')
+  }
+
+  if (!opts.fetch) {
     if (!opts.sourceMap || typeof opts.sourceMap !== 'string') {
       throw new Error('--source-map is a required parameter')
     }

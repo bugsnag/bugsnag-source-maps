@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
@@ -27,3 +28,5 @@ jobs:
 
     - name: Test
       run: npm run test
+      env:
+        BUGSNAG_TIMEOUT_MS: 5000

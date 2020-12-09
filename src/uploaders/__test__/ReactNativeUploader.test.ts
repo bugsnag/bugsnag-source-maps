@@ -544,6 +544,55 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   ))
 })
 
+test('fetchAndUploadOne(): dispatches a request with the correct params with custom entry point with ".bundle" extension', async () => {
+  const directory = path.join(__dirname, 'fixtures/react-native-android')
+  const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
+  const bundle = await fs.readFile(path.resolve(directory, 'bundle.js'))
+
+  const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockResolvedValueOnce(sourceMap.toString())
+  mockedFetch.mockResolvedValueOnce(bundle.toString())
+
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await fetchAndUploadOne({
+    endpoint: 'example.com',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platform: 'ios',
+    bundlerUrl: 'http://react-native-bundler:1234',
+    bundlerEntryPoint: 'cool-app.bundle',
+    appVersion: '1.2.3',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger,
+  })
+
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'example.com',
+    expect.objectContaining({
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'ios',
+      appVersion: '1.2.3',
+      sourceMap: expect.any(File),
+      bundle: expect.any(File),
+    }),
+    expect.objectContaining({})
+  )
+
+  expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
+    'Success, uploaded cool-app.js.map to example.com in'
+  ))
+})
+
 test('fetchAndUploadOne(): dispatches a request with the correct params with custom entry point with no ".js" extension', async () => {
   const directory = path.join(__dirname, 'fixtures/react-native-android')
   const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
@@ -619,7 +668,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)'
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -651,7 +700,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Network
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -719,7 +768,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
       err
     )
   }
@@ -753,7 +802,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (timeout)', asyn
     expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('The request timed out.'),
+      expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
       err
     )
   }
@@ -790,7 +839,7 @@ test('fethchAndUploadOne(): Fetch mode failure to get bundle (generic Error)', a
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -827,7 +876,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (generic NetworkErro
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred'),
+      expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
       err
     )
   }
@@ -905,7 +954,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Recieved an error from the server. Does the entry point file 'index.js' exist?"),
+      expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
       err
     )
   }
@@ -944,7 +993,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
     expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('The request timed out.'),
+      expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
       err
     )
   }

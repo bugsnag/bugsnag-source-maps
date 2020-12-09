@@ -38,6 +38,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         overwrite: nodeOpts.overwrite,
         appVersion: nodeOpts.appVersion,
         endpoint: nodeOpts.endpoint,
+        detectAppVersion: nodeOpts.detectAppVersion,
         logger
       })
     } else {
@@ -49,6 +50,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         overwrite: nodeOpts.overwrite,
         appVersion: nodeOpts.appVersion,
         endpoint: nodeOpts.endpoint,
+        detectAppVersion: nodeOpts.detectAppVersion,
         logger
       })
     }
@@ -83,33 +85,50 @@ function nodeUsage (): void {
   )
 }
 
-const nodeCommandCommonDefs = [ { name: 'app-version', type: String } ]
+const nodeCommandCommonDefs = [
+  {
+    name: 'app-version',
+    type: String
+  },
+  {
+    name: 'detect-app-version',
+    type: Boolean,
+    description: 'detect the app version from the package.json file'
+  }
+]
 
 const nodeCommandSingleDefs = [
   {
     name: 'source-map',
     type: String,
     description: 'the path to the source map {bold required}',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   },
   {
     name: 'bundle',
     type: String,
     description: 'the path to the bundle {bold required}',
-    typeLabel: '{underline file}'
+    typeLabel: '{underline filepath}'
   }
 ]
 const nodeCommandMultipleDefs = [
   {
     name: 'directory',
     type: String,
-    description: 'the directory to start searching for source maps in {bold required}',
+    description: 'the directory to start searching for source maps in, relative to the project root {bold required}',
     typeLabel: '{underline path}'
   }
 ]
 
 function validatenodeOpts (opts: Record<string, unknown>): void {
-  if (!opts['apiKey']) throw new Error('--api-key is required')
+  if (!opts['apiKey']) {
+    throw new Error('--api-key is required')
+  }
+
+  if (opts['appVersion'] && opts['detectAppVersion']) {
+    throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
   const anySingleSet = opts['sourceMap'] || opts['bundle']
   const anyMultipleSet = opts['directory']
   if (anySingleSet && anyMultipleSet) {

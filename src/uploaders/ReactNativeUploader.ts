@@ -48,7 +48,7 @@ export async function uploadOne ({
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+  logger.info(`Preparing upload of React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
   const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
@@ -58,7 +58,7 @@ export async function uploadOne ({
 
   const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
-  logger.debug(`Initiating upload "${endpoint}"`)
+  logger.debug(`Initiating upload to "${endpoint}"`)
   const start = new Date().getTime()
   try {
     await request(endpoint, {
@@ -71,7 +71,7 @@ export async function uploadOne ({
       ...marshalledVersions,
       overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -103,10 +103,10 @@ export async function fetchAndUploadOne ({
   bundlerEntryPoint = 'index.js',
   logger = noopLogger
 }: FetchUploadOpts): Promise<void> {
-  logger.info(`Fetching and uploading React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+  logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   const queryString = qs.stringify({ platform, dev })
-  const entryPoint = bundlerEntryPoint.replace(/\.js$/, '')
+  const entryPoint = bundlerEntryPoint.replace(/\.(js|bundle)$/, '')
 
   const sourceMapUrl = `${bundlerUrl}/${entryPoint}.js.map?${queryString}`
   const bundleUrl = `${bundlerUrl}/${entryPoint}.bundle?${queryString}`
@@ -141,7 +141,7 @@ export async function fetchAndUploadOne ({
 
   const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
-  logger.debug(`Initiating upload "${endpoint}"`)
+  logger.debug(`Initiating upload to "${endpoint}"`)
   const start = new Date().getTime()
   try {
     await request(endpoint, {
@@ -186,7 +186,7 @@ function marshallVersionOptions ({ appVersion, codeBundleId, appVersionCode, app
 
 function formatFetchError(err: Error, url: string, entryPoint: string): string {
   if (!(err instanceof NetworkError)) {
-    return `An unexpected error occurred.\n\n`
+    return `An unexpected error occurred during the request to ${url}.\n\n`
   }
 
   switch (err.code) {
@@ -194,12 +194,12 @@ function formatFetchError(err: Error, url: string, entryPoint: string): string {
       return `Unable to connect to ${url}. Is the server running?\n\n`
 
     case NetworkErrorCode.SERVER_ERROR:
-      return `Recieved an error from the server. Does the entry point file '${entryPoint}' exist?\n\n`
+      return `Received an error from the server at ${url}. Does the entry point file '${entryPoint}' exist?\n\n`
 
     case NetworkErrorCode.TIMEOUT:
-      return `The request timed out.\n\n`
+      return `The request to ${url} timed out.\n\n`
 
     default:
-      return `An unexpected error occurred.\n\n`
+      return `An unexpected error occurred during the request to ${url}.\n\n`
   }
 }
