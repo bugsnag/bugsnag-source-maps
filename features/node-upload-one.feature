@@ -59,11 +59,12 @@ Feature: Node source map upload one
     And the Content-Type header is valid multipart form-data
     And the exit code is successful
 
-  Scenario: Auto detecting app version
+  Scenario: Detected app version
     When I run the service "single-source-map-webpack" with the command
       """
       bugsnag-source-maps upload-node
         --api-key 123
+        --detect-app-version
         --source-map dist/main.js.map
         --bundle dist/main.js
         --endpoint http://maze-runner:9339
