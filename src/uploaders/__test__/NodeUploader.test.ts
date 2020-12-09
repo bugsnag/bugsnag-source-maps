@@ -53,7 +53,7 @@ test('uploadOne(): dispatches a request with the correct params and detected app
   })
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       appVersion: '1.2.3',
@@ -242,7 +242,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
   })
   expect(mockedRequest).toHaveBeenCalledTimes(4)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -260,7 +260,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -278,7 +278,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -296,7 +296,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -327,7 +327,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
   })
   expect(mockedRequest).toHaveBeenCalledTimes(3)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -345,7 +345,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -363,7 +363,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/',
+    'https://upload.bugsnag.com/source-map',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
