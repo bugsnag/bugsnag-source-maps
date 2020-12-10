@@ -1,0 +1,13 @@
+{
+    "version": 3,
+    "file": "a.js",
+    "sourceRoot": "",
+    "sources": [
+        "src/lib/a.ts"
+    ],
+    "names": [],
+    "mappings": "AAAA,SAAS,KAAK;IACZ,OAAO,CAAC,GAAG,CAAC,cAAc,CAAC,CAAA;AAC7B,CAAC;AAED,eAAe,KAAK,CAAA",
+    "sourcesContent": [
+        "function hello(): void {\n  console.log('hello from a')\n}\n\nexport default hello\n"
+    ]
+}

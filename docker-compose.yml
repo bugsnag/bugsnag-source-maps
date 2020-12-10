@@ -1,0 +1,23 @@
+version: '3.6'
+services:
+  packager:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.packager
+    volumes:
+      - ./:/app
+
+  maze-runner:
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:v3.5.1-cli
+    environment:
+      BUILDKITE_JOB_ID:
+      VERBOSE:
+      DEBUG:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./features:/app/features
+      - ./build/:/app/build
+
+networks:
+  default:
+    name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}

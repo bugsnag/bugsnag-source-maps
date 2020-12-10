@@ -1,0 +1,17 @@
+{
+    "version": 3,
+    "file": "out.js",
+    "sourceRoot": "",
+    "sources": [
+        "src/lib/a.ts",
+        "src/lib/b.ts",
+        "src/index.ts"
+    ],
+    "names": [],
+    "mappings": ";;;;;;IAAA,SAAS,KAAK;QACZ,OAAO,CAAC,GAAG,CAAC,cAAc,CAAC,CAAA;IAC7B,CAAC;IAED,kBAAe,KAAK,CAAA;;;;;ICJpB,mBAAe,cAAc,OAAO,CAAC,GAAG,CAAC,YAAY,CAAC,CAAA,CAAC,CAAC,EAAA;;;;;;;ICGxD,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;IAE5B,WAAC,EAAE,CAAA;IACH,WAAC,EAAE,CAAA",
+    "sourcesContent": [
+        "function hello(): void {\n  console.log('hello from a')\n}\n\nexport default hello\n",
+        "export default (): void => { console.log('hey from b') }\n",
+        "import a from './lib/a'\nimport b from './lib/b'\n\nconsole.log('hi from index')\n\na()\nb()\n"
+    ]
+}
