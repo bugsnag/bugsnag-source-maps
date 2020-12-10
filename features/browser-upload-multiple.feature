@@ -10,7 +10,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
@@ -38,7 +38,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
@@ -66,7 +66,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
@@ -94,7 +94,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
@@ -122,7 +122,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "4.5.6" for all requests
@@ -151,7 +151,7 @@ Feature: Browser source map upload multiple
         --overwrite
       """
     And I wait to receive 3 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
@@ -180,7 +180,7 @@ Feature: Browser source map upload multiple
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 4 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests

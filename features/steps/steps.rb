@@ -70,14 +70,6 @@ Then("the payload field {string} matches the minified file {string} for {string}
   assert_equal(expected, actual)
 end
 
-Then("the exit code is successful") do
-  assert_equal(
-    Docker.last_exit_code,
-    0,
-    "Expected the last command to exit successfully, but it exited with code #{Docker.last_exit_code}"
-  )
-end
-
 Then("the exit code is not successful") do
   assert_not_equal(
     Docker.last_exit_code,

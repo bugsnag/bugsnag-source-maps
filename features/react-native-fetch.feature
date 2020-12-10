@@ -14,7 +14,7 @@ Feature: React native source map fetch mode
       <flags>
     """
     And I wait to receive 1 request
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
@@ -58,7 +58,7 @@ Feature: React native source map fetch mode
       --platform ios
     """
     And I wait to receive 2 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests

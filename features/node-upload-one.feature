@@ -17,7 +17,7 @@ Feature: Node source map upload one
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
-    And the exit code is successful
+    And the last run docker command exited successfully
 
   Scenario: Basic success case (babel)
     When I run the service "single-source-map-babel-node" with the command
@@ -37,7 +37,7 @@ Feature: Node source map upload one
     And the payload field "sourceMap" matches the expected source map for "single-source-map-babel-node"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-babel-node"
     And the Content-Type header is valid multipart form-data
-    And the exit code is successful
+    And the last run docker command exited successfully
 
   Scenario: Basic success case (typescript)
     When I run the service "single-source-map-typescript" with the command
@@ -57,7 +57,7 @@ Feature: Node source map upload one
     And the payload field "sourceMap" matches the expected source map for "single-source-map-typescript"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-typescript"
     And the Content-Type header is valid multipart form-data
-    And the exit code is successful
+    And the last run docker command exited successfully
 
   Scenario: Detected app version
     When I run the service "single-source-map-webpack" with the command
@@ -77,7 +77,7 @@ Feature: Node source map upload one
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
-    And the exit code is successful
+    And the last run docker command exited successfully
 
   Scenario: Overwrite enabled
     When I run the service "single-source-map-webpack" with the command
@@ -98,7 +98,7 @@ Feature: Node source map upload one
     And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
     And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
     And the Content-Type header is valid multipart form-data
-    And the exit code is successful
+    And the last run docker command exited successfully
 
   Scenario: A request will be retried on a server failure (500 status code)
     When I set the HTTP status code for the next request to 500
@@ -112,7 +112,7 @@ Feature: Node source map upload one
         --endpoint http://maze-runner:9339
       """
     And I wait to receive 2 requests
-    Then the exit code is successful
+    Then the last run docker command exited successfully
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
