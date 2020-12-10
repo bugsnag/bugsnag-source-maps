@@ -24,7 +24,7 @@ steps:
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
-          command: ["features/browser-upload-one.feature", "features/browser-upload-multiple.feature"]
+          command: ["--fail-fast", "features/browser-upload-one.feature", "features/browser-upload-multiple.feature"]
 
   - label: 'Run Maze Runner tests (node)'
     key: "run-maze-node"
@@ -36,7 +36,7 @@ steps:
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
-          command: ["features/node-upload-one.feature", "features/node-upload-multiple.feature"]
+          command: ["--fail-fast", "features/node-upload-one.feature", "features/node-upload-multiple.feature"]
 
   - label: 'Run Maze Runner tests (react native)'
     key: "run-maze-react-native"
@@ -48,7 +48,7 @@ steps:
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
-          command: ["features/react-native-upload-one.feature"]
+          command: ["--fail-fast", "features/react-native-upload-one.feature"]
 
   - label: 'Run Maze Runner tests (react native fetch)'
     key: "run-maze-react-native-fetch"
@@ -60,4 +60,4 @@ steps:
       - docker-compose#v3.7.0:
           use-aliases: true
           run: maze-runner
-          command: ["features/react-native-fetch.feature"]
+          command: ["--fail-fast", "features/react-native-fetch.feature"]
