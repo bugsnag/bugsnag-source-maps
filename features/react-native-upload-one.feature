@@ -75,7 +75,7 @@ Feature: React native source map upload one
       --platform ios
     """
     And I wait to receive 5 requests
-    Then the exit code is not successful
+    Then the last run docker command did not exit successfully
     And the last run docker command output "A server side error occurred while processing the upload."
     And the last run docker command output "HTTP status 500 received from upload API"
     And the Content-Type header is valid multipart form-data for all requests
@@ -98,7 +98,7 @@ Feature: React native source map upload one
       --platform ios
     """
     And I wait to receive 1 request
-    Then the exit code is not successful
+    Then the last run docker command did not exit successfully
     And the last run docker command output "The provided API key was invalid."
     And the last run docker command output "HTTP status 401 received from upload API"
     And the payload field "apiKey" equals "123"
@@ -121,7 +121,7 @@ Feature: React native source map upload one
       --platform ios
     """
     And I wait to receive 1 request
-    Then the exit code is not successful
+    Then the last run docker command did not exit successfully
     And the last run docker command output "A source map matching the same criteria has already been uploaded. If you want to replace it, use the \"overwrite\" flag."
     And the last run docker command output "HTTP status 409 received from upload API"
     And the payload field "apiKey" equals "123"
@@ -144,7 +144,7 @@ Feature: React native source map upload one
       --platform ios
     """
     And I wait to receive 1 request
-    Then the exit code is not successful
+    Then the last run docker command did not exit successfully
     And the last run docker command output "The uploaded source map was empty."
     And the last run docker command output "HTTP status 422 received from upload API"
     And the payload field "apiKey" equals "123"
@@ -167,7 +167,7 @@ Feature: React native source map upload one
       --platform ios
     """
     And I wait to receive 1 request
-    Then the exit code is not successful
+    Then the last run docker command did not exit successfully
     And the last run docker command output "The request was rejected by the server as invalid."
     And the last run docker command output "HTTP status 400 received from upload API"
     And the payload field "apiKey" equals "123"
