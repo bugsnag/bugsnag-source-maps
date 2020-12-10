@@ -44,6 +44,22 @@ Options
   --version     output the version of the CLI module
 ```
 
+## Bugsnag On-Premise
+
+If you are using Bugsnag On-premise, you should use the endpoint option to set the url of your [upload server](https://docs.bugsnag.com/on-premise/single-machine/service-ports/#bugsnag-upload-server). You must include the correct path, for example:
+
+```sh
+# browser/node uploads
+bugsnag-react-native upload-browser \
+  --endpoint https://bugsnag.my-company.com/source-map \
+  # ... other options
+
+# react native uploads
+bugsnag-react-native upload-react-native \
+  --endpoint https://bugsnag.my-company.com/react-native-source-map \
+  # ... other options
+```
+
 ## Support
 
 * Check out the [documentation](https://docs.bugsnag.com/build-integrations/js/#uploading-source-maps)
