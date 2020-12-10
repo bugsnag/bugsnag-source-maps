@@ -56,7 +56,7 @@ bugsnag-react-native upload-browser \
 
 # react native uploads
 bugsnag-react-native upload-react-native \
-  --endpoint https://internal.bugsnag.com/react-native-source-map \
+  --endpoint https://bugsnag.my-company.com/react-native-source-map \
   # ... other options
 ```
 
