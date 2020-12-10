@@ -8,7 +8,7 @@ services:
       - ./:/app
 
   maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:v3.5.1-cli
     environment:
       BUILDKITE_JOB_ID:
       VERBOSE:
