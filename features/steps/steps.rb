@@ -86,17 +86,6 @@ Then("the exit code is not successful") do
   )
 end
 
-Then('the shell has output {string} to stdout') do |expected_line|
-  assert(
-    Docker.output.any? { |line| line.include?(expected_line) },
-    <<~TEXT
-      No line of output included '#{expected_line}'.
-      Full output:
-      #{Docker.output.join("")}
-    TEXT
-  )
-end
-
 Then("the payload field {string} equals {string} for all requests") do |field, expected|
   Server.stored_requests.each_with_index do |request, index|
     actual = read_key_path(request[:body], field)
