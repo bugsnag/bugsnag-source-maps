@@ -50,12 +50,12 @@ If you are using Bugsnag On-premise, you should use the endpoint option to set t
 
 ```sh
 # browser/node uploads
-bugsnag-react-native upload-browser \
+bugsnag-source-maps upload-browser \
   --endpoint https://bugsnag.my-company.com/source-map \
   # ... other options
 
 # react native uploads
-bugsnag-react-native upload-react-native \
+bugsnag-source-maps upload-react-native \
   --endpoint https://bugsnag.my-company.com/react-native-source-map \
   # ... other options
 ```
