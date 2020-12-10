@@ -70,33 +70,6 @@ Then("the payload field {string} matches the minified file {string} for {string}
   assert_equal(expected, actual)
 end
 
-Then("the exit code is successful") do
-  assert_equal(
-    Docker.last_exit_code,
-    0,
-    "Expected the last command to exit successfully, but it exited with code #{Docker.last_exit_code}"
-  )
-end
-
-Then("the exit code is not successful") do
-  assert_not_equal(
-    Docker.last_exit_code,
-    0,
-    "Expected the last command to exit unsuccessfully, but it exited with code 0"
-  )
-end
-
-Then('the shell has output {string} to stdout') do |expected_line|
-  assert(
-    Docker.output.any? { |line| line.include?(expected_line) },
-    <<~TEXT
-      No line of output included '#{expected_line}'.
-      Full output:
-      #{Docker.output.join("")}
-    TEXT
-  )
-end
-
 Then("the payload field {string} equals {string} for all requests") do |field, expected|
   Server.stored_requests.each_with_index do |request, index|
     actual = read_key_path(request[:body], field)
