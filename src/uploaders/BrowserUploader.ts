@@ -12,7 +12,8 @@ import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import _detectAppVersion from './lib/DetectAppVersion'
 
-const UPLOAD_ENDPOINT = 'https://upload.bugsnag.com/source-map'
+import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
+const UPLOAD_PATH = '/sourcemap'
 
 interface UploadSingleOpts {
   apiKey: string
@@ -38,12 +39,20 @@ export async function uploadOne ({
   codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = UPLOAD_ENDPOINT,
+  endpoint = DEFAULT_UPLOAD_ORIGIN,
   detectAppVersion = false,
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
   logger.info(`Preparing upload of browser source map for "${bundleUrl}"`)
+
+  let url
+  try {
+    url = buildEndpointUrl(endpoint, UPLOAD_PATH)
+  } catch (e) {
+    logger.error(e)
+    throw e
+  }
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
 
@@ -61,15 +70,14 @@ export async function uploadOne ({
       appVersion = await _detectAppVersion(projectRoot, logger)
     } catch (e) {
       logger.error(e.message)
-
       throw e
     }
   }
 
-  logger.debug(`Initiating upload to "${endpoint}"`)
+  logger.debug(`Initiating upload to "${url}"`)
   const start = new Date().getTime()
   try {
-    await request(endpoint, {
+    await request(url, {
       type: PayloadType.Browser,
       apiKey,
       appVersion: codeBundleId ? undefined : appVersion,
@@ -82,7 +90,7 @@ export async function uploadOne ({
 
     const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundle}` : sourceMap
 
-    logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${uploadedFiles} to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -114,11 +122,20 @@ export async function uploadMultiple ({
   overwrite = false,
   detectAppVersion = false,
   projectRoot = process.cwd(),
-  endpoint = UPLOAD_ENDPOINT,
+  endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
   logger = noopLogger
 }: UploadMultipleOpts): Promise<void> {
   logger.info(`Preparing upload of browser source maps for "${baseUrl}"`)
+
+  let url
+  try {
+    url = buildEndpointUrl(endpoint, UPLOAD_PATH)
+  } catch (e) {
+    logger.error(e)
+    throw e
+  }
+
   logger.debug(`Searching for source maps "${directory}"`)
   const absoluteSearchPath = path.resolve(projectRoot, directory)
   const sourceMaps: string[] = await new Promise((resolve, reject) => {
@@ -141,7 +158,6 @@ export async function uploadMultiple ({
       appVersion = await _detectAppVersion(projectRoot, logger)
     } catch (e) {
       logger.error(e.message)
-
       throw e
     }
   }
@@ -164,10 +180,10 @@ export async function uploadMultiple ({
 
     const transformedSourceMap = await applyTransformations(fullSourceMapPath, sourceMapJson, projectRoot, logger)
 
-    logger.debug(`Initiating upload to "${endpoint}"`)
+    logger.debug(`Initiating upload to "${url}"`)
     const start = new Date().getTime()
     try {
-      await request(endpoint, {
+      await request(url, {
         type: PayloadType.Browser,
         apiKey,
         appVersion,
@@ -179,7 +195,7 @@ export async function uploadMultiple ({
 
       const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
 
-      logger.success(`Success, uploaded ${uploadedFiles} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+      logger.success(`Success, uploaded ${uploadedFiles} to ${url} in ${(new Date()).getTime() - start}ms`)
     } catch (e) {
       if (e.cause) {
         logger.error(formatErrorLog(e), e, e.cause)
