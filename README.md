@@ -49,7 +49,6 @@ Options
 If you are using Bugsnag On-premise, you should use the endpoint option to set the url of your [upload server](https://docs.bugsnag.com/on-premise/single-machine/service-ports/#bugsnag-upload-server), for example:
 
 ```sh
-# browser/node uploads
 bugsnag-react-native upload-browser \
   --endpoint https://bugsnag.my-company.com/
   # ... other options
