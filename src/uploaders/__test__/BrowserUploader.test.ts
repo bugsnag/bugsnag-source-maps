@@ -29,7 +29,7 @@ test('uploadOne(): dispatches a request with the correct params', async () => {
   })
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       appVersion: '1.2.3',
@@ -54,7 +54,7 @@ test('uploadOne(): dispatches a request with the correct params (no bundle)', as
   })
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       appVersion: '1.2.3',
@@ -302,6 +302,78 @@ test('uploadOne(): failure (timeout)', async () => {
   }
 })
 
+test('uploadOne(): custom endpoint (origin only)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadOne({
+    endpoint: 'https://bugsnag.my-company.com',
+    apiKey: '123',
+    sourceMap: 'bundle.js.map',
+    bundleUrl: 'http://mybundle.jim',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/a'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://bugsnag.my-company.com/sourcemap',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedUrl: 'http://mybundle.jim',
+      minifiedFile: expect.any(Object),
+      overwrite: false,
+      sourceMap: expect.any(Object)
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): custom endpoint (absolute)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadOne({
+    endpoint: 'https://bugsnag.my-company.com/source-map-custom',
+    apiKey: '123',
+    sourceMap: 'bundle.js.map',
+    bundleUrl: 'http://mybundle.jim',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/a'),
+    logger: mockLogger
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://bugsnag.my-company.com/source-map-custom',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.any(Object),
+      minifiedUrl: 'http://mybundle.jim',
+      overwrite: false,
+      sourceMap: expect.any(Object)
+    }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): custom endpoint (invalid URL)', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  try {
+    await uploadOne({
+      endpoint: 'hljsdf',
+      apiKey: '123',
+      sourceMap: 'bundle.js.map',
+      bundleUrl: 'https://mybundle.jim',
+      bundle: 'bundle.js',
+      projectRoot: path.join(__dirname, 'fixtures/a'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(0)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Invalid URL: hljsdf')
+    expect(mockLogger.error).toHaveBeenCalledWith(e)
+  }
+})
+
 test('uploadMultiple(): success with detected appVersion', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   mockedRequest.mockResolvedValue()
@@ -315,7 +387,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
   })
   expect(mockedRequest).toHaveBeenCalledTimes(4)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -333,7 +405,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -351,7 +423,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -369,7 +441,7 @@ test('uploadMultiple(): success with detected appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -401,7 +473,7 @@ test('uploadMultiple(): success passing appVersion', async () => {
   })
   expect(mockedRequest).toHaveBeenCalledTimes(4)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -419,7 +491,7 @@ test('uploadMultiple(): success passing appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -437,7 +509,7 @@ test('uploadMultiple(): success passing appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -455,7 +527,7 @@ test('uploadMultiple(): success passing appVersion', async () => {
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -488,7 +560,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
 
   expect(mockedRequest).toHaveBeenCalledTimes(4)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -506,7 +578,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -524,7 +596,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({
@@ -542,7 +614,7 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
     expect.objectContaining({})
   )
   expect(mockedRequest).toHaveBeenCalledWith(
-    'https://upload.bugsnag.com/source-map',
+    'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({
       apiKey: '123',
       minifiedFile: expect.objectContaining({

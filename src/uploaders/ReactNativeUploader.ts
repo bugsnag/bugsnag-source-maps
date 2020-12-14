@@ -12,6 +12,9 @@ import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import { NetworkError, NetworkErrorCode } from '../NetworkError'
 
+import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
+const UPLOAD_PATH = '/react-native-source-map'
+
 interface CommonUploadOpts {
   apiKey: string
   platform: 'ios' | 'android'
@@ -44,11 +47,19 @@ export async function uploadOne ({
   appBundleVersion,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/react-native-source-map',
+  endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
   logger = noopLogger
 }: UploadSingleOpts): Promise<void> {
   logger.info(`Preparing upload of React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+
+  let url
+  try {
+    url = buildEndpointUrl(endpoint, UPLOAD_PATH)
+  } catch (e) {
+    logger.error(e)
+    throw e
+  }
 
   const [ sourceMapContent, fullSourceMapPath ] = await readSourceMap(sourceMap, projectRoot, logger)
   const [ bundleContent, fullBundlePath ] = await readBundleContent(bundle, projectRoot, sourceMap, logger)
@@ -58,10 +69,10 @@ export async function uploadOne ({
 
   const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
-  logger.debug(`Initiating upload to "${endpoint}"`)
+  logger.debug(`Initiating upload to "${url}"`)
   const start = new Date().getTime()
   try {
-    await request(endpoint, {
+    await request(url, {
       type: PayloadType.ReactNative,
       apiKey,
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
@@ -71,7 +82,7 @@ export async function uploadOne ({
       ...marshalledVersions,
       overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
@@ -97,13 +108,21 @@ export async function fetchAndUploadOne ({
   appBundleVersion,
   overwrite = false,
   projectRoot = process.cwd(),
-  endpoint = 'https://upload.bugsnag.com/react-native-source-map',
+  endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
   bundlerUrl = 'http://localhost:8081',
   bundlerEntryPoint = 'index.js',
   logger = noopLogger
 }: FetchUploadOpts): Promise<void> {
   logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+
+  let url
+  try {
+    url = buildEndpointUrl(endpoint, UPLOAD_PATH)
+  } catch (e) {
+    logger.error(e)
+    throw e
+  }
 
   const queryString = qs.stringify({ platform, dev })
   const entryPoint = bundlerEntryPoint.replace(/\.(js|bundle)$/, '')
@@ -141,10 +160,10 @@ export async function fetchAndUploadOne ({
 
   const marshalledVersions = marshallVersionOptions({ appVersion, codeBundleId, appBundleVersion, appVersionCode }, platform)
 
-  logger.debug(`Initiating upload to "${endpoint}"`)
+  logger.debug(`Initiating upload to "${url}"`)
   const start = new Date().getTime()
   try {
-    await request(endpoint, {
+    await request(url, {
       type: PayloadType.ReactNative,
       apiKey,
       sourceMap: new File(sourceMapUrl, JSON.stringify(transformedSourceMap)),
@@ -154,7 +173,7 @@ export async function fetchAndUploadOne ({
       ...marshalledVersions,
       overwrite
     }, requestOpts)
-    logger.success(`Success, uploaded ${entryPoint}.js.map to ${endpoint} in ${(new Date()).getTime() - start}ms`)
+    logger.success(`Success, uploaded ${entryPoint}.js.map to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
