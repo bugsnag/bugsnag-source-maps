@@ -23,7 +23,6 @@ test('uploadOne(): dispatches a request with the correct params for Android with
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -36,7 +35,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -55,7 +54,6 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -68,7 +66,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -87,7 +85,6 @@ test('uploadOne(): dispatches a request with the correct params for Android with
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -101,7 +98,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -121,7 +118,6 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -135,7 +131,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -155,7 +151,6 @@ test('uploadOne(): dispatches a request with the correct params for Android with
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -169,7 +164,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -189,7 +184,6 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
   mockedRequest.mockResolvedValue()
 
   await uploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -203,7 +197,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -228,7 +222,7 @@ test('uploadOne(): failure (unexpected network error) with cause', async () => {
 
   try {
     await uploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: false,
@@ -261,7 +255,7 @@ test('uploadOne(): failure (unexpected network error) without cause', async () =
 
   try {
     await uploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: false,
@@ -291,7 +285,7 @@ test('uploadOne(): failure (source map not found)', async () => {
 
   try {
     await uploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: false,
@@ -312,6 +306,57 @@ test('uploadOne(): failure (source map not found)', async () => {
   }
 })
 
+test('uploadOne(): custom endpoint (absolute)', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await uploadOne({
+    endpoint: 'https://bugsnag.my-company.com/source-map-custom',
+    apiKey: '123',
+    overwrite: false,
+    dev: false,
+    platform: 'ios',
+    appBundleVersion: '4.5.6',
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    codeBundleId: '1.2.3',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+    logger: mockLogger
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://bugsnag.my-company.com/source-map-custom',
+    expect.objectContaining({ apiKey: '123' }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadOne(): custom endpoint (invalid URL)', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+
+  try {
+    await uploadOne({
+      endpoint: 'hljsdf',
+      apiKey: '123',
+      overwrite: false,
+      dev: false,
+      platform: 'ios',
+      appBundleVersion: '4.5.6',
+      sourceMap: 'bundle.js.map',
+      bundle: 'bundle.js',
+      codeBundleId: '1.2.3',
+      projectRoot: path.join(__dirname, 'fixtures/react-native-ios'),
+      logger: mockLogger
+    })
+    expect(mockedRequest).toHaveBeenCalledTimes(0)
+  } catch (e) {
+    expect(e).toBeTruthy()
+    expect(e.message).toBe('Invalid URL: hljsdf')
+    expect(mockLogger.error).toHaveBeenCalledWith(e)
+  }
+})
+
 test('fetchAndUploadOne(): dispatches a request with the correct params for Android with appVersion in Fetch mode', async () => {
   const directory = path.join(__dirname, 'fixtures/react-native-android')
   const sourceMap = await fs.readFile(path.resolve(directory, 'bundle.js.map'))
@@ -325,7 +370,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -343,7 +387,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -357,7 +401,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
-    'Success, uploaded index.js.map to example.com in'
+    'Success, uploaded index.js.map to '
   ))
 })
 
@@ -374,7 +418,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -391,7 +434,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -405,7 +448,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
-    'Success, uploaded index.js.map to example.com in'
+    'Success, uploaded index.js.map to '
   ))
 })
 
@@ -422,7 +465,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: true,
@@ -438,7 +480,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -465,7 +507,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: true,
@@ -481,7 +522,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -508,7 +549,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -526,7 +566,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -540,7 +580,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
-    'Success, uploaded cool-app.js.map to example.com in'
+    'Success, uploaded cool-app.js.map to '
   ))
 })
 
@@ -557,7 +597,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -575,7 +614,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -589,7 +628,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
-    'Success, uploaded cool-app.js.map to example.com in'
+    'Success, uploaded cool-app.js.map to '
   ))
 })
 
@@ -606,7 +645,6 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   mockedRequest.mockResolvedValue()
 
   await fetchAndUploadOne({
-    endpoint: 'example.com',
     apiKey: '123',
     overwrite: false,
     dev: false,
@@ -624,7 +662,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
-    'example.com',
+    'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
       overwrite: false,
@@ -638,7 +676,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
-    'Success, uploaded cool-app.js.map to example.com in'
+    'Success, uploaded cool-app.js.map to '
   ))
 })
 
@@ -653,7 +691,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)'
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -685,7 +723,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Network
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -719,7 +757,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (connection refu
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -753,7 +791,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -787,7 +825,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (timeout)', asyn
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -823,7 +861,7 @@ test('fethchAndUploadOne(): Fetch mode failure to get bundle (generic Error)', a
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -860,7 +898,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (generic NetworkErro
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -899,7 +937,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (connection refused)
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -938,7 +976,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
@@ -977,7 +1015,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
 
   try {
     await fetchAndUploadOne({
-      endpoint: 'example.com',
+      endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
       overwrite: false,
       dev: true,
