@@ -24,7 +24,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'android',
     sourceMap: 'bundle.js.map',
@@ -38,7 +38,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'android',
       appVersion: '1.2.3',
@@ -55,7 +55,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     sourceMap: 'bundle.js.map',
@@ -69,7 +69,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -86,7 +86,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'android',
     appVersionCode: '3.2.1',
@@ -101,7 +101,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'android',
       appVersionCode: '3.2.1',
@@ -119,7 +119,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     appBundleVersion: '4.5.6',
@@ -134,7 +134,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appBundleVersion: '4.5.6',
@@ -152,7 +152,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'android',
     appVersionCode: '3.2.1', // We provide this but it should be ignored!
@@ -167,7 +167,7 @@ test('uploadOne(): dispatches a request with the correct params for Android with
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'android',
       codeBundleId: '1.2.3',
@@ -185,7 +185,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
 
   await uploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     appBundleVersion: '4.5.6', // We provide this but it should be ignored!
@@ -200,7 +200,7 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       codeBundleId: '1.2.3',
@@ -224,7 +224,7 @@ test('uploadOne(): failure (unexpected network error) with cause', async () => {
     await uploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appBundleVersion: '4.5.6',
@@ -257,7 +257,7 @@ test('uploadOne(): failure (unexpected network error) without cause', async () =
     await uploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appBundleVersion: '4.5.6',
@@ -287,7 +287,7 @@ test('uploadOne(): failure (source map not found)', async () => {
     await uploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appBundleVersion: '4.5.6',
@@ -313,7 +313,7 @@ test('uploadOne(): custom endpoint (absolute)', async () => {
   await uploadOne({
     endpoint: 'https://bugsnag.my-company.com/source-map-custom',
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     appBundleVersion: '4.5.6',
@@ -339,7 +339,7 @@ test('uploadOne(): custom endpoint (invalid URL)', async () => {
     await uploadOne({
       endpoint: 'hljsdf',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appBundleVersion: '4.5.6',
@@ -371,7 +371,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'android',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -390,7 +390,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'android',
       appVersion: '1.2.3',
@@ -419,7 +419,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -437,7 +437,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -466,7 +466,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: true,
     platform: 'android',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -483,7 +483,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       appVersion: '1.2.3',
@@ -508,7 +508,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: true,
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -525,7 +525,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -550,7 +550,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -569,7 +569,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -598,7 +598,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -617,7 +617,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -646,7 +646,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
 
   await fetchAndUploadOne({
     apiKey: '123',
-    overwrite: false,
+    overwrite: true,
     dev: false,
     platform: 'ios',
     bundlerUrl: 'http://react-native-bundler:1234',
@@ -665,7 +665,7 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
     'https://upload.bugsnag.com/react-native-source-map',
     expect.objectContaining({
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: false,
       platform: 'ios',
       appVersion: '1.2.3',
@@ -693,7 +693,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)'
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -725,7 +725,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Network
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -759,7 +759,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (connection refu
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -793,7 +793,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -827,7 +827,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (timeout)', asyn
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -863,7 +863,7 @@ test('fethchAndUploadOne(): Fetch mode failure to get bundle (generic Error)', a
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -900,7 +900,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (generic NetworkErro
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -939,7 +939,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (connection refused)
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -978,7 +978,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',
@@ -1017,7 +1017,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
     await fetchAndUploadOne({
       endpoint: 'https://upload.bugsnag.com/react-native-source-map',
       apiKey: '123',
-      overwrite: false,
+      overwrite: true,
       dev: true,
       platform: 'android',
       bundlerUrl: 'http://react-native-bundler:1234',

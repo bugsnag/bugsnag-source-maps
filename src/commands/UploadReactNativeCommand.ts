@@ -11,7 +11,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
   }
 
   const defs: OptionDefinition[] = [
-    ...commonCommandDefs,
+    ...commonCommandDefs.filter(def => def.name !== 'overwrite'),
     ...reactNativeCommonDefs,
     ...reactNativeProvideOpts,
     ...reactNativeFetchOpts,
@@ -44,7 +44,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
       await fetchAndUploadOne({
         apiKey: reactNativeOpts.apiKey,
         projectRoot: reactNativeOpts.projectRoot,
-        overwrite: reactNativeOpts.overwrite,
+        overwrite: !reactNativeOpts.noOverwrite,
         appVersion: reactNativeOpts.appVersion,
         codeBundleId: reactNativeOpts.codeBundleId,
         appBundleVersion: reactNativeOpts.appBundleVersion,
@@ -62,7 +62,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
         sourceMap: reactNativeOpts.sourceMap,
         bundle: reactNativeOpts.bundle,
         projectRoot: reactNativeOpts.projectRoot,
-        overwrite: reactNativeOpts.overwrite,
+        overwrite: !reactNativeOpts.noOverwrite,
         appVersion: reactNativeOpts.appVersion,
         codeBundleId: reactNativeOpts.codeBundleId,
         appBundleVersion: reactNativeOpts.appBundleVersion,
@@ -131,6 +131,11 @@ const reactNativeCommonDefs = [
     type: Boolean,
     description: 'indicates this is a debug build',
   },
+  {
+    name: 'no-overwrite',
+    type: Boolean,
+    description: 'prevent exiting source maps uploaded with the same version from being replaced'
+  }
 ]
 
 const reactNativeProvideOpts = [

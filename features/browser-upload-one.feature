@@ -193,7 +193,7 @@ Feature: Browser source map upload one
       """
     And I wait to receive 1 request
     Then the last run docker command did not exit successfully
-    And the last run docker command output "A source map matching the same criteria has already been uploaded. If you want to replace it, use the \"overwrite\" flag."
+    And the last run docker command output "A source map matching the same criteria has already been uploaded. If you want to replace it, use the \"overwrite\" flag (or remove the \"no-overwrite\" flag)."
     And the last run docker command output "HTTP status 409 received from upload API"
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
