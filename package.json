@@ -1,6 +1,6 @@
 {
   "name": "@bugsnag/source-maps",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "CLI and JS library for uploading source maps to Bugsnag",
   "main": "dist/index.js",
   "homepage": "https://github.com/bugsnag/bugsnag-source-maps",
