@@ -45,7 +45,7 @@ export async function uploadOne ({
   codeBundleId,
   appVersionCode,
   appBundleVersion,
-  overwrite = false,
+  overwrite = true,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
@@ -85,9 +85,9 @@ export async function uploadOne ({
     logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
-      logger.error(formatErrorLog(e), e, e.cause)
+      logger.error(formatErrorLog(e, true), e, e.cause)
     } else {
-      logger.error(formatErrorLog(e), e)
+      logger.error(formatErrorLog(e, true), e)
     }
     throw e
   }
@@ -106,7 +106,7 @@ export async function fetchAndUploadOne ({
   codeBundleId,
   appVersionCode,
   appBundleVersion,
-  overwrite = false,
+  overwrite = true,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
@@ -176,9 +176,9 @@ export async function fetchAndUploadOne ({
     logger.success(`Success, uploaded ${entryPoint}.js.map to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
-      logger.error(formatErrorLog(e), e, e.cause)
+      logger.error(formatErrorLog(e, true), e, e.cause)
     } else {
-      logger.error(formatErrorLog(e), e)
+      logger.error(formatErrorLog(e, true), e)
     }
     throw e
   }
