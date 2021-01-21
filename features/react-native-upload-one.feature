@@ -16,7 +16,7 @@ Feature: React native source map upload one
     And the Content-Type header is valid multipart form-data
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" equals "false"
+    And the payload field "overwrite" equals "true"
     And the payload field "dev" equals "<dev>"
     And the payload field "platform" equals "<platform>"
     And the payload field "sourceMap" matches the expected source map for "<service>"
@@ -58,7 +58,7 @@ Feature: React native source map upload one
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
-    And the payload field "overwrite" equals "false" for all requests
+    And the payload field "overwrite" equals "true" for all requests
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios" for all requests
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios" for all requests
 
@@ -81,7 +81,7 @@ Feature: React native source map upload one
     And the Content-Type header is valid multipart form-data for all requests
     And the payload field "apiKey" equals "123" for all requests
     And the payload field "appVersion" equals "2.0.0" for all requests
-    And the payload field "overwrite" equals "false" for all requests
+    And the payload field "overwrite" equals "true" for all requests
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios" for all requests
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios" for all requests
 
@@ -103,7 +103,7 @@ Feature: React native source map upload one
     And the last run docker command output "HTTP status 401 received from upload API"
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" equals "false"
+    And the payload field "overwrite" equals "true"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
@@ -122,11 +122,11 @@ Feature: React native source map upload one
     """
     And I wait to receive 1 request
     Then the last run docker command did not exit successfully
-    And the last run docker command output "A source map matching the same criteria has already been uploaded. If you want to replace it, use the \"overwrite\" flag."
+    And the last run docker command output "A source map matching the same criteria has already been uploaded. If you want to replace it, remove the \"no-overwrite\" flag."
     And the last run docker command output "HTTP status 409 received from upload API"
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" equals "false"
+    And the payload field "overwrite" equals "true"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
@@ -149,7 +149,7 @@ Feature: React native source map upload one
     And the last run docker command output "HTTP status 422 received from upload API"
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" equals "false"
+    And the payload field "overwrite" equals "true"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
@@ -172,7 +172,7 @@ Feature: React native source map upload one
     And the last run docker command output "HTTP status 400 received from upload API"
     And the payload field "apiKey" equals "123"
     And the payload field "appVersion" equals "2.0.0"
-    And the payload field "overwrite" equals "false"
+    And the payload field "overwrite" equals "true"
     And the payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios"
     And the payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
