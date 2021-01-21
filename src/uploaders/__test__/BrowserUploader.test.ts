@@ -255,7 +255,7 @@ test('uploadOne(): failure (duplicate)', async () => {
     expect((e as NetworkError).code).toBe(NetworkErrorCode.DUPLICATE)
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining(
-        'A source map matching the same criteria has already been uploaded. If you want to replace it, use the "overwrite" flag (or remove the "no-overwrite" flag).'
+        'A source map matching the same criteria has already been uploaded. If you want to replace it, use the "overwrite" flag.'
         ),
         expect.any(Error)
       )

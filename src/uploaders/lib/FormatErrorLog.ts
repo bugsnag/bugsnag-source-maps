@@ -1,6 +1,6 @@
 import { NetworkErrorCode, NetworkError } from '../../NetworkError'
 
-function formatErrorLog (e: NetworkError): string {
+function formatErrorLog (e: NetworkError, isReactNative?: boolean): string {
   let str = ''
   switch (e.code) {
     case NetworkErrorCode.EMPTY_FILE:
@@ -14,8 +14,9 @@ function formatErrorLog (e: NetworkError): string {
       str += `\n\n  responseText = ${e.responseText}`
       break
     case NetworkErrorCode.DUPLICATE:
-      str += 'A source map matching the same criteria has already been uploaded. ' +
-        'If you want to replace it, use the "overwrite" flag (or remove the "no-overwrite" flag).'
+      str += !isReactNative
+        ? 'A source map matching the same criteria has already been uploaded. If you want to replace it, use the "overwrite" flag.'
+        : 'A source map matching the same criteria has already been uploaded. If you want to replace it, remove the "no-overwrite" flag.'
       break
     case NetworkErrorCode.SERVER_ERROR:
       str += 'A server side error occurred while processing the upload.'
