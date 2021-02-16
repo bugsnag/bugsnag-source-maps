@@ -23,6 +23,10 @@ npm install --global @bugsnag/source-maps
 yarn global add @bugsnag/source-maps
 ```
 
+## System requirements
+
+`@bugsnag/source-maps` requires Node.js v10+
+
 ## Usage
 
 See the [Bugsnag docs website](https://docs.bugsnag.com/build-integrations/js/#uploading-source-maps) for full usage documentation.
