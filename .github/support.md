@@ -9,7 +9,14 @@ When contacting support, please include as much information as necessary, includ
 - steps to reproduce
 - expected/actual behaviour 
 
-List any relevant environment specific tools and versions used. eg Node version
+* bugsnag-source-maps version:
+* Uploading for:
+	* [ ] Browser
+	* [ ] Node
+		* Node version:
+	* [ ] React Native
+		* React Native version:
+* Command that was run:
 
 ## Bug or Feature Requests
 If you would like to raise a bug or feature request please do so by creating a [New Issue](https://github.com/bugsnag/bugsnag-source-maps/issues/new/choose) and selecting bug or feature.
