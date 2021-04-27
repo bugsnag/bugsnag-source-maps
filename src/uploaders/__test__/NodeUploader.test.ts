@@ -551,3 +551,40 @@ test('uploadMultiple(): failure (connection error)', async () => {
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred'), expect.any(Error), expect.any(Error))
   }
 })
+
+describe('input validation errors (when using as a JS library', () => {
+  test.each([
+    [ {}, 'apiKey is required and must be a string' ],
+    [ { apiKey: 123 }, 'apiKey is required and must be a string' ],
+    [ { apiKey: '123' }, 'sourceMap is required and must be a string' ],
+    [ { apiKey: '123', sourceMap: 'm.map', appVersion: 1 }, 'appVersion must be a string' ],
+    [ { apiKey: '123', sourceMap: 'm.map', logger: null }, 'logger must be an object' ],
+    [ { apiKey: '123', sourceMap: 'm.map', overwrite: 'yes' }, 'overwrite must be true or false' ],
+    [ { apiKey: '123', sourceMap: 'm.map', somethingDifferent: 'yes' }, 'Unrecognized option(s): somethingDifferent' ],
+    [
+      { apiKey: '123', sourceMap: 'm.map', somethingDifferent: 'yes', somethingElse: 'no' },
+      'Unrecognized option(s): somethingDifferent, somethingElse'
+    ],
+  ])('uploadOne(): invalid input rejects with an error', (input, expectedError) => {
+    // The following line is meant to be invalid, so convince the linter and the compiler we definitely want to do it
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return expect(uploadOne(input)).rejects.toThrowError(expectedError)
+  })
+  test.each([
+    [ {}, 'apiKey is required and must be a string' ],
+    [ { apiKey: 123 }, 'apiKey is required and must be a string' ],
+    [ { apiKey: '123' }, 'directory is required and must be a string' ],
+    [ { apiKey: '123', directory: '.', appVersion: 1 }, 'appVersion must be a string' ],
+    [ { apiKey: '123', directory: '.', somethingDifferent: 'yes' }, 'Unrecognized option(s): somethingDifferent' ],
+    [
+      { apiKey: '123', directory: '.', somethingDifferent: 'yes', somethingElse: 'no' },
+      'Unrecognized option(s): somethingDifferent, somethingElse'
+    ],
+  ])('uploadMultiple(): invalid input rejects with an error', (input, expectedError) => {
+    // The following line is meant to be invalid, so convince the linter and the compiler we definitely want to do it
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return expect(uploadMultiple(input)).rejects.toThrowError(expectedError)
+  })
+})
