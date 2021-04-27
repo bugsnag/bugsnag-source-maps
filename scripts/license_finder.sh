@@ -6,4 +6,4 @@ curl https://raw.githubusercontent.com/bugsnag/license-audit/master/config/decis
 
 gem install license_finder
 npm install
-license_finder --decisions-file=config/decisions.yml --enabled-package-managers=npm
+license_finder -d --decisions-file=config/decisions.yml --enabled-package-managers=npm
