@@ -11,6 +11,13 @@ import readBundleContent from './lib/ReadBundleContent'
 import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import { NetworkError, NetworkErrorCode } from '../NetworkError'
+import {
+  validateRequiredStrings,
+  validateOptionalStrings,
+  validateBooleans,
+  validateObjects,
+  validateNoUnknownArgs
+} from './lib/InputValidators'
 
 import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
 const UPLOAD_PATH = '/react-native-source-map'
@@ -35,6 +42,14 @@ interface UploadSingleOpts extends CommonUploadOpts {
   bundle: string
 }
 
+function validateOneOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'sourceMap', 'projectRoot', 'endpoint', 'platform' ])
+  validateOptionalStrings(opts, [ 'bundle', 'appVersion', 'codeBundleId', 'appVersionCode', 'appBundleVersion' ])
+  validateBooleans(opts, [ 'overwrite', 'dev' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function uploadOne ({
   apiKey,
   sourceMap,
@@ -49,8 +64,26 @@ export async function uploadOne ({
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: UploadSingleOpts): Promise<void> {
+  validateOneOpts({
+    apiKey,
+    sourceMap,
+    bundle,
+    platform,
+    dev,
+    appVersion,
+    codeBundleId,
+    appVersionCode,
+    appBundleVersion,
+    overwrite,
+    projectRoot,
+    endpoint,
+    requestOpts,
+    logger
+  }, unknownArgs as Record<string, unknown>)
+
   logger.info(`Preparing upload of React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   let url
@@ -98,6 +131,14 @@ interface FetchUploadOpts extends CommonUploadOpts {
   bundlerEntryPoint?: string
 }
 
+function validateFetchOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'projectRoot', 'endpoint', 'platform', 'bundlerUrl', 'bundlerEntryPoint' ])
+  validateOptionalStrings(opts, [ 'bundle', 'appVersion', 'codeBundleId', 'appVersionCode', 'appBundleVersion' ])
+  validateBooleans(opts, [ 'overwrite', 'dev' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function fetchAndUploadOne ({
   apiKey,
   platform,
@@ -112,8 +153,26 @@ export async function fetchAndUploadOne ({
   requestOpts = {},
   bundlerUrl = 'http://localhost:8081',
   bundlerEntryPoint = 'index.js',
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: FetchUploadOpts): Promise<void> {
+  validateFetchOpts({
+    apiKey,
+    platform,
+    dev,
+    appVersion,
+    codeBundleId,
+    appVersionCode,
+    appBundleVersion,
+    overwrite,
+    projectRoot,
+    endpoint,
+    requestOpts,
+    bundlerUrl,
+    bundlerEntryPoint,
+    logger
+  }, unknownArgs as Record<string, unknown>)
+
   logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
 
   let url

@@ -11,6 +11,13 @@ import readBundleContent from './lib/ReadBundleContent'
 import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import _detectAppVersion from './lib/DetectAppVersion'
+import {
+  validateRequiredStrings,
+  validateOptionalStrings,
+  validateBooleans,
+  validateObjects,
+  validateNoUnknownArgs
+} from './lib/InputValidators'
 
 import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
 const UPLOAD_PATH = '/sourcemap'
@@ -30,6 +37,14 @@ interface UploadSingleOpts {
   logger?: Logger
 }
 
+function validateOneOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'sourceMap', 'bundleUrl', 'projectRoot', 'endpoint' ])
+  validateOptionalStrings(opts, [ 'bundle', 'appVersion', 'codeBundleId' ])
+  validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function uploadOne ({
   apiKey,
   bundleUrl,
@@ -42,8 +57,24 @@ export async function uploadOne ({
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   detectAppVersion = false,
   requestOpts = {},
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: UploadSingleOpts): Promise<void> {
+  validateOneOpts({
+    apiKey,
+    bundleUrl,
+    bundle,
+    sourceMap,
+    appVersion,
+    codeBundleId,
+    overwrite,
+    projectRoot,
+    endpoint,
+    detectAppVersion,
+    requestOpts,
+    logger
+  }, unknownArgs as Record<string, unknown>)
+
   logger.info(`Preparing upload of browser source map for "${bundleUrl}"`)
 
   let url
@@ -114,6 +145,15 @@ interface UploadMultipleOpts {
   logger?: Logger
 }
 
+
+function validateMultipleOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'baseUrl', 'directory', 'projectRoot', 'endpoint' ])
+  validateOptionalStrings(opts, [ 'appVersion' ])
+  validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function uploadMultiple ({
   apiKey,
   baseUrl,
@@ -124,8 +164,22 @@ export async function uploadMultiple ({
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   requestOpts = {},
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: UploadMultipleOpts): Promise<void> {
+  validateMultipleOpts({
+    apiKey,
+    baseUrl,
+    directory,
+    appVersion,
+    overwrite,
+    projectRoot,
+    endpoint,
+    detectAppVersion,
+    requestOpts,
+    logger
+  }, unknownArgs as Record<string, unknown>)
+
   logger.info(`Preparing upload of browser source maps for "${baseUrl}"`)
 
   let url
