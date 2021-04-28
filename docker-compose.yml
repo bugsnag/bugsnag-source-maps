@@ -7,6 +7,13 @@ services:
     volumes:
       - ./:/app
 
+  license_finder:
+    build:
+      dockerfile: dockerfiles/Dockerfile.audit
+      context: .
+    volumes:
+      - ./:/scan
+
   maze-runner:
     image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v3-cli
     environment:

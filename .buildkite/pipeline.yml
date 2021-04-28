@@ -61,3 +61,12 @@ steps:
           use-aliases: true
           run: maze-runner
           command: ["--fail-fast", "features/react-native-fetch.feature"]
+
+  #
+  # License audit
+  #
+  - name: ':copyright: License Audit'
+    plugins:
+      docker-compose#v3.7.0:
+        run: license_finder
+    command: /bin/bash -lc '/scan/scripts/license_finder.sh'
