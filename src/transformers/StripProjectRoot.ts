@@ -27,6 +27,6 @@ function strip (sourceMapPath: string, map: UnsafeSourceMap, projectRoot: string
       path.dirname(sourceMapPath),
       s.replace(/webpack:\/\/\/\.\//, `${projectRoot}/`)
     )
-    return absoluteSourcePath.replace(projectRoot, '').replace(/^\//, '')
+    return absoluteSourcePath.replace(projectRoot, '').replace(/^(\/|\\)/, '')
   })
 }
