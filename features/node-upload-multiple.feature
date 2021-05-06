@@ -134,6 +134,33 @@ Feature: Node source map upload multiple
     And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
     And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
 
+  Scenario: codeBundleId support
+    When I run the service "multiple-source-map-webpack" with the command
+      """
+      bugsnag-source-maps upload-node
+        --api-key 123
+        --code-bundle-id r0124
+        --directory dist
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 3 requests
+    Then the last run docker command exited successfully
+    And the Content-Type header is valid multipart form-data for all requests
+    And the payload field "apiKey" equals "123" for all requests
+    And the payload field "codeBundleId" equals "r0124" for all requests
+    And the payload field "overwrite" is null for all requests
+    And the payload field "minifiedUrl" equals "dist/main-b3944033.js"
+    And the payload field "sourceMap" matches the source map "main-b3944033.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-b3944033.js" for "multiple-source-map-webpack"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-cb48d68d.js"
+    And the payload field "sourceMap" matches the source map "main-cb48d68d.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-cb48d68d.js" for "multiple-source-map-webpack"
+    When I discard the oldest request
+    And the payload field "minifiedUrl" equals "dist/main-d89fcf10.js"
+    And the payload field "sourceMap" matches the source map "main-d89fcf10.json" for "multiple-source-map-webpack"
+    And the payload field "minifiedFile" matches the minified file "main-d89fcf10.js" for "multiple-source-map-webpack"
+
   Scenario: Overwrite enabled
     When I run the service "multiple-source-map-webpack" with the command
       """

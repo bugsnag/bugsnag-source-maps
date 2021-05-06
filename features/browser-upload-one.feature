@@ -83,6 +83,27 @@ Feature: Browser source map upload one
     And the Content-Type header is valid multipart form-data
     And the last run docker command exited successfully
 
+  Scenario: codeBundleId support
+    When I run the service "single-source-map-webpack" with the command
+      """
+      bugsnag-source-maps upload-browser
+        --api-key 123
+        --code-bundle-id r0125
+        --source-map dist/main.js.map
+        --bundle dist/main.js
+        --bundle-url "http://myapp.url/static/js/main.js"
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 1 request
+    Then the payload field "apiKey" equals "123"
+    And the payload field "codeBundleId" equals "r0125"
+    And the payload field "overwrite" is null
+    And the payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
+    And the payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
+    And the Content-Type header is valid multipart form-data
+    And the last run docker command exited successfully
+
   Scenario: Overwrite enabled
     When I run the service "single-source-map-webpack" with the command
       """
