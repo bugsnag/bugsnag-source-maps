@@ -102,7 +102,7 @@ export async function uploadOne ({
       type: PayloadType.Node,
       apiKey,
       appVersion,
-      minifiedUrl: bundle,
+      minifiedUrl: bundle.replace(/\\/g, '/'),
       minifiedFile: new File(fullBundlePath, bundleContent),
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
@@ -223,7 +223,7 @@ export async function uploadMultiple ({
         type: PayloadType.Node,
         apiKey,
         appVersion,
-        minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)),
+        minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)).replace(/\\/g, '/'),
         minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
