@@ -115,10 +115,6 @@ const reactNativeCommonDefs = [
     type: String,
   },
   {
-    name: 'code-bundle-id',
-    type: String,
-  },
-  {
     name: 'app-version-code',
     type: String,
   },
