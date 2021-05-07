@@ -48,6 +48,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
+        codeBundleId: browserOpts.codeBundleId,
         logger
       })
     } else {
@@ -61,6 +62,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
+        codeBundleId: browserOpts.codeBundleId,
         logger
       })
     }
@@ -149,6 +151,11 @@ function validateBrowserOpts (opts: Record<string, unknown>): void {
 
   if (opts['appVersion'] && opts['detectAppVersion']) {
     throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
+  if (opts.codeBundleId) {
+    if (opts.appVersion) throw new Error('--app-version and --code-bundle-id cannot both be given')
+    if (opts.detectAppVersion) throw new Error('--detect-app-version and --code-bundle-id cannot both be given')
   }
 
   const anySingleSet = opts['sourceMap'] || opts['bundleUrl'] || opts['bundle']

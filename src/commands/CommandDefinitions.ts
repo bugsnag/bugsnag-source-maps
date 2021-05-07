@@ -4,4 +4,5 @@ export const commonCommandDefs = [
   { name: 'project-root', type: String, description: 'the top level directory of your project (defaults to the current directory)' },
   { name: 'endpoint', type: String, description: 'customize the endpoint for Bugsnag On-Premise' },
   { name: 'quiet', type: Boolean, description: 'less verbose logging' },
+  { name: 'code-bundle-id', type: String }
 ]

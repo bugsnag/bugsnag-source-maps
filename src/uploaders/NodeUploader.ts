@@ -27,6 +27,7 @@ interface UploadSingleOpts {
   sourceMap: string
   bundle: string
   appVersion?: string
+  codeBundleId?: string
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -37,7 +38,7 @@ interface UploadSingleOpts {
 
 function validateOneOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
   validateRequiredStrings(opts, [ 'apiKey', 'sourceMap', 'projectRoot', 'endpoint' ])
-  validateOptionalStrings(opts, [ 'bundle', 'appVersion' ])
+  validateOptionalStrings(opts, [ 'bundle', 'appVersion', 'codeBundleId' ])
   validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
   validateObjects(opts, [ 'requestOpts', 'logger' ])
   validateNoUnknownArgs(unknownArgs)
@@ -48,6 +49,7 @@ export async function uploadOne ({
   bundle,
   sourceMap,
   appVersion,
+  codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
@@ -61,6 +63,7 @@ export async function uploadOne ({
     bundle,
     sourceMap,
     appVersion,
+    codeBundleId,
     overwrite,
     projectRoot,
     endpoint,
@@ -102,6 +105,7 @@ export async function uploadOne ({
       type: PayloadType.Node,
       apiKey,
       appVersion,
+      codeBundleId,
       minifiedUrl: bundle.replace(/\\/g, '/'),
       minifiedFile: new File(fullBundlePath, bundleContent),
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
@@ -122,6 +126,7 @@ interface UploadMultipleOpts {
   apiKey: string
   directory: string
   appVersion?: string
+  codeBundleId?: string
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -132,7 +137,7 @@ interface UploadMultipleOpts {
 
 function validateMultipleOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
   validateRequiredStrings(opts, [ 'apiKey', 'directory', 'projectRoot', 'endpoint' ])
-  validateOptionalStrings(opts, [ 'appVersion' ])
+  validateOptionalStrings(opts, [ 'appVersion', 'codeBundleId' ])
   validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
   validateObjects(opts, [ 'requestOpts', 'logger' ])
   validateNoUnknownArgs(unknownArgs)
@@ -142,6 +147,7 @@ export async function uploadMultiple ({
   apiKey,
   directory,
   appVersion,
+  codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
@@ -154,6 +160,7 @@ export async function uploadMultiple ({
     apiKey,
     directory,
     appVersion,
+    codeBundleId,
     overwrite,
     projectRoot,
     endpoint,
@@ -223,6 +230,7 @@ export async function uploadMultiple ({
         type: PayloadType.Node,
         apiKey,
         appVersion,
+        codeBundleId,
         minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)).replace(/\\/g, '/'),
         minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),

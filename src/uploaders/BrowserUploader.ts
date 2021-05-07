@@ -137,6 +137,7 @@ interface UploadMultipleOpts {
   baseUrl: string
   directory: string
   appVersion?: string
+  codeBundleId?: string,
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -148,7 +149,7 @@ interface UploadMultipleOpts {
 
 function validateMultipleOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
   validateRequiredStrings(opts, [ 'apiKey', 'baseUrl', 'directory', 'projectRoot', 'endpoint' ])
-  validateOptionalStrings(opts, [ 'appVersion' ])
+  validateOptionalStrings(opts, [ 'appVersion', 'codeBundleId' ])
   validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
   validateObjects(opts, [ 'requestOpts', 'logger' ])
   validateNoUnknownArgs(unknownArgs)
@@ -159,6 +160,7 @@ export async function uploadMultiple ({
   baseUrl,
   directory,
   appVersion,
+  codeBundleId,
   overwrite = false,
   detectAppVersion = false,
   projectRoot = process.cwd(),
@@ -172,6 +174,7 @@ export async function uploadMultiple ({
     baseUrl,
     directory,
     appVersion,
+    codeBundleId,
     overwrite,
     projectRoot,
     endpoint,
@@ -241,6 +244,7 @@ export async function uploadMultiple ({
         type: PayloadType.Browser,
         apiKey,
         appVersion,
+        codeBundleId,
         minifiedUrl: `${baseUrl.replace(/\/$/, '')}/${bundlePath}`,
         minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
