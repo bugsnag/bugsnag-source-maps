@@ -1,3 +1,5 @@
+import { URL } from 'url'
+
 export const DEFAULT_UPLOAD_ORIGIN = 'https://upload.bugsnag.com'
 
 export function buildEndpointUrl (origin: string, path: string): string {
