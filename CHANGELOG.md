@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.0 (2021-05-18)
+
+### Added
+
+- Add support for `codeBundleId` on node and browser uploads [#61](https://github.com/bugsnag/bugsnag-source-maps/pull/61)
+
+### Changed
+
+- Always use `/` as the path separator in the uploaded `minifiedUrl` for Node [#60](https://github.com/bugsnag/bugsnag-source-maps/pull/60)
+
+### Fixed
+
+- Strip the project root from source maps created on Windows [#60](https://github.com/bugsnag/bugsnag-source-maps/pull/60)
+
 ## 2.0.0 (2021-01-21)
 
 ## Breaking
