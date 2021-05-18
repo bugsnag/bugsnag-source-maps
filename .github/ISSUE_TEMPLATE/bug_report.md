@@ -19,7 +19,14 @@ A clear and concise description of what the bug is.
 4. See error
 
 ### Environment
-List any relevant environment specific tools and versions used. eg Node version
+* bugsnag-source-maps version:
+* Uploading for:
+	* [ ] Browser
+	* [ ] Node
+		* Node version:
+	* [ ] React Native
+		* React Native version:
+* Command that was run:
 
 <!--
   Below are a few approaches you might take to communicate the issue, in

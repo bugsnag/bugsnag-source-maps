@@ -11,6 +11,13 @@ import readBundleContent from './lib/ReadBundleContent'
 import readSourceMap from './lib/ReadSourceMap'
 import parseSourceMap from './lib/ParseSourceMap'
 import _detectAppVersion from './lib/DetectAppVersion'
+import {
+  validateRequiredStrings,
+  validateOptionalStrings,
+  validateBooleans,
+  validateObjects,
+  validateNoUnknownArgs
+} from './lib/InputValidators'
 
 import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
 const UPLOAD_PATH = '/sourcemap'
@@ -20,6 +27,7 @@ interface UploadSingleOpts {
   sourceMap: string
   bundle: string
   appVersion?: string
+  codeBundleId?: string
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -28,20 +36,43 @@ interface UploadSingleOpts {
   logger?: Logger
 }
 
+function validateOneOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'sourceMap', 'projectRoot', 'endpoint' ])
+  validateOptionalStrings(opts, [ 'bundle', 'appVersion', 'codeBundleId' ])
+  validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function uploadOne ({
   apiKey,
   bundle,
   sourceMap,
   appVersion,
+  codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   detectAppVersion = false,
   requestOpts = {},
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: UploadSingleOpts): Promise<void> {
-  logger.info(`Preparing upload of node source map for "${bundle}"`)
+  validateOneOpts({
+    apiKey,
+    bundle,
+    sourceMap,
+    appVersion,
+    codeBundleId,
+    overwrite,
+    projectRoot,
+    endpoint,
+    detectAppVersion,
+    requestOpts,
+    logger
+  }, unknownArgs as Record<string, unknown>)
 
+  logger.info(`Preparing upload of node source map for "${bundle}"`)
 
   let url
   try {
@@ -74,7 +105,8 @@ export async function uploadOne ({
       type: PayloadType.Node,
       apiKey,
       appVersion,
-      minifiedUrl: bundle,
+      codeBundleId,
+      minifiedUrl: bundle.replace(/\\/g, '/'),
       minifiedFile: new File(fullBundlePath, bundleContent),
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
@@ -94,6 +126,7 @@ interface UploadMultipleOpts {
   apiKey: string
   directory: string
   appVersion?: string
+  codeBundleId?: string
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
@@ -102,17 +135,40 @@ interface UploadMultipleOpts {
   logger?: Logger
 }
 
+function validateMultipleOpts (opts: Record<string, unknown>, unknownArgs: Record<string, unknown>) {
+  validateRequiredStrings(opts, [ 'apiKey', 'directory', 'projectRoot', 'endpoint' ])
+  validateOptionalStrings(opts, [ 'appVersion', 'codeBundleId' ])
+  validateBooleans(opts, [ 'overwrite', 'detectAppVersion' ])
+  validateObjects(opts, [ 'requestOpts', 'logger' ])
+  validateNoUnknownArgs(unknownArgs)
+}
+
 export async function uploadMultiple ({
   apiKey,
   directory,
   appVersion,
+  codeBundleId,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
   detectAppVersion = false,
   requestOpts = {},
-  logger = noopLogger
+  logger = noopLogger,
+  ...unknownArgs
 }: UploadMultipleOpts): Promise<void> {
+  validateMultipleOpts({
+    apiKey,
+    directory,
+    appVersion,
+    codeBundleId,
+    overwrite,
+    projectRoot,
+    endpoint,
+    detectAppVersion,
+    requestOpts,
+    logger
+  }, unknownArgs as Record<string, unknown>)
+
   logger.info(`Preparing upload of node source maps for "${directory}"`)
 
   let url
@@ -174,7 +230,8 @@ export async function uploadMultiple ({
         type: PayloadType.Node,
         apiKey,
         appVersion,
-        minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)),
+        codeBundleId,
+        minifiedUrl: path.relative(projectRoot, path.resolve(absoluteSearchPath, bundlePath)).replace(/\\/g, '/'),
         minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite

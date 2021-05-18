@@ -230,6 +230,31 @@ test('uploadOne(): custom endpoint (invalid URL)', async () => {
   }
 })
 
+test('uploadOne(): codeBundleId', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadOne({
+    apiKey: '123',
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/a'),
+    logger: mockLogger,
+    codeBundleId: 'r0001'
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/sourcemap',
+    expect.objectContaining({
+      apiKey: '123',
+      minifiedFile: expect.any(Object),
+      overwrite: false,
+      sourceMap: expect.any(Object),
+      codeBundleId: 'r0001'
+    }),
+    expect.objectContaining({})
+  )
+})
+
 test('uploadMultiple(): success', async () => {
   const mockedRequest  = request as jest.MockedFunction<typeof request>
   mockedRequest.mockResolvedValue()
@@ -378,6 +403,39 @@ test('uploadMultiple(): success with detected appVersion', async () => {
       minifiedUrl: 'build/static/js/runtime-main.ad66c902.js',
       appVersion: '1.2.3'
     }),
+    expect.objectContaining({})
+  )
+})
+
+test('uploadMultiple(): success with codeBundleId', async () => {
+  const mockedRequest  = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+  await uploadMultiple({
+    apiKey: '123',
+    directory: 'build/static/js',
+    projectRoot: path.join(__dirname, 'fixtures/c'),
+    logger: mockLogger,
+    codeBundleId: 'r00012'
+  })
+  expect(mockedRequest).toHaveBeenCalledTimes(4)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/sourcemap',
+    expect.objectContaining({ codeBundleId: 'r00012' }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/sourcemap',
+    expect.objectContaining({ codeBundleId: 'r00012'}),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/sourcemap',
+    expect.objectContaining({ codeBundleId: 'r00012' }),
+    expect.objectContaining({})
+  )
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.bugsnag.com/sourcemap',
+    expect.objectContaining({ codeBundleId: 'r00012' }),
     expect.objectContaining({})
   )
 })
@@ -550,4 +608,41 @@ test('uploadMultiple(): failure (connection error)', async () => {
     expect((e as NetworkError).code).toBe(NetworkErrorCode.UNKNOWN)
     expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('An unexpected error occurred'), expect.any(Error), expect.any(Error))
   }
+})
+
+describe('input validation errors (when using as a JS library', () => {
+  test.each([
+    [ {}, 'apiKey is required and must be a string' ],
+    [ { apiKey: 123 }, 'apiKey is required and must be a string' ],
+    [ { apiKey: '123' }, 'sourceMap is required and must be a string' ],
+    [ { apiKey: '123', sourceMap: 'm.map', appVersion: 1 }, 'appVersion must be a string' ],
+    [ { apiKey: '123', sourceMap: 'm.map', logger: null }, 'logger must be an object' ],
+    [ { apiKey: '123', sourceMap: 'm.map', overwrite: 'yes' }, 'overwrite must be true or false' ],
+    [ { apiKey: '123', sourceMap: 'm.map', somethingDifferent: 'yes' }, 'Unrecognized option(s): somethingDifferent' ],
+    [
+      { apiKey: '123', sourceMap: 'm.map', somethingDifferent: 'yes', somethingElse: 'no' },
+      'Unrecognized option(s): somethingDifferent, somethingElse'
+    ],
+  ])('uploadOne(): invalid input rejects with an error', (input, expectedError) => {
+    // The following line is meant to be invalid, so convince the linter and the compiler we definitely want to do it
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return expect(uploadOne(input)).rejects.toThrowError(expectedError)
+  })
+  test.each([
+    [ {}, 'apiKey is required and must be a string' ],
+    [ { apiKey: 123 }, 'apiKey is required and must be a string' ],
+    [ { apiKey: '123' }, 'directory is required and must be a string' ],
+    [ { apiKey: '123', directory: '.', appVersion: 1 }, 'appVersion must be a string' ],
+    [ { apiKey: '123', directory: '.', somethingDifferent: 'yes' }, 'Unrecognized option(s): somethingDifferent' ],
+    [
+      { apiKey: '123', directory: '.', somethingDifferent: 'yes', somethingElse: 'no' },
+      'Unrecognized option(s): somethingDifferent, somethingElse'
+    ],
+  ])('uploadMultiple(): invalid input rejects with an error', (input, expectedError) => {
+    // The following line is meant to be invalid, so convince the linter and the compiler we definitely want to do it
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return expect(uploadMultiple(input)).rejects.toThrowError(expectedError)
+  })
 })
