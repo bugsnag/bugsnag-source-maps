@@ -28,6 +28,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
     return nodeUsage()
   }
   try {
+    const overwrite = nodeOpts.overwrite && !nodeOpts['noOverwrite']
     if (nodeOpts.sourceMap) {
       // single mode
       await node.uploadOne({
@@ -35,7 +36,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         sourceMap: nodeOpts.sourceMap,
         bundle: nodeOpts.bundle,
         projectRoot: nodeOpts.projectRoot,
-        overwrite: nodeOpts.overwrite,
+        overwrite,
         appVersion: nodeOpts.appVersion,
         endpoint: nodeOpts.endpoint,
         detectAppVersion: nodeOpts.detectAppVersion,
@@ -48,7 +49,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         apiKey: nodeOpts.apiKey,
         directory: nodeOpts.directory,
         projectRoot: nodeOpts.projectRoot,
-        overwrite: nodeOpts.overwrite,
+        overwrite,
         appVersion: nodeOpts.appVersion,
         endpoint: nodeOpts.endpoint,
         detectAppVersion: nodeOpts.detectAppVersion,
@@ -129,6 +130,10 @@ function validatenodeOpts (opts: Record<string, unknown>): void {
 
   if (opts['appVersion'] && opts['detectAppVersion']) {
     throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
+  if (opts['overwrite'] && opts['noOverwrite']) {
+    throw new Error('--overwrite and --no-overwrite cannot both be given')
   }
 
   if (opts.codeBundleId) {
