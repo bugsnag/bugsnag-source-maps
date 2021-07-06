@@ -17,11 +17,12 @@ To start a release:
 
 Once the release PR has been approved, merge the PR into `main`. You are now ready to make the release. Ensure you are logged in to npm and that you have access to publish the package.
 
-- Bump the package version and push the new tag:
+- Bump the package version and push the new commit and tag:
 
   ```
   npm version <major|minor|patch>
   git push origin main
+  git push --tags
   ```
 
 - Publish the new version to npm:
