@@ -17,7 +17,7 @@ To start a release:
 
 Once the release PR has been approved, merge the PR into `main`. You are now ready to make the release. Ensure you are logged in to npm and that you have access to publish the package.
 
-- Make sure you are on the latest `master`.
+- Make sure you are on the latest `main`.
 
 - Bump the package version and push the new commit and tag:
 
