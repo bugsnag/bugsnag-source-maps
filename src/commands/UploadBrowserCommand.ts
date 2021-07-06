@@ -36,6 +36,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
     return browserUsage()
   }
   try {
+    const overwrite = browserOpts.overwrite && !browserOpts['noOverwrite']
     if (browserOpts.sourceMap) {
       // single mode
       await browser.uploadOne({
@@ -44,7 +45,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         bundleUrl: browserOpts.bundleUrl,
         bundle: browserOpts.bundle,
         projectRoot: browserOpts.projectRoot,
-        overwrite: browserOpts.overwrite,
+        overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
@@ -58,7 +59,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         baseUrl: browserOpts.baseUrl,
         directory: browserOpts.directory,
         projectRoot: browserOpts.projectRoot,
-        overwrite: browserOpts.overwrite,
+        overwrite,
         appVersion: browserOpts.appVersion,
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
@@ -151,6 +152,10 @@ function validateBrowserOpts (opts: Record<string, unknown>): void {
 
   if (opts['appVersion'] && opts['detectAppVersion']) {
     throw new Error('--app-version and --detect-app-version cannot both be given')
+  }
+
+  if (opts['overwrite'] && opts['noOverwrite']) {
+    throw new Error('--overwrite and --no-overwrite cannot both be given')
   }
 
   if (opts.codeBundleId) {

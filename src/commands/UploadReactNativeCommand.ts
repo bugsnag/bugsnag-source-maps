@@ -11,7 +11,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
   }
 
   const defs: OptionDefinition[] = [
-    ...commonCommandDefs.filter(def => def.name !== 'overwrite'),
+    ...commonCommandDefs,
     ...reactNativeCommonDefs,
     ...reactNativeProvideOpts,
     ...reactNativeFetchOpts,
@@ -40,11 +40,12 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
   }
 
   try {
+    const overwrite = reactNativeOpts.overwrite && !reactNativeOpts['noOverwrite']
     if (reactNativeOpts.fetch) {
       await fetchAndUploadOne({
         apiKey: reactNativeOpts.apiKey,
         projectRoot: reactNativeOpts.projectRoot,
-        overwrite: !reactNativeOpts.noOverwrite,
+        overwrite,
         appVersion: reactNativeOpts.appVersion,
         codeBundleId: reactNativeOpts.codeBundleId,
         appBundleVersion: reactNativeOpts.appBundleVersion,
@@ -62,7 +63,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
         sourceMap: reactNativeOpts.sourceMap,
         bundle: reactNativeOpts.bundle,
         projectRoot: reactNativeOpts.projectRoot,
-        overwrite: !reactNativeOpts.noOverwrite,
+        overwrite,
         appVersion: reactNativeOpts.appVersion,
         codeBundleId: reactNativeOpts.codeBundleId,
         appBundleVersion: reactNativeOpts.appBundleVersion,
@@ -126,11 +127,6 @@ const reactNativeCommonDefs = [
     name: 'dev',
     type: Boolean,
     description: 'indicates this is a debug build',
-  },
-  {
-    name: 'no-overwrite',
-    type: Boolean,
-    description: 'prevent exiting source maps uploaded with the same version from being replaced'
   }
 ]
 
@@ -172,6 +168,10 @@ const reactNativeFetchOpts = [
 function validateReactNativeOpts (opts: Record<string, unknown>): void {
   if (!opts.apiKey || typeof opts.apiKey !== 'string') {
     throw new Error('--api-key is a required parameter')
+  }
+
+  if (opts['overwrite'] && opts['noOverwrite']) {
+    throw new Error('--overwrite and --no-overwrite cannot both be given')
   }
 
   validatePlatform(opts)

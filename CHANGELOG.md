@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0 (2021-07-05)
+
+### Added
+
+- Support `--overwrite` and `--no-overwrite` everywhere [#66](https://github.com/bugsnag/bugsnag-source-maps/pull/66)
+
 ## 2.1.0 (2021-05-18)
 
 ### Added
