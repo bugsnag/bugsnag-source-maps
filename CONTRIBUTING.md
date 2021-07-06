@@ -17,10 +17,11 @@ To start a release:
 
 Once the release PR has been approved, merge the PR into `main`. You are now ready to make the release. Ensure you are logged in to npm and that you have access to publish the package.
 
-- Bump the package version:
+- Bump the package version and push the new tag:
 
   ```
   npm version <major|minor|patch>
+  git push origin main
   ```
 
 - Publish the new version to npm:
@@ -32,7 +33,7 @@ Once the release PR has been approved, merge the PR into `main`. You are now rea
 Finally:
 
 - create a release on GitHub https://github.com/bugsnag/bugsnag-source-maps/releases/new
-- A new tag vX.Y.Z will be created on publish
+- Use the existing tag created during the version step above
 - copy the release notes from `CHANGELOG.md`
 - publish the release
 - update and push `next`:
