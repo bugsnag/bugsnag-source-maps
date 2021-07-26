@@ -13,8 +13,11 @@ end
 
 AfterConfiguration do |_config|
   copy_package
+
+  Maze.config.file_log = false
+  Maze.config.log_requests = true
 end
 
 Before do
-  Docker.compose_project_name = "#{rand.to_s}:#{Time.new.strftime("%s")}"
+  Maze::Docker.compose_project_name = "#{rand.to_s}:#{Time.new.strftime("%s")}"
 end
