@@ -37,16 +37,25 @@ interface ReactNativePayload {
   bundle: File
 }
 
+interface RequestOptions {
+  idleTimeout?: number
+}
+
 const MAX_ATTEMPTS = 5
 const RETRY_INTERVAL_MS = parseInt(process.env.BUGSNAG_RETRY_INTERVAL_MS as string) || 1000
-const TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 30000
+const DEFAULT_TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 30000
 
-export default async function request (endpoint: string, payload: Payload, requestOpts: http.RequestOptions): Promise<void> {
+export default async function request (
+  endpoint: string,
+  payload: Payload,
+  requestOpts: http.RequestOptions,
+  options: RequestOptions = {}
+): Promise<void> {
   let attempts = 0
   const go = async (): Promise<void> => {
     try {
       attempts++
-      await send(endpoint, payload, requestOpts)
+      await send(endpoint, payload, requestOpts, options)
     } catch (err) {
       if (err && err.isRetryable !== false && attempts < MAX_ATTEMPTS) {
         await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL_MS))
@@ -109,7 +118,12 @@ function appendReactNativeFormData(formData: FormData, payload: ReactNativePaylo
   return formData
 }
 
-export async function send (endpoint: string, payload: Payload, requestOpts: http.RequestOptions): Promise<void> {
+export async function send (
+  endpoint: string,
+  payload: Payload,
+  requestOpts: http.RequestOptions,
+  options: RequestOptions = {}
+): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const formData = createFormData(payload)
 
@@ -153,7 +167,7 @@ export async function send (endpoint: string, payload: Payload, requestOpts: htt
     formData.pipe(req)
 
     addErrorHandler(req, reject)
-    addTimeout(req, reject)
+    addTimeout(req, reject, options)
   })
 }
 
@@ -169,7 +183,7 @@ export function isRetryable (status?: number): boolean {
     )
 }
 
-export function fetch(endpoint: string): Promise<string> {
+export function fetch(endpoint: string, options: RequestOptions = {}): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const parsedUrl = url.parse(endpoint)
 
@@ -197,7 +211,7 @@ export function fetch(endpoint: string): Promise<string> {
     })
 
     addErrorHandler(req, reject)
-    addTimeout(req, reject)
+    addTimeout(req, reject, options)
   })
 }
 
@@ -218,8 +232,18 @@ function addErrorHandler(req: http.ClientRequest, reject: (reason: NetworkError)
   })
 }
 
-function addTimeout(req: http.ClientRequest, reject: (reason: NetworkError) => void): void {
-  req.setTimeout(TIMEOUT_MS, () => {
+const minutesToMilliseconds = (minutes: number): number => minutes * 60 * 1000
+
+function addTimeout(
+  req: http.ClientRequest,
+  reject: (reason: NetworkError) => void,
+  options: RequestOptions
+): void {
+  const timeout = options.idleTimeout
+    ? minutesToMilliseconds(options.idleTimeout)
+    : DEFAULT_TIMEOUT_MS
+
+  req.setTimeout(timeout, () => {
     const err = new NetworkError('Connection timed out')
     err.code = NetworkErrorCode.TIMEOUT
     reject(err)

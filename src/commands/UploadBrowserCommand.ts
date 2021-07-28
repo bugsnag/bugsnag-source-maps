@@ -50,6 +50,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
         codeBundleId: browserOpts.codeBundleId,
+        idleTimeout: browserOpts.idleTimeout,
         logger
       })
     } else {
@@ -64,6 +65,7 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
         endpoint: browserOpts.endpoint,
         detectAppVersion: browserOpts.detectAppVersion,
         codeBundleId: browserOpts.codeBundleId,
+        idleTimeout: browserOpts.idleTimeout,
         logger
       })
     }

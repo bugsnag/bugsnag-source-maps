@@ -35,6 +35,7 @@ interface CommonUploadOpts {
   endpoint?: string
   requestOpts?: http.RequestOptions
   logger?: Logger
+  idleTimeout?: number
 }
 
 interface UploadSingleOpts extends CommonUploadOpts {
@@ -60,6 +61,7 @@ export async function uploadOne ({
   codeBundleId,
   appVersionCode,
   appBundleVersion,
+  idleTimeout,
   overwrite = true,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
@@ -114,7 +116,7 @@ export async function uploadOne ({
       dev,
       ...marshalledVersions,
       overwrite
-    }, requestOpts)
+    }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {
@@ -147,6 +149,7 @@ export async function fetchAndUploadOne ({
   codeBundleId,
   appVersionCode,
   appBundleVersion,
+  idleTimeout,
   overwrite = true,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
@@ -194,7 +197,7 @@ export async function fetchAndUploadOne ({
 
   try {
     logger.debug(`Fetching source map from ${sourceMapUrl}`)
-    sourceMap = await fetch(sourceMapUrl)
+    sourceMap = await fetch(sourceMapUrl, { idleTimeout })
   } catch (e) {
     logger.error(
       formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
@@ -204,7 +207,7 @@ export async function fetchAndUploadOne ({
 
   try {
     logger.debug(`Fetching bundle from ${bundleUrl}`)
-    bundle = await fetch(bundleUrl)
+    bundle = await fetch(bundleUrl, { idleTimeout })
   } catch (e) {
     logger.error(
       formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
@@ -231,7 +234,7 @@ export async function fetchAndUploadOne ({
       dev,
       ...marshalledVersions,
       overwrite
-    }, requestOpts)
+    }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${entryPoint}.js.map to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
     if (e.cause) {

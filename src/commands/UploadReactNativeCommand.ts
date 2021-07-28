@@ -55,6 +55,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
         endpoint: reactNativeOpts.endpoint,
         bundlerUrl: reactNativeOpts.bundlerUrl,
         bundlerEntryPoint: reactNativeOpts.bundlerEntryPoint,
+        idleTimeout: reactNativeOpts.idleTimeout,
         logger
       })
     } else {
@@ -71,6 +72,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
         platform: reactNativeOpts.platform,
         dev: reactNativeOpts.dev,
         endpoint: reactNativeOpts.endpoint,
+        idleTimeout: reactNativeOpts.idleTimeout,
         logger
       })
     }

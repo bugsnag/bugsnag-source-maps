@@ -41,6 +41,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         endpoint: nodeOpts.endpoint,
         detectAppVersion: nodeOpts.detectAppVersion,
         codeBundleId: nodeOpts.codeBundleId,
+        idleTimeout: nodeOpts.idleTimeout,
         logger
       })
     } else {
@@ -54,6 +55,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
         endpoint: nodeOpts.endpoint,
         detectAppVersion: nodeOpts.detectAppVersion,
         codeBundleId: nodeOpts.codeBundleId,
+        idleTimeout: nodeOpts.idleTimeout,
         logger
       })
     }
