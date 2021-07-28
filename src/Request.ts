@@ -43,7 +43,7 @@ interface RequestOptions {
 
 const MAX_ATTEMPTS = 5
 const RETRY_INTERVAL_MS = parseInt(process.env.BUGSNAG_RETRY_INTERVAL_MS as string) || 1000
-const DEFAULT_TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 30000
+const DEFAULT_TIMEOUT_MS = parseInt(process.env.BUGSNAG_TIMEOUT_MS as string) || 60000
 
 export default async function request (
   endpoint: string,
