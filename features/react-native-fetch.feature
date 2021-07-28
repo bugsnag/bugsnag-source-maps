@@ -190,3 +190,24 @@ Feature: React native source map fetch mode
     And the sourcemap payload field "sourceMap" matches the expected source map for "fetch-react-native-0-60-ios"
     And the sourcemap payload field "bundle" matches the expected bundle for "fetch-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
+
+  Scenario: A request can set a timeout using the --idle-timeout flag
+    When I start the service "react-native-0-60-bundler"
+    And I wait for 2 seconds
+    And I set the response delay to 5000 milliseconds
+    And I run the service "react-native-0-60-fetch" with the command
+    """
+    bugsnag-source-maps upload-react-native
+      --api-key 123
+      --app-version 2.0.0
+      --endpoint http://maze-runner:9339
+      --fetch
+      --bundler-url http://react-native-0-60-bundler:9449
+      --platform ios
+      --idle-timeout 0.0008 # approx 50ms in minutes
+    """
+    Then the last run docker command did not exit successfully
+    And the last run docker command output "The request to http://react-native-0-60-bundler:9449 timed out."
+    # this is fetch mode so no sourcemaps should be uploaded because the request
+    # to the RN bundle server should timeout due to the idle-timeout
+    And I should receive no requests
