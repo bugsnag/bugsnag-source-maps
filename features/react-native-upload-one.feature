@@ -176,3 +176,26 @@ Feature: React native source map upload one
     And the sourcemap payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios"
     And the sourcemap payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios"
     And the Content-Type header is valid multipart form-data
+
+  Scenario: A request will be retried up to 5 times on a server failure (500 status code)
+    When I set the response delay to 5000 milliseconds
+    And I run the service "single-source-map-react-native-0-60-ios" with the command
+    """
+    bugsnag-source-maps upload-react-native
+      --api-key 123
+      --app-version 2.0.0
+      --endpoint http://maze-runner:9339
+      --source-map build/source-map.json
+      --bundle build/bundle.js
+      --platform ios
+      --idle-timeout 0.0008 # approx 50ms in minutes
+    """
+    Then the last run docker command did not exit successfully
+    And the last run docker command output "The request timed out."
+    When I wait to receive 5 sourcemaps
+    And the Content-Type header is valid multipart form-data for all requests
+    And the sourcemap payload field "apiKey" equals "123" for all requests
+    And the sourcemap payload field "appVersion" equals "2.0.0" for all requests
+    And the sourcemap payload field "overwrite" equals "true" for all requests
+    And the sourcemap payload field "sourceMap" matches the expected source map for "single-source-map-react-native-0-60-ios" for all requests
+    And the sourcemap payload field "bundle" matches the expected bundle for "single-source-map-react-native-0-60-ios" for all requests

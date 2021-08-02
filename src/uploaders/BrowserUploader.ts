@@ -32,7 +32,8 @@ interface UploadSingleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
-  detectAppVersion?: boolean,
+  detectAppVersion?: boolean
+  idleTimeout?: number
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -52,6 +53,7 @@ export async function uploadOne ({
   sourceMap,
   appVersion,
   codeBundleId,
+  idleTimeout,
   overwrite = false,
   projectRoot = process.cwd(),
   endpoint = DEFAULT_UPLOAD_ORIGIN,
@@ -117,7 +119,7 @@ export async function uploadOne ({
       minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
       sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
       overwrite: overwrite
-    }, requestOpts)
+    }, requestOpts, { idleTimeout })
 
     const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundle}` : sourceMap
 
@@ -141,7 +143,8 @@ interface UploadMultipleOpts {
   overwrite?: boolean
   projectRoot?: string
   endpoint?: string
-  detectAppVersion?: boolean,
+  detectAppVersion?: boolean
+  idleTimeout?: number
   requestOpts?: http.RequestOptions
   logger?: Logger
 }
@@ -161,6 +164,7 @@ export async function uploadMultiple ({
   directory,
   appVersion,
   codeBundleId,
+  idleTimeout,
   overwrite = false,
   detectAppVersion = false,
   projectRoot = process.cwd(),
@@ -249,7 +253,7 @@ export async function uploadMultiple ({
         minifiedFile: (bundleContent && fullBundlePath) ? new File(fullBundlePath, bundleContent) : undefined,
         sourceMap: new File(fullSourceMapPath, JSON.stringify(transformedSourceMap)),
         overwrite: overwrite
-      }, requestOpts)
+      }, requestOpts, { idleTimeout })
 
       const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
 

@@ -37,7 +37,8 @@ test('uploadOne(): dispatches a request with the correct params', async () => {
       overwrite: false,
       sourceMap: expect.any(Object)
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -62,7 +63,8 @@ test('uploadOne(): dispatches a request with the correct params and detected app
       overwrite: false,
       sourceMap: expect.any(Object)
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -183,7 +185,8 @@ test('uploadOne(): custom endpoint (origin only)', async () => {
       overwrite: false,
       sourceMap: expect.any(Object)
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -207,7 +210,8 @@ test('uploadOne(): custom endpoint (absolute)', async () => {
       overwrite: false,
       sourceMap: expect.any(Object)
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -251,7 +255,8 @@ test('uploadOne(): codeBundleId', async () => {
       sourceMap: expect.any(Object),
       codeBundleId: 'r0001'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -282,7 +287,8 @@ test('uploadMultiple(): success', async () => {
       minifiedUrl: 'dist/a.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -300,7 +306,8 @@ test('uploadMultiple(): success', async () => {
       minifiedUrl: 'dist/b.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -318,7 +325,8 @@ test('uploadMultiple(): success', async () => {
       minifiedUrl: 'dist/index.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -349,7 +357,8 @@ test('uploadMultiple(): success with detected appVersion', async () => {
       minifiedUrl: 'build/static/js/2.e5bb21a6.chunk.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -367,7 +376,8 @@ test('uploadMultiple(): success with detected appVersion', async () => {
       minifiedUrl: 'build/static/js/3.1b8b4fc7.chunk.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -385,7 +395,8 @@ test('uploadMultiple(): success with detected appVersion', async () => {
       minifiedUrl: 'build/static/js/main.286ac573.chunk.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -403,7 +414,8 @@ test('uploadMultiple(): success with detected appVersion', async () => {
       minifiedUrl: 'build/static/js/runtime-main.ad66c902.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -421,22 +433,26 @@ test('uploadMultiple(): success with codeBundleId', async () => {
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({ codeBundleId: 'r00012' }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({ codeBundleId: 'r00012'}),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({ codeBundleId: 'r00012' }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
     expect.objectContaining({ codeBundleId: 'r00012' }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -467,7 +483,8 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
       minifiedUrl: 'dist/a.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -485,7 +502,8 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
       minifiedUrl: 'dist/b.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://upload.bugsnag.com/sourcemap',
@@ -503,7 +521,8 @@ test('uploadMultiple(): success using absolute path for "directory"', async () =
       minifiedUrl: 'dist/index.js',
       appVersion: '1.2.3'
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
