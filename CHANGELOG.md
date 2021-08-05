@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0 (2021-08-05)
+
+- Add `--idle-timeout` flag to control the HTTP request timeout ([see Node documentation](https://nodejs.org/api/http.html#http_request_settimeout_timeout_callback)) [#74](https://github.com/bugsnag/bugsnag-source-maps/pull/74)
+- Increase the default HTTP request timeout to 10 minutes (from 5 minutes) [#74](https://github.com/bugsnag/bugsnag-source-maps/pull/74)
+
 ## 2.2.0 (2021-07-05)
 
 ### Added

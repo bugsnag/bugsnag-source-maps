@@ -45,7 +45,8 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -76,7 +77,8 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -109,7 +111,8 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -142,7 +145,8 @@ test('uploadOne(): dispatches a request with the correct params for iOS with app
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -174,7 +178,8 @@ test('uploadOne(): dispatches a request with the correct params for Android with
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest.mock.calls[0][1]).toEqual(expect.not.objectContaining({ appVersionCode: '3.2.1' }))
 })
@@ -207,7 +212,8 @@ test('uploadOne(): dispatches a request with the correct params for iOS with cod
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
   expect(mockedRequest.mock.calls[0][1]).toEqual(expect.not.objectContaining({ appBundleVersion: '4.5.6' }))
 })
@@ -328,7 +334,8 @@ test('uploadOne(): custom endpoint (absolute)', async () => {
   expect(mockedRequest).toHaveBeenCalledWith(
     'https://bugsnag.my-company.com/source-map-custom',
     expect.objectContaining({ apiKey: '123' }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -382,8 +389,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=false')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=false', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=false', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -397,7 +404,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
@@ -429,8 +437,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=false')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=false', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=false', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -444,7 +452,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
@@ -475,8 +484,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -490,7 +499,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for Andr
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -517,8 +527,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=true')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=true')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=ios&dev=true', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=ios&dev=true', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -532,7 +542,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params for iOS 
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 })
 
@@ -561,8 +572,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -576,7 +587,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
@@ -609,8 +621,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -624,7 +636,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
@@ -657,8 +670,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
   })
 
   expect(mockedFetch).toHaveBeenCalledTimes(2)
-  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false')
-  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false')
+  expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/cool-app.js.map?platform=ios&dev=false', { idleTimeout: undefined })
+  expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/cool-app.bundle?platform=ios&dev=false', { idleTimeout: undefined })
 
   expect(mockedRequest).toHaveBeenCalledTimes(1)
   expect(mockedRequest).toHaveBeenCalledWith(
@@ -672,7 +685,8 @@ test('fetchAndUploadOne(): dispatches a request with the correct params with cus
       sourceMap: expect.any(File),
       bundle: expect.any(File),
     }),
-    expect.objectContaining({})
+    {},
+    { idleTimeout: undefined }
   )
 
   expect(mockLogger.success).toHaveBeenCalledWith(expect.stringContaining(
@@ -703,7 +717,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Error)'
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(1)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
@@ -735,7 +749,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (generic Network
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(1)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
@@ -769,7 +783,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (connection refu
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(1)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('Unable to connect to http://react-native-bundler:1234. Is the server running?'),
@@ -803,7 +817,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (server error)',
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(1)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
@@ -837,7 +851,7 @@ test('fetchAndUploadOne(): Fetch mode failure to get source map (timeout)', asyn
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(1)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
@@ -873,8 +887,8 @@ test('fethchAndUploadOne(): Fetch mode failure to get bundle (generic Error)', a
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(2)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
@@ -910,8 +924,8 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (generic NetworkErro
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(2)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('An unexpected error occurred during the request to http://react-native-bundler:1234'),
@@ -949,8 +963,8 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (connection refused)
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(2)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('Unable to connect to http://react-native-bundler:1234. Is the server running?'),
@@ -988,8 +1002,8 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (server error)', asy
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(2)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining("Received an error from the server at http://react-native-bundler:1234. Does the entry point file 'index.js' exist?"),
@@ -1027,8 +1041,8 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
     })
   } catch (e) {
     expect(mockedFetch).toHaveBeenCalledTimes(2)
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true')
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true')
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, 'http://react-native-bundler:1234/index.js.map?platform=android&dev=true', { idleTimeout: undefined })
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, 'http://react-native-bundler:1234/index.bundle?platform=android&dev=true', { idleTimeout: undefined })
     expect(mockedRequest).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledWith(
       expect.stringContaining('The request to http://react-native-bundler:1234 timed out.'),
