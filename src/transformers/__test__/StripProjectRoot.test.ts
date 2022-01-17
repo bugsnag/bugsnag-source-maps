@@ -40,3 +40,14 @@ test('StripProjectRoot transformer: webpack example (synthetic sections)', async
   expect(sourceMapJson.sections[0].map.sources[1]).toBe('webpack:///webpack/bootstrap')
   expect(sourceMapJson.sections[0].map.sources[2]).toBe('index.js')
 })
+
+test('StripProjectRoot transformer: webpack example with namespace', async () => {
+  const projectRoot = path.join(__dirname, 'fixtures', 'webpack-2')
+  const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
+  const sourceMapJson = { sections: [ { map: JSON.parse(await fs.readFile(absolutePath, 'utf-8')) } ] }
+  await StripProjectRoot(absolutePath, sourceMapJson, projectRoot, noopLogger)
+  expect(sourceMapJson.sections[0].map.sources).toHaveLength(3)
+  expect(sourceMapJson.sections[0].map.sources[0]).toBe(path.join('lib', 'a.js'))
+  expect(sourceMapJson.sections[0].map.sources[1]).toBe('webpack:///webpack/bootstrap')
+  expect(sourceMapJson.sections[0].map.sources[2]).toBe('index.js')
+})
