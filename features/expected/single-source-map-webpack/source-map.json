@@ -1,10 +1,10 @@
 {
     "version": 3,
     "sources": [
-        "dist/webpack:/single-source-map-webpack/src/lib/a.js",
-        "dist/webpack:/single-source-map-webpack/src/lib/b.js",
-        "dist/webpack:/single-source-map-webpack/webpack/bootstrap",
-        "dist/webpack:/single-source-map-webpack/src/index.js"
+        "src/lib/a.js",
+        "src/lib/b.js",
+        "webpack:///webpack/bootstrap",
+        "src/index.js"
     ],
     "names": [
         "console",
