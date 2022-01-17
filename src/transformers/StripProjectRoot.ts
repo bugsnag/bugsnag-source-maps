@@ -22,10 +22,10 @@ export default async function stripProjectRoot (sourceMapPath: string, sourceMap
 function strip (sourceMapPath: string, map: UnsafeSourceMap, projectRoot: string): void {
   if (!map.sources) return
   map.sources = map.sources.map(s => {
-    if (/^webpack:\/\/\/webpack/.test(s)) return s
+    if (/^webpack:\/\/(.*)\/webpack/.test(s)) return s.replace(/^(webpack:\/\/)(.*)(\/webpack)/, '$1$3')
     const absoluteSourcePath = path.resolve(
       path.dirname(sourceMapPath),
-      s.replace(/webpack:\/\/\/\.\//, `${projectRoot}/`)
+      s.replace(/webpack:\/\/.*\/\.\//, `${projectRoot}/`)
     )
     return absoluteSourcePath.replace(projectRoot, '').replace(/^(\/|\\)/, '')
   })
