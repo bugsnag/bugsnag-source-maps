@@ -3,7 +3,7 @@
     "sources": [
         "src/lib/a.js",
         "src/lib/b.js",
-        "webpack:///webpack/bootstrap",
+        "webpack://single-source-map-webpack/webpack/bootstrap",
         "src/index.js"
     ],
     "names": [

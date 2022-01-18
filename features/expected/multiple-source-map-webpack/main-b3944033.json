@@ -2,10 +2,10 @@
     "version": 3,
     "sources": [
         "src/lib/b.js",
-        "webpack:///webpack/bootstrap",
-        "webpack:///webpack/runtime/hasOwnProperty shorthand",
-        "webpack:///webpack/runtime/jsonp chunk loading",
-        "webpack:///webpack/startup"
+        "webpack://multiple-source-map-webpack/webpack/bootstrap",
+        "webpack://multiple-source-map-webpack/webpack/runtime/hasOwnProperty shorthand",
+        "webpack://multiple-source-map-webpack/webpack/runtime/jsonp chunk loading",
+        "webpack://multiple-source-map-webpack/webpack/startup"
     ],
     "names": [
         "console",
