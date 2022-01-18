@@ -22,7 +22,8 @@ export default async function stripProjectRoot (sourceMapPath: string, sourceMap
 function strip (sourceMapPath: string, map: UnsafeSourceMap, projectRoot: string): void {
   if (!map.sources) return
   map.sources = map.sources.map(s => {
-    if (/^webpack:\/\/(.*)\/webpack/.test(s)) return s.replace(/^(webpack:\/\/)(.*)(\/webpack)/, '$1$3')
+    // leave sources for virtual webpack files untouched
+    if (/^webpack:\/\/(.*)\/webpack/.test(s)) return s
     const absoluteSourcePath = path.resolve(
       path.dirname(sourceMapPath),
       s.replace(/webpack:\/\/.*\/\.\//, `${projectRoot}/`)

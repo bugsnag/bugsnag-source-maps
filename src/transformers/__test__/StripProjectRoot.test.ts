@@ -8,9 +8,10 @@ test('StripProjectRoot transformer: typescript example', async () => {
   const absolutePath = path.join(projectRoot, 'dist', 'out.js.map')
   const sourceMapJson = JSON.parse(await fs.readFile(absolutePath, 'utf-8'))
   await StripProjectRoot(absolutePath, sourceMapJson, projectRoot, noopLogger)
-  expect(sourceMapJson.sources).toHaveLength(2)
-  expect(sourceMapJson.sources[0]).toBe(path.join('lib', 'a.ts'))
-  expect(sourceMapJson.sources[1]).toBe('index.ts')
+  expect(sourceMapJson.sources).toStrictEqual([
+    path.join('lib', 'a.ts'),
+    'index.ts'
+  ])
 })
 
 test('StripProjectRoot transformer: ignore errors when source map is in an unexpected format', async () => {
@@ -24,10 +25,11 @@ test('StripProjectRoot transformer: webpack example', async () => {
   const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
   const sourceMapJson = JSON.parse(await fs.readFile(absolutePath, 'utf-8'))
   await StripProjectRoot(absolutePath, sourceMapJson, projectRoot, noopLogger)
-  expect(sourceMapJson.sources).toHaveLength(3)
-  expect(sourceMapJson.sources[0]).toBe(path.join('lib', 'a.js'))
-  expect(sourceMapJson.sources[1]).toBe('webpack:///webpack/bootstrap')
-  expect(sourceMapJson.sources[2]).toBe('index.js')
+  expect(sourceMapJson.sources).toStrictEqual([
+    path.join('lib', 'a.js'),
+    'webpack:///webpack/bootstrap',
+    'index.js'
+  ])
 })
 
 test('StripProjectRoot transformer: webpack example (synthetic sections)', async () => {
@@ -35,10 +37,11 @@ test('StripProjectRoot transformer: webpack example (synthetic sections)', async
   const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
   const sourceMapJson = { sections: [ { map: JSON.parse(await fs.readFile(absolutePath, 'utf-8')) } ] }
   await StripProjectRoot(absolutePath, sourceMapJson, projectRoot, noopLogger)
-  expect(sourceMapJson.sections[0].map.sources).toHaveLength(3)
-  expect(sourceMapJson.sections[0].map.sources[0]).toBe(path.join('lib', 'a.js'))
-  expect(sourceMapJson.sections[0].map.sources[1]).toBe('webpack:///webpack/bootstrap')
-  expect(sourceMapJson.sections[0].map.sources[2]).toBe('index.js')
+  expect(sourceMapJson.sections[0].map.sources).toStrictEqual([
+    path.join('lib', 'a.js'),
+    'webpack:///webpack/bootstrap',
+    'index.js'
+  ])
 })
 
 test('StripProjectRoot transformer: webpack example with namespace', async () => {
@@ -46,8 +49,9 @@ test('StripProjectRoot transformer: webpack example with namespace', async () =>
   const absolutePath = path.join(projectRoot, 'dist', 'main.js.map')
   const sourceMapJson = { sections: [ { map: JSON.parse(await fs.readFile(absolutePath, 'utf-8')) } ] }
   await StripProjectRoot(absolutePath, sourceMapJson, projectRoot, noopLogger)
-  expect(sourceMapJson.sections[0].map.sources).toHaveLength(3)
-  expect(sourceMapJson.sections[0].map.sources[0]).toBe(path.join('lib', 'a.js'))
-  expect(sourceMapJson.sections[0].map.sources[1]).toBe('webpack:///webpack/bootstrap')
-  expect(sourceMapJson.sections[0].map.sources[2]).toBe('index.js')
+  expect(sourceMapJson.sections[0].map.sources).toStrictEqual([
+    path.join('lib', 'a.js'),
+    'webpack://this-package-name-is-used-in-the-source-paths/webpack/bootstrap',
+    'index.js'
+  ])
 })
