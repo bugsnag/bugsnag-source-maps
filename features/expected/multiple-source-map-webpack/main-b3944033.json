@@ -3,9 +3,9 @@
     "sources": [
         "src/lib/b.js",
         "webpack:///webpack/bootstrap",
-        "webpack:///runtime/hasOwnProperty shorthand",
-        "webpack:///runtime/jsonp chunk loading",
-        "webpack:///startup"
+        "webpack:///webpack/runtime/hasOwnProperty shorthand",
+        "webpack:///webpack/runtime/jsonp chunk loading",
+        "webpack:///webpack/startup"
     ],
     "names": [
         "console",
