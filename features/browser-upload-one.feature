@@ -312,7 +312,7 @@ Feature: Browser source map upload one
     And the sourcemap payload field "appVersion" equals "2.0.0"
     And the sourcemap payload field "overwrite" is null
     And the sourcemap payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
-    And the sourcemap payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
-    And the sourcemap payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
+    And the sourcemap payload field "sourceMap" matches the expected source map for "webpack-nosources"
+    And the sourcemap payload field "minifiedFile" matches the expected minified file for "webpack-nosources"
     And the Content-Type header is valid multipart form-data
     And the last run docker command exited successfully
