@@ -295,3 +295,24 @@ Feature: Browser source map upload one
     And the sourcemap payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js" for all requests
     And the sourcemap payload field "sourceMap" matches the expected source map for "single-source-map-webpack" for all requests
     And the sourcemap payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack" for all requests
+
+  Scenario: Sources are added to the upload when devtool: nosources-source-map is used
+    When I run the service "webpack-nosources" with the command
+      """
+      bugsnag-source-maps upload-browser
+        --api-key 123
+        --app-version 2.0.0
+        --source-map dist/main.js.map
+        --bundle dist/main.js
+        --bundle-url "http://myapp.url/static/js/main.js"
+        --endpoint http://maze-runner:9339
+      """
+    And I wait to receive 1 sourcemap
+    Then the sourcemap payload field "apiKey" equals "123"
+    And the sourcemap payload field "appVersion" equals "2.0.0"
+    And the sourcemap payload field "overwrite" is null
+    And the sourcemap payload field "minifiedUrl" equals "http://myapp.url/static/js/main.js"
+    And the sourcemap payload field "sourceMap" matches the expected source map for "single-source-map-webpack"
+    And the sourcemap payload field "minifiedFile" matches the expected minified file for "single-source-map-webpack"
+    And the Content-Type header is valid multipart form-data
+    And the last run docker command exited successfully
