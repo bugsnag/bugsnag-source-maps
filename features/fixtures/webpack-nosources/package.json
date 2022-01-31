@@ -1,5 +1,5 @@
 {
-  "name": "single-source-map-webpack",
+  "name": "webpack-nosources",
   "version": "1.2.3",
   "description": "",
   "main": "index.js",
