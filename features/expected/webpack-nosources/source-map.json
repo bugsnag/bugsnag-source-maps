@@ -3,7 +3,7 @@
     "sources": [
         "src/lib/a.js",
         "src/lib/b.js",
-        "webpack://single-source-map-webpack/webpack/bootstrap",
+        "webpack://webpack-nosources/webpack/bootstrap",
         "src/index.js"
     ],
     "names": [
@@ -18,11 +18,11 @@
     ],
     "mappings": "sBAAAA,QAAQC,IAAI,c,SCAZD,QAAQC,IAAI,eCCRC,EAA2B,GAG/B,SAASC,EAAoBC,GAE5B,GAAGF,EAAyBE,GAC3B,OAAOF,EAAyBE,GAAUC,QAG3C,IAAIC,EAASJ,EAAyBE,GAAY,CAGjDC,QAAS,IAOV,OAHAE,EAAoBH,GAAUE,EAAQA,EAAOD,QAASF,GAG/CG,EAAOD,QCpBfL,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ,M",
     "file": "main.js",
+    "sourceRoot": "",
     "sourcesContent": [
         "console.log('hi from a')\n",
         "console.log('hi from b')\n",
-        "// The module cache\nvar __webpack_module_cache__ = {};\n\n// The require function\nfunction __webpack_require__(moduleId) {\n\t// Check if module is in cache\n\tif(__webpack_module_cache__[moduleId]) {\n\t\treturn __webpack_module_cache__[moduleId].exports;\n\t}\n\t// Create a new module (and put it into the cache)\n\tvar module = __webpack_module_cache__[moduleId] = {\n\t\t// no module.id needed\n\t\t// no module.loaded needed\n\t\texports: {}\n\t};\n\n\t// Execute the module function\n\t__webpack_modules__[moduleId](module, module.exports, __webpack_require__);\n\n\t// Return the exports of the module\n\treturn module.exports;\n}\n\n",
+        null,
         "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
-    ],
-    "sourceRoot": ""
+    ]
 }
