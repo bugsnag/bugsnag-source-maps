@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0 (2022-02-04)
+
+### Fixed
+
+- handle the webpack 5 default devtoolModuleFilenameTemplate format [#78](https://github.com/bugsnag/bugsnag-source-maps/pull/78)
+
 ## 2.3.0 (2021-08-05)
 
 - Add `--idle-timeout` flag to control the HTTP request timeout ([see Node documentation](https://nodejs.org/api/http.html#http_request_settimeout_timeout_callback)) [#74](https://github.com/bugsnag/bugsnag-source-maps/pull/74)
