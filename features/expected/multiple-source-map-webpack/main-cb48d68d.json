@@ -1,7 +1,7 @@
 {
     "version": 3,
     "sources": [
-        "dist/webpack:/multiple-source-map-webpack/src/lib/a.js"
+        "src/lib/a.js"
     ],
     "names": [
         "console",

@@ -36,6 +36,10 @@ services:
       context: source-map-babel
       dockerfile: Dockerfile.browser-multiple
 
+  webpack-nosources:
+    build:
+      context: webpack-nosources
+
   single-source-map-react-native-0-60-ios:
     build:
       context: rn0_60
