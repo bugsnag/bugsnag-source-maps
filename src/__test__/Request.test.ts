@@ -11,7 +11,7 @@ jest.setTimeout(+(process.env.BUGSNAG_TIMEOUT_MS as string) * 10)
 let server: http.Server
 afterEach(() => server?.close())
 
-const originalSetTimeout = http.ClientRequest.prototype.setTimeout;
+const originalSetTimeout = http.ClientRequest.prototype.setTimeout
 
 beforeAll(() => {
   // trigger a timeout without waiting much real time
@@ -520,5 +520,4 @@ test('request: fetch() unsuccessful (timeout)', async () => {
     expect(e.isRetryable).toBe(true)
     expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
   }
-  
 })
