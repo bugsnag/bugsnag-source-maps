@@ -514,11 +514,11 @@ const originalSetTimeout = http.ClientRequest.prototype.setTimeout;
 
 beforeAll(() => {
   // trigger a timeout without waiting much real time
-http.request.prototype.setTimeout = function(_timeout: number, cb?: () => void) {
-  return originalSetTimeout(0, cb)
-}
+  http.ClientRequest.prototype.setTimeout = function(_timeout: number, cb?: () => void) {
+    return originalSetTimeout.call(this, 100, cb)
+  }
 })
 
 afterAll(() => {
-  http.request.prototype.setTimeout = originalSetTimeout
+  http.ClientRequest.prototype.setTimeout = originalSetTimeout
 })
