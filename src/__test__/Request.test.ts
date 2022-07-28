@@ -510,16 +510,15 @@ test('request: fetch() unsuccessful (timeout)', async () => {
   
 })
 
-const oldSetTimeout = http.ClientRequest.prototype.setTimeout;
+const originalSetTimeout = http.ClientRequest.prototype.setTimeout;
 
 beforeAll(() => {
   // trigger a timeout without waiting much real time
 http.request.prototype.setTimeout = function(_timeout: number, cb?: () => void) {
-  cb && setTimeout(cb, 0)
-  return this
+  return originalSetTimeout(0, cb)
 }
 })
 
 afterAll(() => {
-  http.request.prototype.setTimeout = oldSetTimeout
+  http.request.prototype.setTimeout = originalSetTimeout
 })
