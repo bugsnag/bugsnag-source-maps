@@ -507,4 +507,19 @@ test('request: fetch() unsuccessful (timeout)', async () => {
     expect(e.isRetryable).toBe(true)
     expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
   }
+  
+})
+
+const oldSetTimeout = http.ClientRequest.prototype.setTimeout;
+
+beforeAll(() => {
+  // trigger a timeout without waiting much real time
+http.request.prototype.setTimeout = function(_timeout: number, cb?: () => void) {
+  cb && setTimeout(cb, 0)
+  return this
+}
+})
+
+afterAll(() => {
+  http.request.prototype.setTimeout = oldSetTimeout
 })
