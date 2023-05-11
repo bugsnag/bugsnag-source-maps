@@ -1,3 +1,15 @@
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === 'object' && !Array.isArray(value)
+
+export const isErrnoException = (value: unknown): value is NodeJS.ErrnoException => {
+  return isObject(value) &&
+    typeof value.errno === 'number' &&
+    typeof value.code === 'string' &&
+    typeof value.path === 'string' &&
+    typeof value.syscall === 'string' &&
+    typeof value.stack === 'string'
+}
+
 export default function stringifyFileAccessError (e: NodeJS.ErrnoException): string {
   switch (e.code) {
     case 'ENOENT':
