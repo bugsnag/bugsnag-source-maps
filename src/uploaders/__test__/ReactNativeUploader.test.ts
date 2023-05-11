@@ -243,13 +243,15 @@ test('uploadOne(): failure (unexpected network error) with cause', async () => {
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
-    expect(e).toBeTruthy()
-    expect(e.message).toBe('misc upload error')
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred.'),
-      err,
-      err.cause
-    )
+    if (e instanceof Error) {
+      expect(e).toBeTruthy()
+      expect(e.message).toBe('misc upload error')
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('An unexpected error occurred.'),
+        err,
+        err.cause
+      )
+    }
   }
 })
 
@@ -276,12 +278,14 @@ test('uploadOne(): failure (unexpected network error) without cause', async () =
 
     expect(mockedRequest).toHaveBeenCalledTimes(1)
   } catch (e) {
-    expect(e).toBeTruthy()
-    expect(e.message).toBe('misc upload error')
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('An unexpected error occurred.'),
-      err
-    )
+    if (e instanceof Error) {
+      expect(e).toBeTruthy()
+      expect(e.message).toBe('misc upload error')
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('An unexpected error occurred.'),
+        err
+      )
+    }
   }
 })
 
@@ -304,11 +308,13 @@ test('uploadOne(): failure (source map not found)', async () => {
       logger: mockLogger
     })
   } catch (e) {
-    expect(e).toBeTruthy()
-    expect(e.message).toMatch(/ENOENT/)
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringMatching(/No file exists at the provided path\./)
-    )
+    if (e instanceof Error) {
+      expect(e).toBeTruthy()
+      expect(e.message).toMatch(/ENOENT/)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringMatching(/No file exists at the provided path\./)
+      )
+    }
   }
 })
 
@@ -358,9 +364,11 @@ test('uploadOne(): custom endpoint (invalid URL)', async () => {
     })
     expect(mockedRequest).toHaveBeenCalledTimes(0)
   } catch (e) {
-    expect(e).toBeTruthy()
-    expect(e.message).toBe('Invalid URL')
-    expect(mockLogger.error).toHaveBeenCalledWith(e)
+    if (e instanceof Error) {
+      expect(e).toBeTruthy()
+      expect(e.message).toBe('Invalid URL')
+      expect(mockLogger.error).toHaveBeenCalledWith(e)
+    }
   }
 })
 

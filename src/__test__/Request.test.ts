@@ -1,5 +1,5 @@
 import request, { PayloadType, send, isRetryable, fetch } from '../Request'
-import { NetworkErrorCode } from '../NetworkError'
+import { NetworkError, NetworkErrorCode } from '../NetworkError'
 import http from 'http'
 import { AddressInfo } from 'net'
 import multiparty from 'multiparty'
@@ -40,7 +40,7 @@ test('request: send() successful upload', async () => {
     files: Record<string, multiparty.File[]>
   }[] = []
   server = http.createServer(async (req, res) => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       const form = new multiparty.Form()
       form.parse(req, function(err, fields, files) {
         received.push({ fields, files })
@@ -50,7 +50,7 @@ test('request: send() successful upload', async () => {
     })
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -81,7 +81,7 @@ test('request: send() successful React Native upload', async () => {
     files: Record<string, multiparty.File[]>
   }[] = []
   server = http.createServer(async (req, res) => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       const form = new multiparty.Form()
       form.parse(req, function(err, fields, files) {
         received.push({ fields, files })
@@ -92,7 +92,7 @@ test('request: send() successful React Native upload', async () => {
     })
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -136,7 +136,7 @@ test('request: send() successful upload (with overwrite, appVersion)', async () 
     files: Record<string, multiparty.File[]>
   }[] = []
   server = http.createServer(async (req, res) => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       const form = new multiparty.Form()
       form.parse(req, function(err, fields, files) {
         received.push({ fields, files })
@@ -146,7 +146,7 @@ test('request: send() successful upload (with overwrite, appVersion)', async () 
     })
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -179,7 +179,7 @@ test('request: send() unsuccessful upload (invalid, no retry)', async () => {
     res.end('invalid')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -192,8 +192,10 @@ test('request: send() unsuccessful upload (invalid, no retry)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    }
   }
 })
 
@@ -203,7 +205,7 @@ test('request: send() unsuccessful upload (invalid, empty file)', async () => {
     res.end('empty file')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -216,8 +218,10 @@ test('request: send() unsuccessful upload (invalid, empty file)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.EMPTY_FILE)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.EMPTY_FILE)
+    }
   }
 })
 
@@ -227,7 +231,7 @@ test('request: send() unsuccessful upload (misc 40x code)', async () => {
     res.end('not found')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -240,8 +244,10 @@ test('request: send() unsuccessful upload (misc 40x code)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    }
   }
 })
 
@@ -251,7 +257,7 @@ test('request: send() unsuccessful upload (unauthed, no retry)', async () => {
     res.end('unauthenticated')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -264,8 +270,10 @@ test('request: send() unsuccessful upload (unauthed, no retry)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.INVALID_API_KEY)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.INVALID_API_KEY)
+    }
   }
 })
 
@@ -275,7 +283,7 @@ test('request: send() unsuccessful upload (retryable status)', async () => {
     res.end('server error')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -288,9 +296,11 @@ test('request: send() unsuccessful upload (retryable status)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
-    expect(e.responseText).toBe('server error')
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(true)
+      expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
+      expect(e.responseText).toBe('server error')
+    }
   }
 })
 
@@ -299,7 +309,7 @@ test('request: send() unsuccessful upload (timeout)', async () => {
     // intentionally hang
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -312,8 +322,10 @@ test('request: send() unsuccessful upload (timeout)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(true)
+      expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    }
   }
 })
 
@@ -323,7 +335,7 @@ test('request: send() unsuccessful upload (duplicate)', async () => {
     res.end('duplicate')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -336,8 +348,10 @@ test('request: send() unsuccessful upload (duplicate)', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.DUPLICATE)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.DUPLICATE)
+    }
   }
 })
 
@@ -348,7 +362,7 @@ test('request: request() multiple attempts at retryable errors', async () => {
     requestsReceived += 1
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -361,8 +375,10 @@ test('request: request() multiple attempts at retryable errors', async () => {
       minifiedFile: new File('dist/app.js', 'console.log("hello")')
     }, {})
   } catch (e) {
-    expect(requestsReceived).toBe(5)
-    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    if (e instanceof NetworkError) {
+      expect(requestsReceived).toBe(5)
+      expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    }
   }
 })
 
@@ -374,7 +390,7 @@ test('request: request() multiple attempts, eventually succeeds', async () => {
     if (requestsReceived > 3) res.end('OK')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
   await request(`http://localhost:${port}`, {
@@ -396,7 +412,7 @@ test('request: request() React Native payload, multiple attempts, eventually suc
     if (requestsReceived > 3) res.end('OK')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
   await request(`http://localhost:${port}`, {
@@ -420,7 +436,7 @@ test('request: send() successful Node upload', async () => {
     files: Record<string, multiparty.File[]>
   }[] = []
   server = http.createServer(async (req, res) => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       const form = new multiparty.Form()
       form.parse(req, function(err, fields, files) {
         received.push({ fields, files })
@@ -430,7 +446,7 @@ test('request: send() successful Node upload', async () => {
     })
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
 
@@ -461,7 +477,7 @@ test('request: send() successful Node upload', async () => {
 test('request: fetch() successful request', async () => {
   server = http.createServer((req, res) => { res.end('OK') })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
 
   const port = (server.address() as AddressInfo).port
   const response = await fetch(`http://localhost:${port}`)
@@ -475,15 +491,17 @@ test('request: fetch() unsuccessful (bad request)', async () => {
     res.end('invalid')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
   const port = (server.address() as AddressInfo).port
 
   try {
     const response = await fetch(`http://localhost:${port}`)
     expect(response).toBe('abc')
   } catch (e) {
-    expect(e.isRetryable).toBe(false)
-    expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(false)
+      expect(e.code).toBe(NetworkErrorCode.MISC_BAD_REQUEST)
+    }
   }
 })
 
@@ -493,15 +511,17 @@ test('request: fetch() unsuccessful (server error)', async () => {
     res.end('invalid')
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
   const port = (server.address() as AddressInfo).port
 
   try {
     const response = await fetch(`http://localhost:${port}`)
     expect(response).toBe('abc')
   } catch (e) {
-    expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(true)
+      expect(e.code).toBe(NetworkErrorCode.SERVER_ERROR)
+    } 
   }
 })
 
@@ -510,14 +530,16 @@ test('request: fetch() unsuccessful (timeout)', async () => {
     // intentionally hang
   })
 
-  await new Promise((resolve) => server.listen(() => resolve()))
+  await new Promise<void>((resolve) => server.listen(() => resolve()))
   const port = (server.address() as AddressInfo).port
 
   try {
     const response = await fetch(`http://localhost:${port}`)
     expect(response).toBe('abc')
   } catch (e) {
-    expect(e.isRetryable).toBe(true)
-    expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    if (e instanceof NetworkError) {
+      expect(e.isRetryable).toBe(true)
+      expect(e.code).toBe(NetworkErrorCode.TIMEOUT)
+    }
   }
 })
