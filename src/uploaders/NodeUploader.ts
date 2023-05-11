@@ -93,7 +93,7 @@ export async function uploadOne ({
   if (detectAppVersion) {
     try {
       appVersion = await _detectAppVersion(projectRoot, logger)
-    } catch (e) {
+    } catch (e: any) {
       logger.error(e.message)
 
       throw e
@@ -114,7 +114,7 @@ export async function uploadOne ({
       overwrite: overwrite
     }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
-  } catch (e) {
+  } catch (e: any) {
     if (e.cause) {
       logger.error(formatErrorLog(e), e, e.cause)
     } else {
@@ -203,7 +203,7 @@ export async function uploadMultiple ({
   if (detectAppVersion) {
     try {
       appVersion = await _detectAppVersion(projectRoot, logger)
-    } catch (e) {
+    } catch (e: any) {
       logger.error(e.message)
       throw e
     }
@@ -244,7 +244,7 @@ export async function uploadMultiple ({
       const uploadedFiles = (bundleContent && fullBundlePath) ? `${sourceMap} and ${bundlePath}` : sourceMap
 
       logger.success(`Success, uploaded ${uploadedFiles} to ${url} in ${(new Date()).getTime() - start}ms`)
-    } catch (e) {
+    } catch (e: any) {
       if (e.cause) {
         logger.error(formatErrorLog(e), e, e.cause)
       } else {

@@ -56,7 +56,7 @@ export default async function request (
     try {
       attempts++
       await send(endpoint, payload, requestOpts, options)
-    } catch (err) {
+    } catch (err: any) {
       if (err && err.isRetryable !== false && attempts < MAX_ATTEMPTS) {
         await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL_MS))
         return await go()

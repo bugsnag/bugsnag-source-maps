@@ -8,7 +8,7 @@ export default async function readBundleContent (bundlePath: string, basePath: s
   logger.debug(`Reading bundle file "${bundlePath}"`)
   try {
     return [ await fs.readFile(fullBundlePath, 'utf-8'), fullBundlePath ]
-  } catch (e) {
+  } catch (e: any) {
     logger.error(`The bundle "${bundlePath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullBundlePath}"`)
     throw e
   }

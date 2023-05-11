@@ -118,11 +118,11 @@ export async function uploadOne ({
       overwrite
     }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
-  } catch (e) {
+  } catch (e: any) {
     if (e.cause) {
-      logger.error(formatErrorLog(e, true), e, e.cause)
+      logger.error(formatErrorLog(e), e, e.cause)
     } else {
-      logger.error(formatErrorLog(e, true), e)
+      logger.error(formatErrorLog(e), e)
     }
     throw e
   }
@@ -200,7 +200,7 @@ export async function fetchAndUploadOne ({
     sourceMap = await fetch(sourceMapUrl, { idleTimeout })
   } catch (e) {
     logger.error(
-      formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
+      formatFetchError(e as Error, bundlerUrl, bundlerEntryPoint), e
     )
     throw e
   }
@@ -209,9 +209,7 @@ export async function fetchAndUploadOne ({
     logger.debug(`Fetching bundle from ${bundleUrl}`)
     bundle = await fetch(bundleUrl, { idleTimeout })
   } catch (e) {
-    logger.error(
-      formatFetchError(e, bundlerUrl, bundlerEntryPoint), e
-    )
+    logger.error(formatFetchError(e as Error, bundlerUrl, bundlerEntryPoint), e)
     throw e
   }
 
@@ -237,10 +235,12 @@ export async function fetchAndUploadOne ({
     }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${entryPoint}.js.map to ${url} in ${(new Date()).getTime() - start}ms`)
   } catch (e) {
-    if (e.cause) {
-      logger.error(formatErrorLog(e, true), e, e.cause)
-    } else {
-      logger.error(formatErrorLog(e, true), e)
+    if (e instanceof Error) {
+      if (e.cause) {
+        logger.error(formatErrorLog(e as NetworkError, true), e, e.cause)
+      } else {
+        logger.error(formatErrorLog(e as NetworkError, true), e)
+      }
     }
     throw e
   }

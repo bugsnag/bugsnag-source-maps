@@ -8,7 +8,7 @@ export default async function readSourceMap (sourceMapPath: string, basePath: st
   const fullSourceMapPath = path.resolve(basePath, sourceMapPath)
   try {
     return [ await fs.readFile(fullSourceMapPath, 'utf-8'), fullSourceMapPath ]
-  } catch (e) {
+  } catch (e: any) {
     logger.error(`The source map "${sourceMapPath}" could not be found. ${stringifyFileAccessError(e)}\n\n  "${fullSourceMapPath}"`)
     throw e
   }

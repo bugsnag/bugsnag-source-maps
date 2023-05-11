@@ -18,7 +18,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
     if (opts.help) return nodeUsage()
     if (nodeOpts.quiet) logger.level = LogLevels.success
     validatenodeOpts(nodeOpts)
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = 1
     if (e.name === 'UNKNOWN_VALUE') {
       logger.error(`Invalid argument provided. ${e.message}`)

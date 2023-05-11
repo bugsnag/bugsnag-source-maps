@@ -27,7 +27,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
     }
 
     validateReactNativeOpts(reactNativeOpts)
-  } catch (e) {
+  } catch (e: any) {
     process.exitCode = 1
 
     if (e.name === 'UNKNOWN_VALUE' || e.name === 'UNKNOWN_OPTION') {
