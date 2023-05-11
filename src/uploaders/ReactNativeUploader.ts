@@ -118,11 +118,13 @@ export async function uploadOne ({
       overwrite
     }, requestOpts, { idleTimeout })
     logger.success(`Success, uploaded ${sourceMap} and ${bundle} to ${url} in ${(new Date()).getTime() - start}ms`)
-  } catch (e: any) {
-    if (e.cause) {
-      logger.error(formatErrorLog(e), e, e.cause)
-    } else {
-      logger.error(formatErrorLog(e), e)
+  } catch (e) {
+    if (e instanceof NetworkError) {
+      if (e.cause) {
+        logger.error(formatErrorLog(e), e, e.cause)
+      } else {
+        logger.error(formatErrorLog(e), e)
+      }
     }
     throw e
   }

@@ -18,20 +18,22 @@ export default async function uploadBrowser (argv: string[], opts: Record<string
     if (opts.help) return browserUsage()
     if (browserOpts.quiet) logger.level = LogLevels.success
     validateBrowserOpts(browserOpts)
-  } catch (e: any) {
+  } catch (e) {
     process.exitCode = 1
-    if (e.name === 'UNKNOWN_VALUE') {
-      logger.error(`Invalid argument provided. ${e.message}`)
-      
-      // Check if the user provided an argument that allows a wildcard ('*') and
-      // if so, warn them about wrapping the value in quotes
-      const wildcardArgument = argv.find(arg => arg === '--bundle-url' || arg === '--base-url')
-      
-      if (wildcardArgument) {
-        logger.info(`Values that contain a wildcard must be wrapped in quotes to prevent shell expansion, for example ${wildcardArgument} "*"`)
+    if (e instanceof Error) {
+      if (e.name === 'UNKNOWN_VALUE') {
+        logger.error(`Invalid argument provided. ${e.message}`)
+        
+        // Check if the user provided an argument that allows a wildcard ('*') and
+        // if so, warn them about wrapping the value in quotes
+        const wildcardArgument = argv.find(arg => arg === '--bundle-url' || arg === '--base-url')
+        
+        if (wildcardArgument) {
+          logger.info(`Values that contain a wildcard must be wrapped in quotes to prevent shell expansion, for example ${wildcardArgument} "*"`)
+        }
+      } else {
+        logger.error(e.message)
       }
-    } else {
-      logger.error(e.message)
     }
     return browserUsage()
   }

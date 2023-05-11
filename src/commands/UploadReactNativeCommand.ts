@@ -27,13 +27,15 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
     }
 
     validateReactNativeOpts(reactNativeOpts)
-  } catch (e: any) {
+  } catch (e) {
     process.exitCode = 1
 
-    if (e.name === 'UNKNOWN_VALUE' || e.name === 'UNKNOWN_OPTION') {
-      logger.error(`Invalid argument provided. ${e.message}`)
-    } else {
-      logger.error(e.message)
+    if (e instanceof Error) {
+      if (e.name === 'UNKNOWN_VALUE' || e.name === 'UNKNOWN_OPTION') {
+        logger.error(`Invalid argument provided. ${e.message}`)
+      } else {
+        logger.error(e.message)
+      }
     }
 
     return reactNativeUsage()
