@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Fixed
+
+- upgrade consola dependency to 3.x [#83](https://github.com/bugsnag/bugsnag-source-maps/pull/83) ([JulianMar](https://github.com/JulianMar))
+
 ## 2.3.1 (2022-02-04)
 
 ### Fixed
