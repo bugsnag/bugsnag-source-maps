@@ -229,7 +229,7 @@ test('uploadOne(): custom endpoint (invalid URL)', async () => {
     expect(mockedRequest).toHaveBeenCalledTimes(0)
   } catch (e) {
     expect(e).toBeTruthy()
-    expect(e.message).toBe('Invalid URL: hljsdf')
+    expect(e.message).toBe('Invalid URL')
     expect(mockLogger.error).toHaveBeenCalledWith(e)
   }
 })
