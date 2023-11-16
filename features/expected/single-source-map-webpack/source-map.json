@@ -1,28 +1,30 @@
 {
     "version": 3,
+    "file": "main.js",
+    "mappings": "sBAAAA,QAAQC,IAAI,Y,WCAZD,QAAQC,IAAI,Y,GCCRC,EAA2B,CAAC,EAGhC,SAASC,EAAoBC,GAE5B,IAAIC,EAAeH,EAAyBE,GAC5C,QAAqBE,IAAjBD,EACH,OAAOA,EAAaE,QAGrB,IAAIC,EAASN,EAAyBE,GAAY,CAGjDG,QAAS,CAAC,GAOX,OAHAE,EAAoBL,GAAUI,EAAQA,EAAOD,QAASJ,GAG/CK,EAAOD,OACf,CCtBAP,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ,I",
     "sources": [
         "src/lib/a.js",
         "src/lib/b.js",
         "webpack://single-source-map-webpack/webpack/bootstrap",
         "src/index.js"
     ],
+    "sourcesContent": [
+        "console.log('hi from a')\n",
+        "console.log('hi from b')\n",
+        "// The module cache\nvar __webpack_module_cache__ = {};\n\n// The require function\nfunction __webpack_require__(moduleId) {\n\t// Check if module is in cache\n\tvar cachedModule = __webpack_module_cache__[moduleId];\n\tif (cachedModule !== undefined) {\n\t\treturn cachedModule.exports;\n\t}\n\t// Create a new module (and put it into the cache)\n\tvar module = __webpack_module_cache__[moduleId] = {\n\t\t// no module.id needed\n\t\t// no module.loaded needed\n\t\texports: {}\n\t};\n\n\t// Execute the module function\n\t__webpack_modules__[moduleId](module, module.exports, __webpack_require__);\n\n\t// Return the exports of the module\n\treturn module.exports;\n}\n\n",
+        "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
+    ],
+    "sourceRoot": "",
     "names": [
         "console",
         "log",
         "__webpack_module_cache__",
         "__webpack_require__",
         "moduleId",
+        "cachedModule",
+        "undefined",
         "exports",
         "module",
         "__webpack_modules__"
-    ],
-    "mappings": "sBAAAA,QAAQC,IAAI,c,SCAZD,QAAQC,IAAI,eCCRC,EAA2B,GAG/B,SAASC,EAAoBC,GAE5B,GAAGF,EAAyBE,GAC3B,OAAOF,EAAyBE,GAAUC,QAG3C,IAAIC,EAASJ,EAAyBE,GAAY,CAGjDC,QAAS,IAOV,OAHAE,EAAoBH,GAAUE,EAAQA,EAAOD,QAASF,GAG/CG,EAAOD,QCpBfL,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ,M",
-    "file": "main.js",
-    "sourcesContent": [
-        "console.log('hi from a')\n",
-        "console.log('hi from b')\n",
-        "// The module cache\nvar __webpack_module_cache__ = {};\n\n// The require function\nfunction __webpack_require__(moduleId) {\n\t// Check if module is in cache\n\tif(__webpack_module_cache__[moduleId]) {\n\t\treturn __webpack_module_cache__[moduleId].exports;\n\t}\n\t// Create a new module (and put it into the cache)\n\tvar module = __webpack_module_cache__[moduleId] = {\n\t\t// no module.id needed\n\t\t// no module.loaded needed\n\t\texports: {}\n\t};\n\n\t// Execute the module function\n\t__webpack_modules__[moduleId](module, module.exports, __webpack_require__);\n\n\t// Return the exports of the module\n\treturn module.exports;\n}\n\n",
-        "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
-    ],
-    "sourceRoot": ""
+    ]
 }
