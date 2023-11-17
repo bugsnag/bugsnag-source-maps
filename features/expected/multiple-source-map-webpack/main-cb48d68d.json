@@ -1,16 +1,16 @@
 {
     "version": 3,
+    "file": "main-cb48d68d.js",
+    "mappings": "sHAAAA,QAAQC,IAAI,Y",
     "sources": [
         "src/lib/a.js"
+    ],
+    "sourcesContent": [
+        "console.log('hi from a')\n"
     ],
     "names": [
         "console",
         "log"
-    ],
-    "mappings": "sHAAAA,QAAQC,IAAI",
-    "file": "main-cb48d68d.js",
-    "sourcesContent": [
-        "console.log('hi from a')\n"
     ],
     "sourceRoot": ""
 }
