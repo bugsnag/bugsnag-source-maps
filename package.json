@@ -71,6 +71,9 @@
     "consola": "^2.15.0",
     "form-data": "^3.0.0",
     "glob": "^7.1.6",
-    "read-pkg-up": "^8.0.0"
+    "read-pkg-up": "^7.0.1"
+  },
+  "resolutions": {
+    "semver": "^5.7.2"
   }
 }
