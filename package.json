@@ -72,5 +72,8 @@
     "form-data": "^3.0.0",
     "glob": "^7.1.6",
     "read-pkg-up": "^7.0.1"
+  },
+  "resolutions": {
+    "semver": "^5.7.2"
   }
 }
