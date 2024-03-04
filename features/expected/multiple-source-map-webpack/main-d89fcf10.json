@@ -1,16 +1,16 @@
 {
     "version": 3,
+    "file": "main-d89fcf10.js",
+    "mappings": "2HAAAA,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ,I",
     "sources": [
         "src/index.js"
+    ],
+    "sourcesContent": [
+        "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
     ],
     "names": [
         "console",
         "log"
-    ],
-    "mappings": "2HAAAA,QAAQC,IAAI,MAEZ,EAAQ,KACR,EAAQ",
-    "file": "main-d89fcf10.js",
-    "sourcesContent": [
-        "console.log('hi')\n\nrequire('./lib/a')\nrequire('./lib/b')\n"
     ],
     "sourceRoot": ""
 }

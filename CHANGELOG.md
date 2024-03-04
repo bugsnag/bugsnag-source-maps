@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.2 (2024-03-04)
+
+### Security
+
+- Add dependency resolution for `semver` to fix ReDoS vulnerability [#92](https://github.com/bugsnag/bugsnag-source-maps/pull/92)
+
 ## 2.3.1 (2022-02-04)
 
 ### Fixed
