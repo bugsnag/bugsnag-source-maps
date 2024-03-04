@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.3.2 (2024-03-04)
 
 ### Security
 
