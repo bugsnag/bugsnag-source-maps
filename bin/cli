@@ -1,3 +1,8 @@
 #!/usr/bin/env node
 
-require('../dist/bin/cli.js').default(process.argv)
+const { dirname, join } = require('path')
+
+require(join(
+  dirname(require.resolve('@bugsnag/source-maps/package.json')),
+  'dist/bin/cli.js'
+)).default(process.argv)
