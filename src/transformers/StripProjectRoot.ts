@@ -24,10 +24,17 @@ function strip (sourceMapPath: string, map: UnsafeSourceMap, projectRoot: string
   map.sources = map.sources.map(s => {
     // leave sources for virtual webpack files untouched
     if (/^webpack:\/\/(.*)\/webpack/.test(s)) return s
+
+    // If the source path is a webpack path and we are running on Windows,
+    // we normalize the path separators to URI format
+    const isWebPackOnWindows = s.indexOf('webpack') > -1 && process.platform === 'win32'
+
     const absoluteSourcePath = path.resolve(
       path.dirname(sourceMapPath),
       s.replace(/webpack:\/\/.*\/\.\//, `${projectRoot}/`)
     )
-    return absoluteSourcePath.replace(projectRoot, '').replace(/^(\/|\\)/, '')
+
+    const strippedSourcePath = absoluteSourcePath.replace(projectRoot, '').replace(/^(\/|\\)/, '')
+    return isWebPackOnWindows ? strippedSourcePath.replace(/\\/g, '/') : strippedSourcePath
   })
 }

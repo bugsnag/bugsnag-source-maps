@@ -1,5 +1,11 @@
 # Changelog
 
+## TBD
+
+### Fixed
+
+- Normalise path separators for Webpack paths on Windows [#95](https://github.com/bugsnag/bugsnag-source-maps/pull/95)
+
 ## 2.3.2 (2024-03-04)
 
 ### Security
