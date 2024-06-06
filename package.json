@@ -68,7 +68,7 @@
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0",
     "concat-stream": "^2.0.0",
-    "consola": "^2.15.0",
+    "consola": "^3.0.0",
     "form-data": "^3.0.0",
     "glob": "^7.1.6",
     "read-pkg-up": "^7.0.1"

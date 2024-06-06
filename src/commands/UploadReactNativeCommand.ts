@@ -1,7 +1,7 @@
 import commandLineArgs, { OptionDefinition } from 'command-line-args'
 import commandLineUsage from 'command-line-usage'
 import logger from '../Logger'
-import { LogLevel } from 'consola'
+import { LogLevels } from 'consola'
 import { commonCommandDefs } from './CommandDefinitions'
 import { uploadOne, fetchAndUploadOne } from '../uploaders/ReactNativeUploader'
 
@@ -23,7 +23,7 @@ export default async function uploadReactNative (argv: string[], opts: Record<st
     reactNativeOpts = commandLineArgs(defs, { argv, camelCase: true })
 
     if (reactNativeOpts.quiet) {
-      logger.level = LogLevel.Success
+      logger.level = LogLevels.success
     }
 
     validateReactNativeOpts(reactNativeOpts)
