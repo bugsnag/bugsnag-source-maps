@@ -19,7 +19,12 @@ import {
   validateNoUnknownArgs
 } from './lib/InputValidators'
 
-import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
+import {
+  DEFAULT_UPLOAD_ORIGIN,
+  buildEndpointUrl,
+  selectUploadOrigin            
+} from './lib/EndpointUrl'
+
 const UPLOAD_PATH = '/react-native-source-map'
 
 interface CommonUploadOpts {
@@ -87,6 +92,8 @@ export async function uploadOne ({
   }, unknownArgs as Record<string, unknown>)
 
   logger.info(`Preparing upload of React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+
+  endpoint = selectUploadOrigin(apiKey, endpoint)
 
   let url
   try {
@@ -177,6 +184,8 @@ export async function fetchAndUploadOne ({
   }, unknownArgs as Record<string, unknown>)
 
   logger.info(`Fetching React Native source map (${dev ? 'dev' : 'release'} / ${platform})`)
+
+  endpoint = selectUploadOrigin(apiKey, endpoint)
 
   let url
   try {

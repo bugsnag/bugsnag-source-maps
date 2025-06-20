@@ -19,7 +19,11 @@ import {
   validateNoUnknownArgs
 } from './lib/InputValidators'
 
-import { DEFAULT_UPLOAD_ORIGIN, buildEndpointUrl } from './lib/EndpointUrl'
+import {
+  DEFAULT_UPLOAD_ORIGIN,
+  buildEndpointUrl,
+  selectUploadOrigin
+} from './lib/EndpointUrl'
 const UPLOAD_PATH = '/sourcemap'
 
 interface UploadSingleOpts {
@@ -75,6 +79,8 @@ export async function uploadOne ({
   }, unknownArgs as Record<string, unknown>)
 
   logger.info(`Preparing upload of node source map for "${bundle}"`)
+
+  endpoint = selectUploadOrigin(apiKey, endpoint)
 
   let url
   try {
@@ -174,6 +180,8 @@ export async function uploadMultiple ({
   }, unknownArgs as Record<string, unknown>)
 
   logger.info(`Preparing upload of node source maps for "${directory}"`)
+  
+  endpoint = selectUploadOrigin(apiKey, endpoint)
 
   let url
   try {
