@@ -15,10 +15,9 @@ services:
       - ./:/scan
 
   maze-runner:
-    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v5-cli
+    image: 855461928731.dkr.ecr.us-west-1.amazonaws.com/maze-runner-releases:latest-v9-cli
     environment:
       BUILDKITE_JOB_ID:
-      VERBOSE:
       DEBUG:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

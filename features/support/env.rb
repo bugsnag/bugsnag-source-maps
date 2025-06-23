@@ -11,7 +11,7 @@ def copy_package
   end
 end
 
-AfterConfiguration do |_config|
+BeforeAll do |_config|
   copy_package
 
   Maze.config.file_log = false
