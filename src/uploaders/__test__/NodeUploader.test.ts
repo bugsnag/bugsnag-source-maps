@@ -629,6 +629,59 @@ test('uploadMultiple(): failure (connection error)', async () => {
   }
 })
 
+test('uploadOne(): switches to InsightHub upload origin when apiKey starts with 00000', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await uploadOne({
+    apiKey: '00000cafebabecafebabecafebabecafe',   // Hub-style key
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/a')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.insighthub.smartbear.com/sourcemap',  
+    expect.objectContaining({
+      apiKey: '00000cafebabecafebabecafebabecafe',
+      minifiedFile: expect.any(Object),
+      minifiedUrl: 'bundle.js',
+      overwrite: false,
+      sourceMap: expect.any(Object)
+    }),
+    {},
+    { idleTimeout: undefined }
+  )
+})
+
+test('uploadOne(): honours an explicit custom endpoint even for a Hub-style apiKey', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await uploadOne({
+    apiKey: '00000deadbeefdeadbeefdeadbeefdead',          // Hub-style key
+    endpoint: 'https://upload.my-corp.com',                // explicit override
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/a')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.my-corp.com/sourcemap',               
+    expect.objectContaining({
+      apiKey: '00000deadbeefdeadbeefdeadbeefdead',
+      minifiedFile: expect.any(Object),
+      minifiedUrl: 'bundle.js',
+      overwrite: false,
+      sourceMap: expect.any(Object)
+    }),
+    {},
+    { idleTimeout: undefined }
+  )
+})
+
 describe('input validation errors (when using as a JS library', () => {
   test.each([
     [ {}, 'apiKey is required and must be a string' ],

@@ -2,6 +2,8 @@
 
 ## TBD
 
+- Set default endpoints based on API key [#100](https://github.com/bugsnag/bugsnag-source-maps/pull/100)
+
 ### Fixed
 
 - Normalise path separators for Webpack paths on Windows [#95](https://github.com/bugsnag/bugsnag-source-maps/pull/95)

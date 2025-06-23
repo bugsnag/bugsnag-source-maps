@@ -1051,6 +1051,102 @@ test('fetchAndUploadOne(): Fetch mode failure to get bundle (timeout)', async ()
   }
 })
 
+test('uploadOne(): switches to InsightHub when using a Hub-style apiKey', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await uploadOne({
+    apiKey: '00000cafebabecafebabecafebabecafe',    // Hub key
+    platform: 'ios',
+    dev: false,
+    overwrite: true,
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.insighthub.smartbear.com/react-native-source-map', // auto-switched origin
+    expect.objectContaining({
+      apiKey: '00000cafebabecafebabecafebabecafe',
+      platform: 'ios'
+    }),
+    {},
+    { idleTimeout: undefined }
+  )
+})
+
+test('uploadOne(): explicit endpoint overrides InsightHub auto-switch', async () => {
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedRequest.mockResolvedValue()
+
+  await uploadOne({
+    apiKey: '00000deadbeefdeadbeefdeadbeefdead',   // Hub key
+    endpoint: 'https://upload.my-company.com',     // explicit override
+    platform: 'android',
+    dev: false,
+    overwrite: true,
+    sourceMap: 'bundle.js.map',
+    bundle: 'bundle.js',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest).toHaveBeenCalledWith(
+    'https://upload.my-company.com/react-native-source-map', // explicit wins
+    expect.objectContaining({
+      apiKey: '00000deadbeefdeadbeefdeadbeefdead',
+      platform: 'android'
+    }),
+    {},
+    { idleTimeout: undefined }
+  )
+})
+
+test('fetchAndUploadOne(): InsightHub origin selected automatically for Hub key', async () => {
+  const mockedFetch   = fetch   as jest.MockedFunction<typeof fetch>
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedFetch.mockResolvedValueOnce('{"version":3}') // dummy source-map
+  mockedFetch.mockResolvedValueOnce('console.log(1)') // dummy bundle
+  mockedRequest.mockResolvedValue()
+
+  await fetchAndUploadOne({
+    apiKey: '00000badd00df00d0000badd00df00d0',   // Hub key
+    platform: 'ios',
+    dev: false,
+    overwrite: true,
+    bundlerUrl: 'http://example:8081',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-ios')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest.mock.calls[0][0])
+    .toBe('https://upload.insighthub.smartbear.com/react-native-source-map')
+})
+
+test('fetchAndUploadOne(): explicit endpoint overrides InsightHub auto-switch', async () => {
+  const mockedFetch   = fetch   as jest.MockedFunction<typeof fetch>
+  const mockedRequest = request as jest.MockedFunction<typeof request>
+  mockedFetch.mockResolvedValueOnce('{"version":3}')
+  mockedFetch.mockResolvedValueOnce('console.log(1)')
+  mockedRequest.mockResolvedValue()
+
+  await fetchAndUploadOne({
+    apiKey: '00000facefeedfacefeedfacefeedface',  // Hub key
+    endpoint: 'https://upload.my-company.com',
+    platform: 'android',
+    dev: true,
+    overwrite: true,
+    bundlerUrl: 'http://example:8081',
+    projectRoot: path.join(__dirname, 'fixtures/react-native-android')
+  })
+
+  expect(mockedRequest).toHaveBeenCalledTimes(1)
+  expect(mockedRequest.mock.calls[0][0])
+    .toBe('https://upload.my-company.com/react-native-source-map')
+})
+
 describe('input validation errors (when using as a JS library', () => {
   test.each([
     [ {}, 'apiKey is required and must be a string' ],
