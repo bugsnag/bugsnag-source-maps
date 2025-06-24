@@ -162,4 +162,5 @@ services:
 
 networks:
   default:
+    external: true
     name: ${BUILDKITE_JOB_ID:-source-maps-maze-runner}
