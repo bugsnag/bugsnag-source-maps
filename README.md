@@ -1,5 +1,7 @@
 # @bugsnag/source-maps
 
+## This package is now deprecated - please use [bugsnag-cli](https://github.com/bugsnag/bugsnag-cli) to upload source maps to Bugsnag
+
 ## Installation
 
 You can install @bugsnag/source-maps locally to your project:
