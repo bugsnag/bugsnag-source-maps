@@ -2,7 +2,7 @@ import commandLineArgs, { OptionDefinition } from 'command-line-args'
 import commandLineUsage from 'command-line-usage'
 import * as node from '../uploaders/NodeUploader'
 import logger from '../Logger'
-import { LogLevel } from 'consola'
+import { LogLevels } from 'consola'
 import { commonCommandDefs } from './CommandDefinitions'
 
 export default async function uploadNode (argv: string[], opts: Record<string, unknown>): Promise<void> {
@@ -16,7 +16,7 @@ export default async function uploadNode (argv: string[], opts: Record<string, u
   try {
     nodeOpts = commandLineArgs(defs, { argv, camelCase: true })
     if (opts.help) return nodeUsage()
-    if (nodeOpts.quiet) logger.level = LogLevel.Success
+    if (nodeOpts.quiet) logger.level = LogLevels.success
     validatenodeOpts(nodeOpts)
   } catch (e) {
     process.exitCode = 1

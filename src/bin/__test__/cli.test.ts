@@ -3,7 +3,7 @@ import logger from '../../Logger'
 import * as browser from '../../uploaders/BrowserUploader'
 import * as node from '../../uploaders/NodeUploader'
 import * as reactNative from '../../uploaders/ReactNativeUploader'
-import { LogLevel } from 'consola'
+import { LogLevels } from 'consola'
 
 jest.mock('../../uploaders/BrowserUploader')
 jest.mock('../../uploaders/NodeUploader')
@@ -106,7 +106,7 @@ test('cli: upload-node incompatible opts', async () => {
 test('cli: upload-node --quiet', async () => {
   await run(['upload-node', '--api-key', '123', '--bundle', 'bundle.js', '--source-map', 'bundle.js.map', '--quiet'])
   expect(node.uploadOne).toHaveBeenCalledTimes(1)
-  expect(logger.level).toBe(LogLevel.Success)
+  expect(logger.level).toBe(LogLevels.success)
 })
 
 test('cli: upload-node --app-version and --detect-app-version', async () => {
@@ -194,7 +194,7 @@ test('cli: upload-browser incompatible opts', async () => {
 test('cli: upload-browser --quiet', async () => {
   await run(['upload-browser', '--api-key', '123', '--bundle-url', 'http://my.url/dist/bundle.js', '--source-map', 'bundle.js.map', '--quiet'])
   expect(browser.uploadOne).toHaveBeenCalledTimes(1)
-  expect(logger.level).toBe(LogLevel.Success)
+  expect(logger.level).toBe(LogLevels.success)
 })
 
 test('cli: upload-browser --app-version and --detect-app-version', async () => {
@@ -473,7 +473,7 @@ test('cli: upload-react-native --quiet', async () => {
     appVersion: '1.0.2'
   }))
 
-  expect(logger.level).toBe(LogLevel.Success)
+  expect(logger.level).toBe(LogLevels.success)
   expect(process.exitCode).toBe(0)
 })
 
